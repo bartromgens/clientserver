@@ -17,13 +17,12 @@ int main(int argc, char* argv[])
   std::vector<std::string> arguments;
   arguments.push_back("hello!\0");
 
-  for (std::size_t i = 0; i < 100; i++)
+  for (std::size_t i = 0; i < 100000; i++)
   {
     try
     {
       std::string reply = client.sendCommand("test", arguments);
       std::cout << "main() - reply: " << reply << std::endl;
-      usleep(10000);
     }
     catch (boost::system::system_error& e)
     {

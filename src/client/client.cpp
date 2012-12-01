@@ -63,7 +63,7 @@ Client::connect()
 std::string
 Client::sendCommand(const std::string &command, const std::vector<std::string> &arguments) const
 {
-  std::cout << "Client::sendCommand() - start" << std::endl;
+//  std::cout << "Client::sendCommand() - start" << std::endl;
   std::string reply;
 
   try
@@ -114,7 +114,7 @@ Client::sendCommand(const std::string &command, const std::vector<std::string> &
     std::cerr << e.what() << std::endl;
   }
 
-  std::cout << "Client::sendCommand() - end" << std::endl;
+//  std::cout << "Client::sendCommand() - end" << std::endl;
 
   return reply;
 }

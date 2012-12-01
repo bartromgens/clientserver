@@ -73,7 +73,7 @@ Server::startServing()
 
         std::string command = newState_str[0];
 
-        std::cout << "Server:startServing() - command: " << command << std::endl;
+//        std::cout << "Server:startServing() - command: " << command << std::endl;
 
         // incoming server commands are processed and delegated
         if (command == "setState")
@@ -92,7 +92,7 @@ Server::startServing()
 
           boost::system::error_code ignored_error;
           // send the forces to the client socket
-          std::cout << "Server:startServing() - send message: " << message << std::endl;
+//          std::cout << "Server:startServing() - send message: " << message << std::endl;
           boost::asio::write(socket, boost::asio::buffer(message), boost::asio::transfer_all(), ignored_error);
         }
       }
@@ -119,20 +119,6 @@ Server::sendForces(boost::asio::ip::tcp::socket &socket, const boost::array<doub
 
   boost::system::error_code ignored_error;
   // send the forces to the client socket
-  boost::asio::write(socket, boost::asio::buffer(message), boost::asio::transfer_all(), ignored_error);
-}
-
-
-void
-Server::sendStatus(boost::asio::ip::tcp::socket &socket, std::string statusMessage) const
-{
-  // create message to send back to the client
-  std::string message = "";
-
-  message += statusMessage;
-  message += "\0";
-
-  boost::system::error_code ignored_error;
   boost::asio::write(socket, boost::asio::buffer(message), boost::asio::transfer_all(), ignored_error);
 }
 

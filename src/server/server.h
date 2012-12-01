@@ -40,14 +40,6 @@ private:
    */
   void sendForces(boost::asio::ip::tcp::socket &socket, const boost::array<double, 6> &forces) const;
 
-  /**
-   * Sends the status back to the client
-   * @param socket the boost socket
-   * @param statusMessage the string with the status
-   */
-  void sendStatus(boost::asio::ip::tcp::socket &socket, std::string statusMessage) const;
-
-
 private:
 
   /** State flags */
