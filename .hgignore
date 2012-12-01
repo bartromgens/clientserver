@@ -1,0 +1,4 @@
+syntax: glob
+tmp/*
+*.pro.user
+Makefile*
