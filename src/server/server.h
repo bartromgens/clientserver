@@ -32,13 +32,9 @@ public:
    */
   void setPort(int port);
 
+  void processIncomingData(boost::asio::ip::tcp::socket socket, size_t len, boost::array<char, 2048> bufIncoming);
+
 private:
-  /**
-   * Sends the forces back to the client
-   * @param socket the boost socket
-   * @param forces vector with interface forces and moments
-   */
-  void sendForces(boost::asio::ip::tcp::socket &socket, const boost::array<double, 6> &forces) const;
 
 private:
 

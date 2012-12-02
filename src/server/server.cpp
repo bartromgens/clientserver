@@ -102,23 +102,6 @@ Server::startServing()
 
 
 void
-Server::sendForces(boost::asio::ip::tcp::socket &socket, const boost::array<double, 6> &forces) const
-{
-  // create message to send back to the client
-  std::string message = "force";
-  for (size_t i = 0; i < forces.size(); ++i)
-  {
-    message += "@" + std::to_string(forces[i]);
-  }
-  message += "\0";
-
-  boost::system::error_code ignored_error;
-  // send the forces to the client socket
-  boost::asio::write(socket, boost::asio::buffer(message), boost::asio::transfer_all(), ignored_error);
-}
-
-
-void
 Server::setPort(int port)
 {
   m_port = port;
