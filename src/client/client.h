@@ -16,7 +16,7 @@ public:
    * Constructor
    * @param id the unique client ID mapping it to the Orpheus module analysis
    */
-  Client(int id);
+  Client();
 
   /**
    * Destructor

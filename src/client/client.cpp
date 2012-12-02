@@ -6,10 +6,9 @@
 using boost::asio::ip::tcp;
 
 
-Client::Client(int id)
+Client::Client()
   : m_io_service(0),
     m_socket(0),
-    m_id(id),
     m_port("2020"),
     m_ip("127.0.0.1")
 {

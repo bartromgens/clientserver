@@ -12,17 +12,16 @@ int main(int argc, char* argv[])
 {
   std::cout << "main() - start!" << std::endl;
 
-  Client client(1);
+  Client client;
   client.connect();
 
-  std::vector<std::string> arguments;
-  arguments.push_back("1");
-  arguments.push_back("2");
-
-  for (std::size_t i = 0; i < 10; i++)
+  for (int i = 0; i < 10; i++)
   {
     try
     {
+      std::vector<std::string> arguments;
+      arguments.push_back(std::to_string(i*2));
+      arguments.push_back(std::to_string(i));
       std::string reply = client.sendCommand("add", arguments);
       std::cout << "main() - reply: " << reply << std::endl;
     }
@@ -33,7 +32,7 @@ int main(int argc, char* argv[])
   }
 
   client.disconnect();
-
+  // wait for the server to close the socket
   usleep(100000);
   client.connect();
 
@@ -41,6 +40,7 @@ int main(int argc, char* argv[])
   {
     try
     {
+      std::vector<std::string> arguments;
       std::string reply = client.sendCommand("test", arguments);
       std::cout << "main() - reply: " << reply << std::endl;
     }
