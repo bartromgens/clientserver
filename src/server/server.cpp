@@ -8,7 +8,9 @@ using boost::asio::ip::tcp;
 
 
 Server::Server()
-  : m_port(2020)
+  : m_io_service(),
+    m_socket(),
+    m_port(2020)
 {
 }
 
@@ -19,27 +21,33 @@ Server::~Server()
 
 
 void
-Server::startServing() const
+Server::open()
+{
+  m_io_service.reset(new boost::asio::io_service());
+  m_socket.reset(new tcp::socket(*m_io_service));
+}
+
+
+void
+Server::startServing()
 {
   for (;;)
   {
     // start server loop
     try
     {
-      boost::asio::io_service io_service;
+      open();
 
-      tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), m_port));
-
-      boost::array<char, 2048> bufIncoming;
-      boost::system::error_code error;
-
-      tcp::socket socket(io_service);
-      acceptor.accept(socket);
+      tcp::acceptor acceptor(*m_io_service, tcp::endpoint(tcp::v4(), m_port));
+      acceptor.accept(*m_socket);
 
       for (;;)
       {
+        boost::array<char, 2048> bufIncoming;
+        boost::system::error_code error;
+
         // receive a command
-        size_t len = socket.read_some(boost::asio::buffer(bufIncoming), error);
+        size_t len = m_socket->read_some(boost::asio::buffer(bufIncoming), error);
 
         if (error == boost::asio::error::eof)
         {
@@ -53,7 +61,13 @@ Server::startServing() const
           continue;
         }
 
-        processIncomingData(socket, len, bufIncoming);
+        std::string bufString = bufIncoming.data();
+        bufString.resize(len);
+        std::vector<std::string> newState_str;
+
+        boost::split(newState_str, bufString, boost::is_any_of("@"));
+
+        processIncomingData(*m_socket, newState_str);
       }
     }
     catch (std::exception& e)
@@ -66,21 +80,15 @@ Server::startServing() const
 
 
 void
-Server::processIncomingData(tcp::socket& socket, size_t len, const boost::array<char, 2048>& bufIncoming) const
+Server::processIncomingData(tcp::socket& socket, std::vector<std::string> incomingData) const
 {
-  std::string bufString = bufIncoming.data();
-  bufString.resize(len);
-  std::vector<std::string> newState_str(12);
-
-  boost::split(newState_str, bufString, boost::is_any_of("@"));
-
-  std::string command = newState_str[0];
+  std::string command = incomingData[0];
 
   // incoming server commands are processed and delegated
   if (command == "add")
   {
-    int a = atoi(newState_str[1].c_str());
-    int b = atoi(newState_str[2].c_str());
+    int a = atoi(incomingData[1].c_str());
+    int b = atoi(incomingData[2].c_str());
     int sum = a + b;
     std::string message = std::to_string(sum);
     message += "\0";

@@ -13,8 +13,6 @@ int main(int argc, char* argv[])
   std::cout << "main() - start!" << std::endl;
 
   Server server;
-//  server.setPort();
-
   server.startServing();
 
   std::cout << "main() - end!" << std::endl;

@@ -56,12 +56,13 @@ Client::connect()
 void
 Client::disconnect()
 {
-  std::cout << "Client::~disconnect()" << std::endl;
-  boost::system::error_code errorcode;
-  m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, errorcode);
-  std::cout << "Client::~disconnect() - socket.shutdown(): " << errorcode.message() << std::endl;
+  boost::system::error_code error;
+  m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+  std::cout << "Client::~disconnect() - socket.shutdown(): " << error.message() << std::endl;
+
   m_socket->close();
   m_io_service->stop();
+
   delete m_io_service;
   delete m_socket;
 }

@@ -6,6 +6,7 @@
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
 
+#include <memory>
 
 class Server
 {
@@ -23,7 +24,7 @@ public:
   /**
    * Starts serving
    */
-  void startServing() const;
+  void startServing();
 
   /**
    * Set the port number
@@ -31,11 +32,15 @@ public:
    */
   void setPort(int port);
 
-  void processIncomingData(boost::asio::ip::tcp::socket& socket, size_t len, const boost::array<char, 2048>& bufIncoming) const;
+  void processIncomingData(boost::asio::ip::tcp::socket& socket, std::vector<std::string> incomingData) const;
+
+  void open();
 
 private:
 
 private:
+  std::unique_ptr<boost::asio::io_service> m_io_service;
+  std::unique_ptr<boost::asio::ip::tcp::socket> m_socket;
 
   /** Server network port number */
   int m_port;
