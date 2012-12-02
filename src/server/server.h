@@ -32,7 +32,7 @@ public:
    */
   void setPort(int port);
 
-  void processIncomingData(boost::asio::ip::tcp::socket& socket, std::vector<std::string> incomingData) const;
+  void processIncomingData(const std::vector<std::string>& incomingData) const;
 
   void open();
 

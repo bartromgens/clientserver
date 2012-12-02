@@ -67,7 +67,7 @@ Server::startServing()
 
         boost::split(newState_str, bufString, boost::is_any_of("@"));
 
-        processIncomingData(*m_socket, newState_str);
+        processIncomingData(newState_str);
       }
     }
     catch (std::exception& e)
@@ -80,7 +80,7 @@ Server::startServing()
 
 
 void
-Server::processIncomingData(tcp::socket& socket, std::vector<std::string> incomingData) const
+Server::processIncomingData(const std::vector<std::string>& incomingData) const
 {
   std::string command = incomingData[0];
 
@@ -94,7 +94,7 @@ Server::processIncomingData(tcp::socket& socket, std::vector<std::string> incomi
     message += "\0";
 
     boost::system::error_code ignored_error;
-    boost::asio::write(socket, boost::asio::buffer(message), boost::asio::transfer_all(), ignored_error);
+    boost::asio::write(*m_socket, boost::asio::buffer(message), boost::asio::transfer_all(), ignored_error);
   }
   else
   {
@@ -102,7 +102,7 @@ Server::processIncomingData(tcp::socket& socket, std::vector<std::string> incomi
     message += "\0";
 
     boost::system::error_code ignored_error;
-    boost::asio::write(socket, boost::asio::buffer(message), boost::asio::transfer_all(), ignored_error);
+    boost::asio::write(*m_socket, boost::asio::buffer(message), boost::asio::transfer_all(), ignored_error);
   }
 }
 
