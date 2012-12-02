@@ -8,10 +8,7 @@ using boost::asio::ip::tcp;
 
 
 Server::Server()
-  : m_isInitialised(false),
-    m_isModelLoaded(false),
-    m_isServing(false),
-    m_port(2020)
+  : m_port(2020)
 {
 }
 
@@ -26,6 +23,7 @@ Server::startServing()
 {
   for (;;)
   {
+    // start server loop
     try
     {
       boost::asio::io_service io_service;
@@ -35,24 +33,17 @@ Server::startServing()
       boost::array<char, 2048> bufIncoming;
       boost::system::error_code error;
 
-      m_isServing = true;
-
       std::cout << "Server:startServing() - create socket" << std::endl;
       tcp::socket socket(io_service);
       acceptor.accept(socket);
 
-      // start server loop
       for (;;)
       {
+//      std::cout << "Server:startServing() - read some: " << std::endl;
 
         // receive a command
-        //      std::cout << "Server:startServing() - read some: " << std::endl;
-        if (io_service.stopped())
-        {
-          std::cout << "Server:startServing() - socket not open" << std::endl;
-        }
-
         size_t len = socket.read_some(boost::asio::buffer(bufIncoming), error);
+
         if (error == boost::asio::error::eof)
         {
           std::cout << "Server:startServing() - connection was closed by the peer." << std::endl;
@@ -61,7 +52,7 @@ Server::startServing()
 
         if (len < 1)
         {
-          usleep(100000);
+          usleep(1000);
           continue;
         }
 
@@ -73,17 +64,21 @@ Server::startServing()
 
         std::string command = newState_str[0];
 
-//        std::cout << "Server:startServing() - command: " << command << std::endl;
+//      std::cout << "Server:startServing() - command: " << command << std::endl;
 
         // incoming server commands are processed and delegated
-        if (command == "setState")
+        if (command == "add")
         {
-          int id = atoi(newState_str[1].c_str());
-          std::cout << "OLIB_MB_SERVER::startServing() - id: " << id << std::endl;
+          int a = atoi(newState_str[1].c_str());
+          int b = atoi(newState_str[2].c_str());
+          int sum = a + b;
+          std::string message = std::to_string(sum);
+          message += "\0";
 
-          boost::array<double, 6> forces;
-          forces.fill(0.0);
-          sendForces(socket, forces);
+          boost::system::error_code ignored_error;
+          // send the forces to the client socket
+//          std::cout << "Server:startServing() - send message: " << message << std::endl;
+          boost::asio::write(socket, boost::asio::buffer(message), boost::asio::transfer_all(), ignored_error);
         }
         else
         {

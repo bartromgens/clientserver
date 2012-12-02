@@ -42,11 +42,6 @@ private:
 
 private:
 
-  /** State flags */
-  bool m_isInitialised;
-  bool m_isModelLoaded;
-  bool m_isServing;
-
   /** Server network port number */
   int m_port;
 };

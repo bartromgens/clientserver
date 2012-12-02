@@ -13,6 +13,19 @@ Client::Client(int id)
     m_port("2020"),
     m_ip("127.0.0.1")
 {
+
+}
+
+
+Client::~Client()
+{
+  disconnect();
+}
+
+
+void
+Client::connect()
+{
   std::cout << "Client::Client() - start" << std::endl;
 
   m_io_service = new boost::asio::io_service();
@@ -40,23 +53,17 @@ Client::Client(int id)
 }
 
 
-Client::~Client()
+void
+Client::disconnect()
 {
-  std::cout << "Client::~Client()" << std::endl;
+  std::cout << "Client::~disconnect()" << std::endl;
   boost::system::error_code errorcode;
   m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, errorcode);
-  std::cout << "Client::~Client() - socket.shutdown(): " << errorcode.message() << std::endl;
+  std::cout << "Client::~disconnect() - socket.shutdown(): " << errorcode.message() << std::endl;
   m_socket->close();
   m_io_service->stop();
-  delete m_socket;
   delete m_io_service;
-}
-
-
-bool
-Client::connect()
-{
-  return true;
+  delete m_socket;
 }
 
 
