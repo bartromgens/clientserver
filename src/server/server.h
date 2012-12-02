@@ -21,10 +21,9 @@ public:
   ~Server();
 
   /**
-   * Starts the server after the orpheus side is intialized, a model loaded and analysis opened.
-   * It is now ready to receive state, solve and return corresponding forces and moments.
+   * Starts serving
    */
-  void startServing();
+  void startServing() const;
 
   /**
    * Set the port number
@@ -32,7 +31,7 @@ public:
    */
   void setPort(int port);
 
-  void processIncomingData(boost::asio::ip::tcp::socket socket, size_t len, boost::array<char, 2048> bufIncoming);
+  void processIncomingData(boost::asio::ip::tcp::socket& socket, size_t len, const boost::array<char, 2048>& bufIncoming) const;
 
 private:
 
