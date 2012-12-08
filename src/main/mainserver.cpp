@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
   std::cout << "main() - start!" << std::endl;
 
   DummyApplication app;
-  app.startServing();
+  app.run();
 
   std::cout << "main() - end!" << std::endl;
 }

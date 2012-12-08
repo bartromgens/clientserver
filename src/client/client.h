@@ -72,7 +72,8 @@ public:
 
   void disconnect();
 
-  bool tryConnect();
+  bool tryConnect(int nTimes, int interval_ms);
+
   void connect();
 
 private:

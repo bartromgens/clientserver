@@ -41,7 +41,7 @@ public:
   void write(const std::string& message);
   void write(const std::vector<std::string>& messageStrings);
 
-  void setApplication(std::shared_ptr<DummyApplication> app);
+  void setApplication(DummyApplication* app);
 
 private:
 
@@ -51,7 +51,7 @@ private:
 
   /** Server network port number */
   int m_port;
-  std::shared_ptr<DummyApplication> m_application;
+  DummyApplication* m_application;
 };
 
 #endif // SERVER_H

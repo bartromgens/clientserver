@@ -14,11 +14,7 @@ int main(int argc, char* argv[])
 
   Client client;
   bool isConnected = false;
-  for (std::size_t i = 0; i < 10 && !isConnected; ++i)
-  {
-    isConnected = client.tryConnect();
-    usleep(1000*1000);
-  }
+  isConnected = client.tryConnect(10, 1000);
 
   if (!isConnected)
   {
@@ -26,7 +22,7 @@ int main(int argc, char* argv[])
     return 0;
   }
 
-  for (int i = 0; i < 10; i++)
+  for (int i = 0; i < 100; i++)
   {
     try
     {
@@ -43,9 +39,7 @@ int main(int argc, char* argv[])
   }
 
   client.disconnect();
-  // wait for the server to close the socket
-  usleep(100000);
-  client.connect();
+  client.tryConnect(10, 1000);
 
   for (std::size_t i = 0; i < 10; i++)
   {
@@ -62,9 +56,7 @@ int main(int argc, char* argv[])
   }
 
   client.disconnect();
-  // wait for the server to close the socket
-  usleep(100000);
-  client.connect();
+  client.tryConnect(10, 1000);
 
   for (std::size_t i = 0; i < 4; i++)
   {

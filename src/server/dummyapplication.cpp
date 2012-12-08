@@ -4,7 +4,7 @@ DummyApplication::DummyApplication()
   : m_server(new Server())
 {
   std::cout << "DummyApplication::DummyApplication()" << std::endl;
-  m_server->setApplication(std::shared_ptr<DummyApplication>(this));
+  m_server->setApplication(this);
 }
 
 

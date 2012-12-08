@@ -35,7 +35,7 @@ Server::open()
 
 
 void
-Server::setApplication(std::shared_ptr<DummyApplication> app)
+Server::setApplication(DummyApplication *app)
 {
   m_application = app;
 }
@@ -76,8 +76,8 @@ Server::startServing()
 
         std::string bufString = bufIncoming.data();
         bufString.resize(len);
-        std::vector<std::string> newState_str;
 
+        std::vector<std::string> newState_str;
         boost::split(newState_str, bufString, boost::is_any_of("@"));
 
         processIncomingData(newState_str);

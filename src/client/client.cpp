@@ -24,18 +24,25 @@ Client::~Client()
 
 
 bool
-Client::tryConnect()
+Client::tryConnect(int nTimes, int interval_ms)
 {
-  try
+//  m_socket->is_open();
+
+  for (std::size_t i = 0; i < nTimes; ++i)
   {
-    connect();
-    return true;
+    try
+    {
+      connect();
+      std::cout << "Client::tryConnect() - CONNECTED!" << std::endl;
+      return true;
+    }
+    catch(boost::system::system_error& error)
+    {
+      std::cout << "Client::tryConnect() - failed: " <<  error.what() << std::endl;
+    }
+    usleep(interval_ms*1000);
   }
-  catch(boost::system::system_error& error)
-  {
-    std::cout << "Client::tryConnect() - failed: " <<  error.what() << std::endl;
-    return false;
-  }
+  return false;
 }
 
 
@@ -108,7 +115,7 @@ Client::sendCommand(const std::string &command, const std::vector<std::string> &
     boost::asio::write(*m_socket, boost::asio::buffer(message), boost::asio::transfer_all(), error);
     if (error != 0)
     {
-      std::cout << "Client::sendCommand() - write error: " << error.message() << std::endl;
+      std::cout << "ERROR: Client::sendCommand() - write error: " << error.message() << std::endl;
     }
 
     // receive reply
@@ -116,7 +123,7 @@ Client::sendCommand(const std::string &command, const std::vector<std::string> &
 
     if (error != 0)
     {
-      std::cout << "Client::sendCommand() - read some: " << error.message() << std::endl;
+      std::cout << "ERROR: Client::sendCommand() - read_some: " << error.message() << std::endl;
     }
 
     reply = buf.data();
