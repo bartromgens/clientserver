@@ -69,6 +69,10 @@ public:
    */
   const std::string& getPort() const;
 
+  const std::string& getName() const;
+
+  void setName(const std::string& name);
+
   void open();
   bool tryConnect(int nTimes, int interval_ms);
   void connect();
@@ -86,6 +90,8 @@ private:
   std::string m_port;
   /** Server IP address */
   std::string m_ip;
+
+  std::string m_name;
 
 
 };

@@ -10,10 +10,12 @@ LIBS += -lboost_system -lpthread
 LIBS += -lpthread
 
 SOURCES += ./src/main/mainclient.cpp \
-    ./src/client/client.cpp
+    ./src/client/client.cpp \
+    src/client/clienttestgroup.cpp
 
 HEADERS += \
     ./src/client/client.h \
+    src/client/clienttestgroup.h
 
 OBJECTS_DIR += ./tmp/objects/
 MAKEFILE += MakefileClient

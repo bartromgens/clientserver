@@ -7,6 +7,7 @@
 #include <boost/asio.hpp>
 
 #include <memory>
+#include <mutex>
 
 class DummyApplication;
 
@@ -34,26 +35,26 @@ public:
    */
   void setPort(int port);
 
-  void processIncomingData(const std::vector<std::string>& incomingData) const;
+  int open();
 
-  void open();
-
-  void write(const std::string& message);
-  void write(const std::vector<std::string>& messageStrings);
+  void write(const std::string& message, int id);
+  void write(const std::vector<std::string>& messageStrings, int id);
 
   void setApplication(DummyApplication* app);
 
-  void readLoop();
+  void close(int id);
 private:
 
 private:
   std::unique_ptr<boost::asio::io_service> m_io_service;
-  std::unique_ptr<boost::asio::ip::tcp::socket> m_socket;
+//  std::unique_ptr<boost::asio::ip::tcp::socket> m_socket;
+  std::map<int, boost::asio::ip::tcp::socket*> m_sockets;
   boost::asio::ip::tcp::acceptor* m_acceptor;
 
   /** Server network port number */
   int m_port;
   DummyApplication* m_application;
+  std::mutex m_mutex;
 };
 
 #endif // SERVER_H

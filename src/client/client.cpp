@@ -10,7 +10,8 @@ Client::Client()
   : m_io_service(),
     m_socket(),
     m_port("2020"),
-    m_ip("127.0.0.1")
+    m_ip("127.0.0.1"),
+    m_name("ClientNoName")
 {
   std::cout << "Client::Client()" << std::endl;
 }
@@ -19,7 +20,14 @@ Client::Client()
 Client::~Client()
 {
   std::cout << "Client::~Client()" << std::endl;
-  disconnect();
+  if (m_socket->is_open())
+  {
+    disconnect();
+  }
+  if (m_io_service)
+  {
+    m_io_service->stop();
+  }
 }
 
 
@@ -28,7 +36,7 @@ Client::tryConnect(int nTimes, int interval_ms)
 {
 //  m_socket->is_open();
 
-  for (std::size_t i = 0; i < nTimes; ++i)
+  for (int i = 0; i < nTimes; ++i)
   {
     try
     {
@@ -190,3 +198,16 @@ Client::getPort() const
 {
   return m_port;
 }
+
+const
+std::string &Client::getName() const
+{
+  return m_name;
+}
+
+void
+Client::setName(const std::string &name)
+{
+  m_name = name;
+}
+

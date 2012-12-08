@@ -12,10 +12,9 @@ public:
   void run();
 
 
-  void processIncomingData(std::vector<std::string> dataStrings);
-  void write(const std::vector<std::string>& dataStrings);
-  void write(const std::string& dataString);
-  void startServing2();
+  void processIncomingData(std::vector<std::string> dataStrings, int id);
+  void write(const std::vector<std::string>& dataStrings, int id);
+  void write(const std::string& dataString, int id);
 private:
 
   void startServing();

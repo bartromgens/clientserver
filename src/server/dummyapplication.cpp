@@ -20,11 +20,14 @@ void
 DummyApplication::run()
 {
   std::cout << "DummyApplication:run()" << std::endl;
-  startServing();
-//  std::thread t1(&DummyApplication::startServing, this);
-//  t1.detach();
-//  std::thread t2(&DummyApplication::startServing2, this);
-//  t2.detach();
+  std::thread t1(&DummyApplication::startServing, this);
+  std::thread t2(&DummyApplication::startServing, this);
+  std::thread t3(&DummyApplication::startServing, this);
+  std::thread t4(&DummyApplication::startServing, this);
+  t1.join();
+  t2.join();
+  t3.join();
+  t4.join();
 }
 
 
@@ -37,7 +40,7 @@ DummyApplication::startServing()
 
 
 void
-DummyApplication::processIncomingData(std::vector<std::string> dataStrings)
+DummyApplication::processIncomingData(std::vector<std::string> dataStrings, int id)
 {
   std::string command = dataStrings[0];
 
@@ -50,28 +53,28 @@ DummyApplication::processIncomingData(std::vector<std::string> dataStrings)
     std::string message = std::to_string(sum);
     message += "\0";
 
-    write(message);
+    write(message, id);
   }
   else
   {
     std::string message = "server: nothing to do!";
     message += "\0";
 
-    write(message);
+    write(message, id);
   }
 }
 
 
 void
-DummyApplication::write(const std::vector<std::string>& dataStrings)
+DummyApplication::write(const std::vector<std::string>& dataStrings, int id)
 {
-  m_server->write(dataStrings);
+  m_server->write(dataStrings, id);
 }
 
 
 void
-DummyApplication::write(const std::string& dataString)
+DummyApplication::write(const std::string& dataString, int id)
 {
-  m_server->write(dataString);
+  m_server->write(dataString, id);
 }
 
