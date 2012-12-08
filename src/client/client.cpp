@@ -23,6 +23,22 @@ Client::~Client()
 }
 
 
+bool
+Client::tryConnect()
+{
+  try
+  {
+    connect();
+    return true;
+  }
+  catch(boost::system::system_error& error)
+  {
+    std::cout << "Client::tryConnect() - failed: " <<  error.what() << std::endl;
+    return false;
+  }
+}
+
+
 void
 Client::connect()
 {
@@ -46,7 +62,6 @@ Client::connect()
   }
   if (error)
   {
-    std::cout << "Client::Client() - ERROR: " << error << std::endl;
     throw boost::system::system_error(error);
   }
   std::cout << "Client::Client() - end" << std::endl;

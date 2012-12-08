@@ -13,7 +13,18 @@ int main(int argc, char* argv[])
   std::cout << "main() - start!" << std::endl;
 
   Client client;
-  client.connect();
+  bool isConnected = false;
+  for (std::size_t i = 0; i < 10 && !isConnected; ++i)
+  {
+    isConnected = client.tryConnect();
+    usleep(1000*1000);
+  }
+
+  if (!isConnected)
+  {
+    std::cout << "client main: could not connect, closing down." << std::endl;
+    return 0;
+  }
 
   for (int i = 0; i < 10; i++)
   {
@@ -68,8 +79,6 @@ int main(int argc, char* argv[])
       std::cout << "client main() - ERROR sending command: " << e.what() << std::endl;
     }
   }
-
-  sleep(5);
 
   std::cout << "main() - end!" << std::endl;
   return 0;

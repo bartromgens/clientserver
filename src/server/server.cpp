@@ -80,27 +80,6 @@ Server::startServing()
 
         boost::split(newState_str, bufString, boost::is_any_of("@"));
 
-        std::string command = newState_str[0];
-
-//        // incoming server commands are processed and delegated
-//        if (command == "add")
-//        {
-//          int a = atoi(newState_str[1].c_str());
-//          int b = atoi(newState_str[2].c_str());
-//          int sum = a + b;
-//          std::string message = std::to_string(sum);
-//          message += "\0";
-
-//          write(message);
-//        }
-//        else
-//        {
-//          std::string message = "server: nothing to do!";
-//          message += "\0";
-
-//          write(message);
-//        }
-
         processIncomingData(newState_str);
       }
     }

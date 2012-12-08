@@ -69,9 +69,11 @@ public:
    */
   const std::string& getPort() const;
 
-  void connect();
 
   void disconnect();
+
+  bool tryConnect();
+  void connect();
 
 private:
 
