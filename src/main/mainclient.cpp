@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
     return 0;
   }
 
-  for (int i = 0; i < 100; i++)
+  for (int i = 0; i < 5999; i++)
   {
     try
     {
@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
   }
 
   client.disconnect();
-  client.tryConnect(10, 1000);
+  client.tryConnect(10, 100);
 
   for (std::size_t i = 0; i < 10; i++)
   {
@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
   }
 
   client.disconnect();
-  client.tryConnect(10, 1000);
+  client.tryConnect(10, 100);
 
   for (std::size_t i = 0; i < 4; i++)
   {

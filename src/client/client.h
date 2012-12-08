@@ -69,18 +69,16 @@ public:
    */
   const std::string& getPort() const;
 
-
+  void open();
+  bool tryConnect(int nTimes, int interval_ms);
+  void connect();
   void disconnect();
 
-  bool tryConnect(int nTimes, int interval_ms);
-
-  void connect();
-
 private:
 
 private:
-  boost::asio::io_service* m_io_service;
-  boost::asio::ip::tcp::socket* m_socket;
+  std::unique_ptr<boost::asio::io_service> m_io_service;
+  std::unique_ptr<boost::asio::ip::tcp::socket> m_socket;
 
   /** The unique client/bearing ID*/
   int m_id;

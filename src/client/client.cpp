@@ -7,8 +7,8 @@ using boost::asio::ip::tcp;
 
 
 Client::Client()
-  : m_io_service(0),
-    m_socket(0),
+  : m_io_service(),
+    m_socket(),
     m_port("2020"),
     m_ip("127.0.0.1")
 {
@@ -47,18 +47,28 @@ Client::tryConnect(int nTimes, int interval_ms)
 
 
 void
+Client::open()
+{
+  if (!m_io_service)
+  {
+    m_io_service.reset(new boost::asio::io_service());
+  }
+  m_socket.reset(new tcp::socket(*m_io_service));
+}
+
+
+void
 Client::connect()
 {
-  std::cout << "Client::Client() - start" << std::endl;
+//  std::cout << "Client::connect() - start" << std::endl;
 
-  m_io_service = new boost::asio::io_service();
+  open();
 
   tcp::resolver resolver(*m_io_service);
   tcp::resolver::query query(m_ip, m_port);
   tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
   tcp::resolver::iterator end;
 
-  m_socket = new tcp::socket(*m_io_service);
   boost::system::error_code error = boost::asio::error::host_not_found;
 
   // keeps the client program independent of a specific IP version.
@@ -71,7 +81,7 @@ Client::connect()
   {
     throw boost::system::system_error(error);
   }
-  std::cout << "Client::Client() - end" << std::endl;
+//  std::cout << "Client::connect() - end" << std::endl;
 }
 
 
@@ -84,9 +94,6 @@ Client::disconnect()
 
   m_socket->close();
   m_io_service->stop();
-
-  delete m_io_service;
-  delete m_socket;
 }
 
 
