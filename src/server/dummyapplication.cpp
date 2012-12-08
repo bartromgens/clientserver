@@ -1,5 +1,7 @@
 #include "dummyapplication.h"
 
+#include <thread>
+
 DummyApplication::DummyApplication()
   : m_server(new Server())
 {
@@ -14,15 +16,22 @@ DummyApplication::~DummyApplication()
 }
 
 
-void DummyApplication::run()
+void
+DummyApplication::run()
 {
+  std::cout << "DummyApplication:run()" << std::endl;
   startServing();
+//  std::thread t1(&DummyApplication::startServing, this);
+//  t1.detach();
+//  std::thread t2(&DummyApplication::startServing2, this);
+//  t2.detach();
 }
 
 
 void
 DummyApplication::startServing()
-{
+{ 
+  std::cout << "DummyApplication:startServing()" << std::endl;
   m_server->startServing();
 }
 

@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
     return 0;
   }
 
-  for (int i = 0; i < 5999; i++)
+  for (int i = 0; i < 5; i++)
   {
     try
     {
@@ -43,6 +43,7 @@ int main(int argc, char* argv[])
 
   for (std::size_t i = 0; i < 10; i++)
   {
+    std::cout << "client main() - sending tests: " << std::endl;
     try
     {
       std::vector<std::string> arguments;

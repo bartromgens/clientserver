@@ -3,9 +3,7 @@ CONFIG += console
 CONFIG -= qt
 
 #INCLUDEPATH += /usr/include/boost
-# use boost 1.52
-INCLUDEPATH += /home/bart/prog/1_tools/boost_1_52_0
-
+# use boost 1.52, see ./boost_1_52_0/stage/lib/dir for boost static and shared build libs
 INCLUDEPATH += /home/bart/prog/1_tools/boost_1_52_0
 
 LIBS += -L/home/bart/prog/1_tools/boost_1_52_0/stage/lib
@@ -25,4 +23,3 @@ MAKEFILE += MakefileServer
 
 QMAKE_CXXFLAGS += -std=c++0x
 QMAKE_CXXFLAGS += -Wall
-QMAKE_LFLAGS += -static

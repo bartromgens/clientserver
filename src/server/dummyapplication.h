@@ -15,6 +15,7 @@ public:
   void processIncomingData(std::vector<std::string> dataStrings);
   void write(const std::vector<std::string>& dataStrings);
   void write(const std::string& dataString);
+  void startServing2();
 private:
 
   void startServing();
