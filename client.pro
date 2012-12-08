@@ -18,3 +18,5 @@ OBJECTS_DIR += ./tmp/objects/
 MAKEFILE += MakefileClient
 
 QMAKE_CXXFLAGS += -std=c++0x
+QMAKE_CXXFLAGS += -Wall
+QMAKE_LFLAGS += -static

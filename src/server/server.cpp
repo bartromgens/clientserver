@@ -1,5 +1,7 @@
 #include "server.h"
 
+#include "src/server/dummyapplication.h"
+
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -10,7 +12,8 @@ using boost::asio::ip::tcp;
 Server::Server()
   : m_io_service(),
     m_socket(),
-    m_port(2020)
+    m_port(2020),
+    m_application(0)
 {
 }
 
@@ -23,8 +26,18 @@ Server::~Server()
 void
 Server::open()
 {
-  m_io_service.reset(new boost::asio::io_service());
+  if (!m_io_service)
+  {
+    m_io_service.reset(new boost::asio::io_service());
+  }
   m_socket.reset(new tcp::socket(*m_io_service));
+}
+
+
+void
+Server::setApplication(std::shared_ptr<DummyApplication> app)
+{
+  m_application = app;
 }
 
 
@@ -67,6 +80,27 @@ Server::startServing()
 
         boost::split(newState_str, bufString, boost::is_any_of("@"));
 
+        std::string command = newState_str[0];
+
+//        // incoming server commands are processed and delegated
+//        if (command == "add")
+//        {
+//          int a = atoi(newState_str[1].c_str());
+//          int b = atoi(newState_str[2].c_str());
+//          int sum = a + b;
+//          std::string message = std::to_string(sum);
+//          message += "\0";
+
+//          write(message);
+//        }
+//        else
+//        {
+//          std::string message = "server: nothing to do!";
+//          message += "\0";
+
+//          write(message);
+//        }
+
         processIncomingData(newState_str);
       }
     }
@@ -82,28 +116,29 @@ Server::startServing()
 void
 Server::processIncomingData(const std::vector<std::string>& incomingData) const
 {
-  std::string command = incomingData[0];
+  m_application->processIncomingData(incomingData);
+}
 
-  // incoming server commands are processed and delegated
-  if (command == "add")
+
+void
+Server::write(const std::vector<std::string>& messageStrings)
+{
+  std::string message;
+  for (std::size_t i = 0; i < messageStrings.size(); ++i)
   {
-    int a = atoi(incomingData[1].c_str());
-    int b = atoi(incomingData[2].c_str());
-    int sum = a + b;
-    std::string message = std::to_string(sum);
-    message += "\0";
-
-    boost::system::error_code ignored_error;
-    boost::asio::write(*m_socket, boost::asio::buffer(message), boost::asio::transfer_all(), ignored_error);
+    message += "@";
+    message += messageStrings[i];
   }
-  else
-  {
-    std::string message = "server: nothing to do!";
-    message += "\0";
+  message += "\0";
+  write(message);
+}
 
-    boost::system::error_code ignored_error;
-    boost::asio::write(*m_socket, boost::asio::buffer(message), boost::asio::transfer_all(), ignored_error);
-  }
+
+void
+Server::write(const std::string& message)
+{
+  boost::system::error_code ignored_error;
+  boost::asio::write(*m_socket, boost::asio::buffer(message), boost::asio::transfer_all(), ignored_error);
 }
 
 

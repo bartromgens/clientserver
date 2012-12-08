@@ -8,6 +8,8 @@
 
 #include <memory>
 
+class DummyApplication;
+
 class Server
 {
 public:
@@ -36,6 +38,11 @@ public:
 
   void open();
 
+  void write(const std::string& message);
+  void write(const std::vector<std::string>& messageStrings);
+
+  void setApplication(std::shared_ptr<DummyApplication> app);
+
 private:
 
 private:
@@ -44,6 +51,7 @@ private:
 
   /** Server network port number */
   int m_port;
+  std::shared_ptr<DummyApplication> m_application;
 };
 
 #endif // SERVER_H

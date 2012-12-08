@@ -13,12 +13,16 @@ LIBS += -lboost_system -lpthread
 
 
 SOURCES += ./src/main/mainserver.cpp \
-    ./src/server/server.cpp
+    ./src/server/server.cpp \
+    src/server/dummyapplication.cpp
 
 HEADERS += \
-    ./src/server/server.h
+    ./src/server/server.h \
+    src/server/dummyapplication.h
 
 OBJECTS_DIR += ./tmp/objects/
 MAKEFILE += MakefileServer
 
 QMAKE_CXXFLAGS += -std=c++0x
+QMAKE_CXXFLAGS += -Wall
+QMAKE_LFLAGS += -static

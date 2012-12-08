@@ -12,12 +12,13 @@ Client::Client()
     m_port("2020"),
     m_ip("127.0.0.1")
 {
-
+  std::cout << "Client::Client()" << std::endl;
 }
 
 
 Client::~Client()
 {
+  std::cout << "Client::~Client()" << std::endl;
   disconnect();
 }
 
@@ -57,7 +58,7 @@ Client::disconnect()
 {
   boost::system::error_code error;
   m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
-  std::cout << "Client::~disconnect() - socket.shutdown(): " << error.message() << std::endl;
+  std::cout << "Client::disconnect() - socket.shutdown(): " << error.message() << std::endl;
 
   m_socket->close();
   m_io_service->stop();

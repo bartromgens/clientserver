@@ -50,6 +50,25 @@ int main(int argc, char* argv[])
     }
   }
 
+  client.disconnect();
+  // wait for the server to close the socket
+  usleep(100000);
+  client.connect();
+
+  for (std::size_t i = 0; i < 4; i++)
+  {
+    try
+    {
+      std::vector<std::string> arguments;
+      std::string reply = client.sendCommand("test", arguments);
+      std::cout << "main() - reply: " << reply << std::endl;
+    }
+    catch (boost::system::system_error& e)
+    {
+      std::cout << "client main() - ERROR sending command: " << e.what() << std::endl;
+    }
+  }
+
   sleep(5);
 
   std::cout << "main() - end!" << std::endl;
