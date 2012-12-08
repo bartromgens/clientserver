@@ -33,6 +33,7 @@ void
 Server::close(int id)
 {
   m_mutex.lock();
+
   if (m_sockets[id]->is_open())
   {
     boost::system::error_code error;
@@ -40,6 +41,7 @@ Server::close(int id)
     std::cout << "Server::close() - socket.shutdown(): " << error.message() << std::endl;
     m_sockets[id]->close();
   }
+
   m_mutex.unlock();
 }
 
@@ -70,9 +72,12 @@ void
 Server::setApplication(DummyApplication *app)
 {
   m_mutex.lock();
+
   m_application = app;
+
   m_mutex.unlock();
 }
+
 
 void
 Server::startServing()
@@ -81,7 +86,6 @@ Server::startServing()
   for (;;)
   {
     // start server loop
-
     try
     {
       int id = open();
