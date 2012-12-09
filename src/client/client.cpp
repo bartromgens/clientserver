@@ -46,6 +46,8 @@ Client::open()
 void
 Client::connect()
 {
+  std::lock_guard<std::mutex> lock(m_mutex);
+
   open();
 
   tcp::resolver resolver(*m_io_service);
@@ -94,6 +96,8 @@ Client::tryConnect(int nTimes, int interval_ms)
 void
 Client::disconnect()
 {
+  std::lock_guard<std::mutex> lock(m_mutex);
+
   boost::system::error_code error;
   m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
   if (error)
