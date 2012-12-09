@@ -2,8 +2,6 @@
 
 #include "client.h"
 
-#include <QTime>
-
 #include <thread>
 
 ClientTestGroup::ClientTestGroup()
@@ -42,9 +40,6 @@ ClientTestGroup::startClient(int id)
     return false;
   }
 
-  QTime timer;
-  timer.start();
-
   int nRounds = 1000*1000;
   for (int i = 0; i < nRounds; i++)
   {
@@ -65,8 +60,6 @@ ClientTestGroup::startClient(int id)
       throw;
     }
   }
-  std::cout << "ClientTestGroup::startClient() - time: " << timer.elapsed() << std::endl;
-  std::cout << "ClientTestGroup::startClient() - send/sec: " << nRounds/(timer.elapsed()/1000.0) << std::endl;
 
   client.disconnect();
 
