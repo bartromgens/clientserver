@@ -12,9 +12,9 @@ using boost::asio::ip::tcp;
 
 Server::Server()
   : m_io_service(),
+    m_acceptor(),
     m_threads(),
     m_sockets(),
-    m_acceptor(),
     m_port(2020),
     m_application(0),
     m_mutex(),

@@ -55,9 +55,10 @@ private:
 
 private:
   std::unique_ptr<boost::asio::io_service> m_io_service;
+  std::unique_ptr<boost::asio::ip::tcp::acceptor> m_acceptor;
+
   std::map<int, std::unique_ptr<std::thread> > m_threads;
   std::map<int, std::unique_ptr<boost::asio::ip::tcp::socket> > m_sockets;
-  std::unique_ptr<boost::asio::ip::tcp::acceptor> m_acceptor;
 
   /** Server network port number */
   int m_port;

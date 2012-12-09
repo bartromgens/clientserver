@@ -34,8 +34,6 @@ Client::~Client()
 bool
 Client::tryConnect(int nTimes, int interval_ms)
 {
-//  m_socket->is_open();
-
   for (int i = 0; i < nTimes; ++i)
   {
     try
@@ -69,7 +67,6 @@ void
 Client::connect()
 {
 //  std::cout << "Client::connect() - start" << std::endl;
-
   open();
 
   tcp::resolver resolver(*m_io_service);
@@ -89,7 +86,7 @@ Client::connect()
   {
     throw boost::system::system_error(error);
   }
-  std::cout << "Client::connect() - end : " << error.message() << std::endl;
+  std::cout << "Client::connect() - : " << error.message() << std::endl;
 }
 
 
