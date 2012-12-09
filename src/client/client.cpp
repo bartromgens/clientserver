@@ -125,18 +125,13 @@ Client::sendCommand(const std::string &command, const std::vector<std::string> &
 
     // send to server
     boost::asio::write(*m_socket, boost::asio::buffer(message), boost::asio::transfer_all(), error);
-    if (error != 0)
+    if (error)
     {
-      std::cout << "ERROR: Client::sendCommand() - write error: " << error.message() << std::endl;
+      throw boost::system::system_error(error);
     }
 
     // receive reply
     len = m_socket->read_some(boost::asio::buffer(buf), error);
-
-    if (error != 0)
-    {
-      std::cout << "ERROR: Client::sendCommand() - read_some: " << error.message() << std::endl;
-    }
 
     reply = buf.data();
     reply.resize(len);
