@@ -17,7 +17,7 @@ ClientTestGroup::~ClientTestGroup()
 void
 ClientTestGroup::startClientThread()
 {
-  for (int i = 0; i < 3; ++i)
+  for (int i = 0; i < 10; ++i)
   {
 //    std::cout << "ClientTestGroup::startClientThread()" << std::endl;
     std::thread t1(&ClientTestGroup::startClient, this, i);
@@ -42,7 +42,7 @@ ClientTestGroup::startClient(int id)
     return false;
   }
 
-  for (int i = 0; i < 100000; i++)
+  for (int i = 0; i < 10000; i++)
   {
     try
     {
@@ -50,11 +50,14 @@ ClientTestGroup::startClient(int id)
       arguments.push_back(std::to_string(i*2));
       arguments.push_back(std::to_string(i));
       std::string reply = client.sendCommand("add", arguments);
+      int sum = atoi(reply.c_str());
+      assert(sum == i*3);
 //      std::cout << "ClientTestGroup::startClient() - client name: " << client.getName() << ", reply: " << reply << std::endl;
     }
     catch (boost::system::system_error& e)
     {
       std::cout << "client main() - ERROR sending command: " << e.what() << std::endl;
+      assert(0);
     }
   }
 

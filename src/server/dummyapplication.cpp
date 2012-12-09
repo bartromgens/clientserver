@@ -3,10 +3,8 @@
 #include <thread>
 
 DummyApplication::DummyApplication()
-  : m_server(new Server())
+  : m_server(new Server(this))
 {
-  std::cout << "DummyApplication::DummyApplication()" << std::endl;
-  m_server->setApplication(this);
 }
 
 

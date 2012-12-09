@@ -10,13 +10,13 @@
 using boost::asio::ip::tcp;
 
 
-Server::Server()
+Server::Server(DummyApplication *app, int port)
   : m_io_service(),
     m_acceptor(),
     m_threads(),
     m_sockets(),
-    m_port(2020),
-    m_application(0),
+    m_port(port),
+    m_application(app),
     m_mutex(),
     m_nIdCounter(0)
 {
@@ -25,28 +25,6 @@ Server::Server()
 
 Server::~Server()
 {
-}
-
-
-void
-Server::close(int id)
-{
-  m_mutex.lock();
-
-  std::cout << "Server::close() - id: " << id << std::endl;
-
-  if (m_sockets[id]->is_open())
-  {
-    boost::system::error_code error;
-    m_sockets[id]->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
-    std::cout << "Server::close() - socket.shutdown(): " << error.message() << std::endl;
-    m_sockets[id]->close();
-
-    m_sockets.erase(id);
-    m_threads.erase(id);
-  }
-
-  m_mutex.unlock();
 }
 
 
@@ -66,11 +44,34 @@ Server::open(int id)
 
   m_sockets[id].reset(new boost::asio::ip::tcp::socket(*m_io_service));
 
-  std::cout << "Server::open() - already open: " << getNOpenSockets() << std::endl;
-  std::cout << "Server::open() - threads: " << m_threads.size() << std::endl;
+  std::cout << "Server::open() - id: " << id << std::endl;
+  std::cout << "Server::open() - open sockets: " << getNOpenSockets() << std::endl;
+  std::cout << "Server::open() - running threads: " << m_threads.size() << std::endl;
 
   m_mutex.unlock();
   return id;
+}
+
+
+void
+Server::close(int id)
+{
+  m_mutex.lock();
+
+//  std::cout << "Server::close() - id: " << id << std::endl;
+
+  if (m_sockets[id]->is_open())
+  {
+    boost::system::error_code error;
+    m_sockets[id]->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+    std::cout << "Server::close() - socket.shutdown(): " << error.message() << std::endl;
+    m_sockets[id]->close();
+
+    m_sockets.erase(id);
+    m_threads.erase(id);
+  }
+
+  m_mutex.unlock();
 }
 
 
@@ -107,7 +108,6 @@ Server::startServing(int id)
   {
     boost::asio::ip::tcp::socket* socket = getRawSocket(id);
     m_acceptor->accept(*socket);
-    std::cout << "Server::startServing() - socket accepted" << std::endl;
 
     startServerThread();
 
@@ -124,6 +124,10 @@ Server::startServing(int id)
         std::cout << "Server:startServing() - connection was closed by the peer." << std::endl;
         close(id);
         break;
+      }
+      else if (error)
+      {
+        std::cout << "Server:startServing() - read some ERROR: " << error.message() << std::endl;
       }
 
       if (len < 1)
@@ -171,17 +175,6 @@ Server::write(const std::string& message, int id)
 
   boost::system::error_code ignored_error;
   boost::asio::write(*socket, boost::asio::buffer(message), boost::asio::transfer_all(), ignored_error);
-}
-
-
-void
-Server::setApplication(DummyApplication *app)
-{
-  m_mutex.lock();
-
-  m_application = app;
-
-  m_mutex.unlock();
 }
 
 

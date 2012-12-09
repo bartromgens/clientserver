@@ -18,7 +18,7 @@ public:
   /**
    * Constructor
    */
-  Server();
+  Server(DummyApplication* app, int port = 2020);
 
   /**
    * Destructor
@@ -34,8 +34,6 @@ public:
 
   void write(const std::string& message, int id);
   void write(const std::vector<std::string>& messageStrings, int id);
-
-  void setApplication(DummyApplication* app);
 
   void startServerThread();
 
