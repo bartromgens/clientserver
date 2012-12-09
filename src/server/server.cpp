@@ -1,6 +1,5 @@
 #include "server.h"
-
-#include "src/server/dummyapplication.h"
+#include "serverobserver.h"
 
 #include <iostream>
 #include <thread>

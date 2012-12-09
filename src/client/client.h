@@ -5,6 +5,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
+#include <mutex>
 #include <vector>
 
 
@@ -71,6 +72,8 @@ private:
 private:
   std::unique_ptr<boost::asio::io_service> m_io_service;
   std::unique_ptr<boost::asio::ip::tcp::socket> m_socket;
+
+  mutable std::mutex m_mutex;
 
   /** The unique client/bearing ID*/
   int m_id;

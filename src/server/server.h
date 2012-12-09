@@ -37,8 +37,8 @@ public:
 
   std::vector<std::string> convertArrayToStringVector(std::array<char, 2048> bufIncoming, size_t len);
 
-  void unregisterObserver(ServerObserver *observer);
-  void registerObserver(ServerObserver *observer);
+  void unregisterObserver(ServerObserver* observer);
+  void registerObserver(ServerObserver* observer);
   void notifyObservers(std::vector<std::string> dataStrings, int id);
 
 private:

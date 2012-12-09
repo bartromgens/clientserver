@@ -6,3 +6,7 @@ server
 client
 server.pro.user.2.6pre1
 client.pro.user.2.6pre1
+*.o
+examples/ClientStatusGUI/ClientStatusGUI
+examples/ClientStatusGUI/ui_clientstatuswindow.h
+examples/ClientStatusGUI/moc_clientstatuswindow.cpp

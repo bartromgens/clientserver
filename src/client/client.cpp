@@ -1,7 +1,7 @@
 #include "client.h"
 
 #include <cmath>
-
+#include <thread>
 
 using boost::asio::ip::tcp;
 
@@ -9,6 +9,7 @@ using boost::asio::ip::tcp;
 Client::Client()
   : m_io_service(),
     m_socket(),
+    m_mutex(),
     m_port("2020"),
     m_ip("127.0.0.1"),
     m_name("ClientNoName")
@@ -110,6 +111,8 @@ Client::disconnect()
 std::string
 Client::sendCommand(const std::string &command, const std::vector<std::string> &arguments) const
 {
+  std::lock_guard<std::mutex> lock(m_mutex);
+
 //  std::cout << "Client::sendCommand() - start" << std::endl;
   std::string reply;
 
