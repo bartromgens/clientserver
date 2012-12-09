@@ -1,9 +1,10 @@
 #ifndef DUMMYAPPLICATION_H
 #define DUMMYAPPLICATION_H
 
-#include "src/server/server.h"
+#include "server.h"
+#include "serverobserver.h"
 
-class DummyApplication
+class DummyApplication : public ServerObserver
 {
 public:
   DummyApplication();
@@ -11,9 +12,10 @@ public:
 
   void run();
 
-  void processIncomingData(std::vector<std::string> dataStrings, int id);
   void write(const std::vector<std::string>& dataStrings, int id);
   void write(const std::string& dataString, int id);
+
+  virtual void notifyReceivedData(std::vector<std::string> dataStrings, int id);
 
 private:
 

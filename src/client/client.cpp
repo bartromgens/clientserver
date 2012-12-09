@@ -128,6 +128,8 @@ Client::sendCommand(const std::string &command, const std::vector<std::string> &
     }
     message += "\0";
 
+    assert(m_socket->is_open());
+
     // send to server
     boost::asio::write(*m_socket, boost::asio::buffer(message), boost::asio::transfer_all(), error);
     if (error)

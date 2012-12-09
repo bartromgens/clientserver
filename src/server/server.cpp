@@ -10,13 +10,12 @@
 using boost::asio::ip::tcp;
 
 
-Server::Server(DummyApplication *app, int port)
+Server::Server(int port)
   : m_io_service(),
     m_acceptor(),
     m_threads(),
     m_sockets(),
     m_port(port),
-    m_application(app),
     m_mutex(),
     m_nIdCounter(0)
 {
@@ -29,7 +28,7 @@ Server::~Server()
 
 
 int
-Server::open(int id)
+Server::openConnection(int id)
 {
   std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -55,7 +54,7 @@ Server::open(int id)
 
 
 void
-Server::close(int id)
+Server::closeConnection(int id)
 {
   //  std::cout << "Server::close() - id: " << id << std::endl;
   std::lock_guard<std::mutex> lock(m_mutex);
@@ -64,7 +63,9 @@ Server::close(int id)
   {
     boost::system::error_code error;
     m_sockets[id]->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+
     std::cout << "Server::close() - socket.shutdown(): " << error.message() << std::endl;
+
     m_sockets[id]->close();
 
     m_sockets.erase(id);
@@ -77,6 +78,7 @@ boost::asio::ip::tcp::socket*
 Server::getRawSocket(int id) const
 {
   std::lock_guard<std::mutex> lock(m_mutex);
+
   return m_sockets.at(id).get();
 }
 
@@ -85,6 +87,7 @@ void
 Server::startServerThread()
 {
   std::lock_guard<std::mutex> lock(m_mutex);
+
   int id = m_nIdCounter++;
 
   m_threads[id] = std::unique_ptr<std::thread>(new std::thread(&Server::startServing, this, id));
@@ -92,23 +95,11 @@ Server::startServerThread()
 }
 
 
-std::vector<std::string>
-Server::convertArrayToStringVector(std::array<char, 2048> bufIncoming, size_t len)
-{
-  std::string bufString = bufIncoming.data();
-  bufString.resize(len);
-  std::vector<std::string> newState_str;
-  boost::split(newState_str, bufString, boost::is_any_of("@"));
-
-  return newState_str;
-}
-
-
 void
 Server::startServing(int id)
 {
   std::cout << "Server::startServing()" << std::endl;
-  open(id);
+  openConnection(id);
 
   try
   {
@@ -130,7 +121,7 @@ Server::startServing(int id)
       if (error == boost::asio::error::eof)
       {
         std::cout << "Server:startServing() - connection was closed by the peer." << std::endl;
-        close(id);
+        closeConnection(id);
         break;
       }
       else if (error)
@@ -146,14 +137,14 @@ Server::startServing(int id)
 
       std::vector<std::string> newState_str = convertArrayToStringVector(bufIncoming, len);
 
-      m_application->processIncomingData(newState_str, id);
+      notifyObservers(newState_str, id);
     }
   }
   // boost::system::system_error is derived from std::exception
   catch (std::exception& e)
   {
     std::cerr << "Server::startServing() - ERROR: " << e.what() << std::endl;
-    close(id);
+    closeConnection(id);
     throw;
   }
 }
@@ -178,6 +169,8 @@ Server::write(const std::string& message, int id)
 {
   boost::asio::ip::tcp::socket* socket = getRawSocket(id);
 
+  assert(socket->is_open());
+
   boost::system::error_code ignored_error;
   boost::asio::write(*socket, boost::asio::buffer(message), boost::asio::transfer_all(), ignored_error);
 
@@ -186,6 +179,53 @@ Server::write(const std::string& message, int id)
     std::cerr << "Server::write() - : " << ignored_error.message() << std::endl;
     throw boost::system::system_error(ignored_error);
   }
+}
+
+
+void
+Server::registerObserver(ServerObserver* observer)
+{
+  std::lock_guard<std::mutex> lock(m_mutex);
+  m_observers.push_back(observer);
+}
+
+
+void
+Server::unregisterObserver(ServerObserver* observer)
+{
+  std::lock_guard<std::mutex> lock(m_mutex);
+  m_observers.erase( std::find(m_observers.begin(), m_observers.end(), observer) );
+}
+
+
+void
+Server::notifyObservers(std::vector<std::string> dataStrings, int id)
+{
+  std::vector<ServerObserver*> observers;
+  {
+    std::lock_guard<std::mutex> lock(m_mutex);
+    observers = m_observers;
+  }
+
+  for (std::size_t i = 0; i < observers.size(); ++i)
+  {
+    if (observers[i])
+    {
+      observers[i]->notifyReceivedData(dataStrings, id);
+    }
+  }
+}
+
+
+std::vector<std::string>
+Server::convertArrayToStringVector(std::array<char, 2048> bufIncoming, size_t len)
+{
+  std::string bufString = bufIncoming.data();
+  bufString.resize(len);
+  std::vector<std::string> newState_str;
+  boost::split(newState_str, bufString, boost::is_any_of("@"));
+
+  return newState_str;
 }
 
 
@@ -219,6 +259,3 @@ Server::getNThreads() const
 {
   return m_threads.size();
 }
-
-
-

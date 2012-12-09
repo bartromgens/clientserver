@@ -1,10 +1,13 @@
 #include "dummyapplication.h"
 
+
 #include <thread>
 
 DummyApplication::DummyApplication()
-  : m_server(new Server(this))
+  : ServerObserver(),
+    m_server(new Server())
 {
+  m_server->registerObserver(this);
 }
 
 
@@ -32,7 +35,7 @@ DummyApplication::startServing()
 
 
 void
-DummyApplication::processIncomingData(std::vector<std::string> dataStrings, int id)
+DummyApplication::notifyReceivedData(std::vector<std::string> dataStrings, int id)
 {
   std::string command = dataStrings[0];
 

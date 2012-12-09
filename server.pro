@@ -12,11 +12,13 @@ LIBS += -lboost_system -lpthread
 
 SOURCES += ./src/main/mainserver.cpp \
     ./src/server/server.cpp \
-    src/server/dummyapplication.cpp
+    src/server/dummyapplication.cpp \
+    src/server/serverobserver.cpp
 
 HEADERS += \
     ./src/server/server.h \
-    src/server/dummyapplication.h
+    src/server/dummyapplication.h \
+    src/server/serverobserver.h
 
 OBJECTS_DIR += ./tmp/objects/
 MAKEFILE += MakefileServer

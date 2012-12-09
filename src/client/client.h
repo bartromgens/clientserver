@@ -13,7 +13,6 @@ class Client
 public:
   /**
    * Constructor
-   * @param id the unique client ID mapping it to the Orpheus module analysis
    */
   Client();
 
@@ -22,17 +21,13 @@ public:
    */
   virtual ~Client();
 
-  bool tryConnect(int nTimes, int interval_ms);
+  bool tryConnect(int nTimes = 1, int interval_ms = 0);
 
   void connect();
 
   void disconnect();
 
   /**
-   * Sends the state to the server, let the server solve for this state and get the forces and moments back
-   * @param command the server command
-   * @param arguments the arguments for the command
-   * @returns the reply from the server
    */
   std::string sendCommand(const std::string &command, const std::vector<std::string> &arguments) const;
 

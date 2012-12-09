@@ -9,7 +9,7 @@
 #include <mutex>
 #include <thread>
 
-class DummyApplication;
+class ServerObserver;
 
 class Server
 {
@@ -17,7 +17,7 @@ public:
   /**
    * Constructor
    */
-  Server(DummyApplication* app, int port = 2020);
+  Server(int port = 2020);
 
   /**
    * Destructor
@@ -30,21 +30,25 @@ public:
    */
   void setPort(int port);
 
+  void startServerThread();
 
   void write(const std::string& message, int id);
   void write(const std::vector<std::string>& messageStrings, int id);
 
-  void startServerThread();
-
   std::vector<std::string> convertArrayToStringVector(std::array<char, 2048> bufIncoming, size_t len);
+
+  void unregisterObserver(ServerObserver *observer);
+  void registerObserver(ServerObserver *observer);
+  void notifyObservers(std::vector<std::string> dataStrings, int id);
+
 private:
   /**
    * Starts serving
    */
   void startServing(int id);
 
-  int open(int id);
-  void close(int id);
+  int openConnection(int id);
+  void closeConnection(int id);
   boost::asio::ip::tcp::socket* getRawSocket(int id) const;
   std::vector<std::string> readSome(int id);
 
@@ -58,9 +62,10 @@ private:
   std::map<int, std::unique_ptr<std::thread> > m_threads;
   std::map<int, std::unique_ptr<boost::asio::ip::tcp::socket> > m_sockets;
 
+  std::vector<ServerObserver*> m_observers;
+
   /** Server network port number */
   int m_port;
-  DummyApplication* m_application;
   mutable std::mutex m_mutex;
   int m_nIdCounter;
 };
