@@ -20,14 +20,8 @@ void
 DummyApplication::run()
 {
   std::cout << "DummyApplication:run()" << std::endl;
-  std::thread t1(&DummyApplication::startServing, this);
-  std::thread t2(&DummyApplication::startServing, this);
-  std::thread t3(&DummyApplication::startServing, this);
-  std::thread t4(&DummyApplication::startServing, this);
-  t1.join();
-  t2.join();
-  t3.join();
-  t4.join();
+  m_server->startServerThread();
+  std::cout << "DummyApplication:run() - end!" << std::endl;
 }
 
 
@@ -35,7 +29,7 @@ void
 DummyApplication::startServing()
 { 
   std::cout << "DummyApplication:startServing()" << std::endl;
-  m_server->startServing();
+//  m_server->startServing();
 }
 
 

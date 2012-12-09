@@ -17,7 +17,7 @@ ClientTestGroup::~ClientTestGroup()
 void
 ClientTestGroup::startClientThread()
 {
-  for (int i = 0; i < 100; ++i)
+  for (int i = 0; i < 1; ++i)
   {
     std::cout << "ClientTestGroup::startClientThread()" << std::endl;
     std::thread t1(&ClientTestGroup::startClient, this, i);
@@ -42,7 +42,7 @@ ClientTestGroup::startClient(int id)
     return false;
   }
 
-  for (int i = 0; i < 10000; i++)
+  for (int i = 0; i < 1000; i++)
   {
     try
     {

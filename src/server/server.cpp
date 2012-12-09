@@ -12,7 +12,7 @@ using boost::asio::ip::tcp;
 
 Server::Server()
   : m_io_service(),
-//    m_socket(),
+    m_threads(),
     m_sockets(),
     m_acceptor(0),
     m_port(2020),
@@ -34,12 +34,15 @@ Server::close(int id)
 {
   m_mutex.lock();
 
+  std::cout << "Server::close()" << std::endl;
+
   if (m_sockets[id]->is_open())
   {
     boost::system::error_code error;
     m_sockets[id]->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
     std::cout << "Server::close() - socket.shutdown(): " << error.message() << std::endl;
     m_sockets[id]->close();
+    m_threads.erase(id);
   }
 
   m_mutex.unlock();
@@ -47,11 +50,10 @@ Server::close(int id)
 
 
 int
-Server::open()
+Server::open(int id)
 {
   m_mutex.lock();
 
-  std::cout << "Server::open()" << std::endl;
   if (!m_io_service)
   {
     m_io_service.reset(new boost::asio::io_service());
@@ -60,8 +62,11 @@ Server::open()
   {
     m_acceptor = new boost::asio::ip::tcp::acceptor(*m_io_service, tcp::endpoint(tcp::v4(), m_port));
   }
-  int id = m_sockets.size()+1;
+
   m_sockets[id] = new boost::asio::ip::tcp::socket(*m_io_service);
+
+  std::cout << "Server::open() - already open: " << getNOpenSockets() << std::endl;
+  std::cout << "Server::open() - threads: " << m_threads.size() << std::endl;
 
   m_mutex.unlock();
   return id;
@@ -79,20 +84,34 @@ Server::setApplication(DummyApplication *app)
 }
 
 
+
 void
-Server::startServing()
+Server::startServerThread()
+{
+  m_mutex.lock();
+  int id = m_sockets.size()+1;
+
+  m_threads[id] = std::unique_ptr<std::thread>(new std::thread(&Server::startServing, this, id));
+  m_threads[id]->detach();
+
+  m_mutex.unlock();
+}
+
+
+void
+Server::startServing(int id)
 {
   std::cout << "Server::startServing()" << std::endl;
-  for (;;)
-  {
+//  for (;;)
+//  {
     // start server loop
+    open(id);
+
     try
     {
-      int id = open();
-
-      std::cout << "Server::startServing() - waiting for accept, id: " << id << std::endl;
       m_acceptor->accept(*m_sockets[id]);
-      std::cout << "Server::startServing() - accepted, id: " << id << std::endl;
+
+      startServerThread();
 
       for (;;)
       {
@@ -128,9 +147,11 @@ Server::startServing()
     catch (std::exception& e)
     {
       std::cerr << "Server::startServing() - ERROR: " << e.what() << std::endl;
+      close(id);
       throw;
     }
-  }
+    close(id);
+//  }
 }
 
 
@@ -160,4 +181,29 @@ void
 Server::setPort(int port)
 {
   m_port = port;
+}
+
+
+int
+Server::getNOpenSockets() const
+{
+  int nOpen(0);
+
+  for (std::map<int, boost::asio::ip::tcp::socket*>::const_iterator iter = m_sockets.begin();
+       iter != m_sockets.end(); ++iter)
+  {
+    if (iter->second->is_open())
+    {
+      nOpen++;
+    }
+  }
+
+  return nOpen;
+}
+
+
+int
+Server::getNThreads() const
+{
+  return m_threads.size();
 }

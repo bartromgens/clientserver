@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <mutex>
+#include <thread>
 
 class DummyApplication;
 
@@ -27,7 +28,7 @@ public:
   /**
    * Starts serving
    */
-  void startServing();
+  void startServing(int id);
 
   /**
    * Set the port number
@@ -35,7 +36,7 @@ public:
    */
   void setPort(int port);
 
-  int open();
+  int open(int id);
 
   void write(const std::string& message, int id);
   void write(const std::vector<std::string>& messageStrings, int id);
@@ -43,11 +44,15 @@ public:
   void setApplication(DummyApplication* app);
 
   void close(int id);
+  std::vector<std::string> readSome(int id);
+  void startServerThread();
+  int getNOpenSockets() const;
+  int getNThreads() const;
 private:
 
 private:
   std::unique_ptr<boost::asio::io_service> m_io_service;
-//  std::unique_ptr<boost::asio::ip::tcp::socket> m_socket;
+  std::map<int, std::unique_ptr<std::thread> > m_threads;
   std::map<int, boost::asio::ip::tcp::socket*> m_sockets;
   boost::asio::ip::tcp::acceptor* m_acceptor;
 
