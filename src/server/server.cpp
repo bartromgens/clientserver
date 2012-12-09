@@ -14,7 +14,7 @@ Server::Server()
   : m_io_service(),
     m_threads(),
     m_sockets(),
-    m_acceptor(0),
+    m_acceptor(),
     m_port(2020),
     m_application(0),
     m_mutex(),
@@ -25,8 +25,6 @@ Server::Server()
 
 Server::~Server()
 {
-  // todo delete sockets
-  delete m_acceptor;
 }
 
 
@@ -63,7 +61,7 @@ Server::open(int id)
   }
   if (!m_acceptor)
   {
-    m_acceptor = new boost::asio::ip::tcp::acceptor(*m_io_service, tcp::endpoint(tcp::v4(), m_port));
+    m_acceptor = std::unique_ptr<boost::asio::ip::tcp::acceptor>(new boost::asio::ip::tcp::acceptor(*m_io_service, tcp::endpoint(tcp::v4(), m_port)));
   }
 
   m_sockets[id].reset(new boost::asio::ip::tcp::socket(*m_io_service));
@@ -77,10 +75,10 @@ Server::open(int id)
 
 
 boost::asio::ip::tcp::socket*
-Server::getRawSocket(int id)
+Server::getRawSocket(int id) const
 {
   m_mutex.lock();
-  boost::asio::ip::tcp::socket* socket = m_sockets[id].get();
+  boost::asio::ip::tcp::socket* socket = m_sockets.at(id).get();
   m_mutex.unlock();
   return socket;
 }

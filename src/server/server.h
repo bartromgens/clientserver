@@ -26,41 +26,43 @@ public:
   ~Server();
 
   /**
-   * Starts serving
-   */
-  void startServing(int id);
-
-  /**
    * Set the port number
    * @param port network connection port number
    */
   void setPort(int port);
 
-  int open(int id);
 
   void write(const std::string& message, int id);
   void write(const std::vector<std::string>& messageStrings, int id);
 
   void setApplication(DummyApplication* app);
 
-  void close(int id);
-  std::vector<std::string> readSome(int id);
   void startServerThread();
-  int getNOpenSockets() const;
-  int getNThreads() const;
-  boost::asio::ip::tcp::socket* getRawSocket(int id);
+
 private:
+  /**
+   * Starts serving
+   */
+  void startServing(int id);
+
+  int open(int id);
+  void close(int id);
+  boost::asio::ip::tcp::socket* getRawSocket(int id) const;
+  std::vector<std::string> readSome(int id);
+
+  int getNThreads() const;
+  int getNOpenSockets() const;
 
 private:
   std::unique_ptr<boost::asio::io_service> m_io_service;
   std::map<int, std::unique_ptr<std::thread> > m_threads;
   std::map<int, std::unique_ptr<boost::asio::ip::tcp::socket> > m_sockets;
-  boost::asio::ip::tcp::acceptor* m_acceptor;
+  std::unique_ptr<boost::asio::ip::tcp::acceptor> m_acceptor;
 
   /** Server network port number */
   int m_port;
   DummyApplication* m_application;
-  std::mutex m_mutex;
+  mutable std::mutex m_mutex;
   int m_nIdCounter;
 };
 
