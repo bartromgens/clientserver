@@ -23,6 +23,12 @@ public:
    */
   virtual ~Client();
 
+  bool tryConnect(int nTimes, int interval_ms);
+
+  void connect();
+
+  void disconnect();
+
   /**
    * Sends the state to the server, let the server solve for this state and get the forces and moments back
    * @param command the server command
@@ -63,9 +69,7 @@ public:
 
   void setName(const std::string& name);
 
-  bool tryConnect(int nTimes, int interval_ms);
-  void connect();
-  void disconnect();
+
 
 private:
   void open();

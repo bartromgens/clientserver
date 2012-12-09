@@ -62,22 +62,7 @@ ClientTestGroup::startClient(int id)
   }
 
   client.disconnect();
-//  client.tryConnect(10, 100);
 
-//  for (std::size_t i = 0; i < 10; i++)
-//  {
-//    std::cout << "client main() - sending tests: " << std::endl;
-//    try
-//    {
-//      std::vector<std::string> arguments;
-//      std::string reply = client.sendCommand("test", arguments);
-//      std::cout << "main() - reply: " << reply << std::endl;
-//    }
-//    catch (boost::system::system_error& e)
-//    {
-//      std::cout << "client main() - ERROR sending command: " << e.what() << std::endl;
-//    }
-//  }
   std::cout << "ClientTestGroup::startClient()" << std::endl;
   return true;
 }

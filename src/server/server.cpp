@@ -31,7 +31,7 @@ Server::~Server()
 int
 Server::open(int id)
 {
-  m_mutex.lock();
+  std::lock_guard<std::mutex> lock(m_mutex);
 
   if (!m_io_service)
   {
@@ -48,7 +48,6 @@ Server::open(int id)
   std::cout << "Server::open() - open sockets: " << getNOpenSockets() << std::endl;
   std::cout << "Server::open() - running threads: " << m_threads.size() << std::endl;
 
-  m_mutex.unlock();
   return id;
 }
 
@@ -56,8 +55,7 @@ Server::open(int id)
 void
 Server::close(int id)
 {
-  m_mutex.lock();
-
+  std::lock_guard<std::mutex> lock(m_mutex);
 //  std::cout << "Server::close() - id: " << id << std::endl;
 
   if (m_sockets[id]->is_open())
@@ -70,31 +68,25 @@ Server::close(int id)
     m_sockets.erase(id);
     m_threads.erase(id);
   }
-
-  m_mutex.unlock();
 }
 
 
 boost::asio::ip::tcp::socket*
 Server::getRawSocket(int id) const
 {
-  m_mutex.lock();
-  boost::asio::ip::tcp::socket* socket = m_sockets.at(id).get();
-  m_mutex.unlock();
-  return socket;
+  std::lock_guard<std::mutex> lock(m_mutex);
+  return m_sockets.at(id).get();
 }
 
 
 void
 Server::startServerThread()
 {
-  m_mutex.lock();
+  std::lock_guard<std::mutex> lock(m_mutex);
   int id = m_nIdCounter++;
 
   m_threads[id] = std::unique_ptr<std::thread>(new std::thread(&Server::startServing, this, id));
   m_threads[id]->detach();
-
-  m_mutex.unlock();
 }
 
 
