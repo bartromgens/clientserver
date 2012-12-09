@@ -33,6 +33,7 @@ Server::open(int id)
 {
   std::lock_guard<std::mutex> lock(m_mutex);
 
+  // create io_service and acceptor if they don't exist yet
   if (!m_io_service)
   {
     m_io_service.reset(new boost::asio::io_service());
@@ -42,6 +43,7 @@ Server::open(int id)
     m_acceptor = std::unique_ptr<boost::asio::ip::tcp::acceptor>(new boost::asio::ip::tcp::acceptor(*m_io_service, tcp::endpoint(tcp::v4(), m_port)));
   }
 
+  // add a new socket to the map
   m_sockets[id].reset(new boost::asio::ip::tcp::socket(*m_io_service));
 
   std::cout << "Server::open() - id: " << id << std::endl;
@@ -55,8 +57,8 @@ Server::open(int id)
 void
 Server::close(int id)
 {
+  //  std::cout << "Server::close() - id: " << id << std::endl;
   std::lock_guard<std::mutex> lock(m_mutex);
-//  std::cout << "Server::close() - id: " << id << std::endl;
 
   if (m_sockets[id]->is_open())
   {
@@ -90,6 +92,18 @@ Server::startServerThread()
 }
 
 
+std::vector<std::string>
+Server::convertArrayToStringVector(std::array<char, 2048> bufIncoming, size_t len)
+{
+  std::string bufString = bufIncoming.data();
+  bufString.resize(len);
+  std::vector<std::string> newState_str;
+  boost::split(newState_str, bufString, boost::is_any_of("@"));
+
+  return newState_str;
+}
+
+
 void
 Server::startServing(int id)
 {
@@ -101,11 +115,13 @@ Server::startServing(int id)
     boost::asio::ip::tcp::socket* socket = getRawSocket(id);
     m_acceptor->accept(*socket);
 
+    // after connection is accepted, start a new server thread
     startServerThread();
 
+    // wait for incoming data
     for (;;)
     {
-      boost::array<char, 2048> bufIncoming;
+      std::array<char, 2048> bufIncoming;
       boost::system::error_code error;
 
       // receive a command
@@ -119,7 +135,7 @@ Server::startServing(int id)
       }
       else if (error)
       {
-        std::cout << "Server:startServing() - read some ERROR: " << error.message() << std::endl;
+        throw boost::system::system_error(error);
       }
 
       if (len < 1)
@@ -128,15 +144,12 @@ Server::startServing(int id)
         continue;
       }
 
-      std::string bufString = bufIncoming.data();
-      bufString.resize(len);
-
-      std::vector<std::string> newState_str;
-      boost::split(newState_str, bufString, boost::is_any_of("@"));
+      std::vector<std::string> newState_str = convertArrayToStringVector(bufIncoming, len);
 
       m_application->processIncomingData(newState_str, id);
     }
   }
+  // boost::system::system_error is derived from std::exception
   catch (std::exception& e)
   {
     std::cerr << "Server::startServing() - ERROR: " << e.what() << std::endl;
@@ -167,6 +180,12 @@ Server::write(const std::string& message, int id)
 
   boost::system::error_code ignored_error;
   boost::asio::write(*socket, boost::asio::buffer(message), boost::asio::transfer_all(), ignored_error);
+
+  if (ignored_error)
+  {
+    std::cerr << "Server::write() - : " << ignored_error.message() << std::endl;
+    throw boost::system::system_error(ignored_error);
+  }
 }
 
 

@@ -58,6 +58,7 @@ ClientTestGroup::startClient(int id)
     {
       std::cout << "client main() - ERROR sending command: " << e.what() << std::endl;
       assert(0);
+      throw;
     }
   }
 

@@ -1,7 +1,6 @@
 #ifndef OLIB_MB_CLIENT_H
 #define OLIB_MB_CLIENT_H
 
-#include <boost/array.hpp>
 #include <boost/asio.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>

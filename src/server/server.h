@@ -3,7 +3,6 @@
 
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
-#include <boost/array.hpp>
 #include <boost/asio.hpp>
 
 #include <memory>
@@ -37,6 +36,7 @@ public:
 
   void startServerThread();
 
+  std::vector<std::string> convertArrayToStringVector(std::array<char, 2048> bufIncoming, size_t len);
 private:
   /**
    * Starts serving

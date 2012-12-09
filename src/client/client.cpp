@@ -31,6 +31,44 @@ Client::~Client()
 }
 
 
+void
+Client::open()
+{
+  if (!m_io_service)
+  {
+    m_io_service.reset(new boost::asio::io_service());
+  }
+  m_socket.reset(new tcp::socket(*m_io_service));
+}
+
+
+void
+Client::connect()
+{
+  open();
+
+  tcp::resolver resolver(*m_io_service);
+  tcp::resolver::query query(m_ip, m_port);
+  tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
+  tcp::resolver::iterator end;
+
+  boost::system::error_code error = boost::asio::error::host_not_found;
+
+  // keeps the client program independent of a specific IP version.
+  while (error && endpoint_iterator != end)
+  {
+    m_socket->close();
+    m_socket->connect(*endpoint_iterator++, error);
+  }
+  if (error)
+  {
+    throw boost::system::system_error(error);
+  }
+
+  std::cout << "Client::connect() - status: " << error.message() << std::endl;
+}
+
+
 bool
 Client::tryConnect(int nTimes, int interval_ms)
 {
@@ -53,48 +91,15 @@ Client::tryConnect(int nTimes, int interval_ms)
 
 
 void
-Client::open()
-{
-  if (!m_io_service)
-  {
-    m_io_service.reset(new boost::asio::io_service());
-  }
-  m_socket.reset(new tcp::socket(*m_io_service));
-}
-
-
-void
-Client::connect()
-{
-//  std::cout << "Client::connect() - start" << std::endl;
-  open();
-
-  tcp::resolver resolver(*m_io_service);
-  tcp::resolver::query query(m_ip, m_port);
-  tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
-  tcp::resolver::iterator end;
-
-  boost::system::error_code error = boost::asio::error::host_not_found;
-
-  // keeps the client program independent of a specific IP version.
-  while (error && endpoint_iterator != end)
-  {
-    m_socket->close();
-    m_socket->connect(*endpoint_iterator++, error);
-  }
-  if (error)
-  {
-    throw boost::system::system_error(error);
-  }
-  std::cout << "Client::connect() - : " << error.message() << std::endl;
-}
-
-
-void
 Client::disconnect()
 {
   boost::system::error_code error;
   m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+  if (error)
+  {
+    std::cerr << "Client::disconnect() - shutdown ERROR: " << error.message() << std::endl;
+  }
+
   std::cout << "Client::disconnect() - socket.shutdown(): " << error.message() << std::endl;
 
   m_socket->close();
@@ -110,7 +115,7 @@ Client::sendCommand(const std::string &command, const std::vector<std::string> &
 
   try
   {
-    boost::array<char, 2048> buf;
+    std::array<char, 2048> buf;
     std::size_t len;
 
     boost::system::error_code error;
@@ -149,6 +154,8 @@ Client::sendCommand(const std::string &command, const std::vector<std::string> &
   catch (std::exception& e)
   {
     std::cerr << e.what() << std::endl;
+    assert(0);
+    throw;
   }
 
 //  std::cout << "Client::sendCommand() - end" << std::endl;

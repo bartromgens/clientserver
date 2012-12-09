@@ -11,10 +11,10 @@ public:
 
   void run();
 
-
   void processIncomingData(std::vector<std::string> dataStrings, int id);
   void write(const std::vector<std::string>& dataStrings, int id);
   void write(const std::string& dataString, int id);
+
 private:
 
   void startServing();
