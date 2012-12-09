@@ -17,11 +17,11 @@ ClientTestGroup::~ClientTestGroup()
 void
 ClientTestGroup::startClientThread()
 {
-  for (int i = 0; i < 1; ++i)
+  for (int i = 0; i < 3; ++i)
   {
-    std::cout << "ClientTestGroup::startClientThread()" << std::endl;
+//    std::cout << "ClientTestGroup::startClientThread()" << std::endl;
     std::thread t1(&ClientTestGroup::startClient, this, i);
-    std::cout << "ClientTestGroup::startClientThread()" << std::endl;
+//    std::cout << "ClientTestGroup::startClientThread()" << std::endl;
     t1.detach();
   }
 }
@@ -42,7 +42,7 @@ ClientTestGroup::startClient(int id)
     return false;
   }
 
-  for (int i = 0; i < 1000; i++)
+  for (int i = 0; i < 100000; i++)
   {
     try
     {

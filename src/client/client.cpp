@@ -41,7 +41,7 @@ Client::tryConnect(int nTimes, int interval_ms)
     try
     {
       connect();
-      std::cout << "Client::tryConnect() - CONNECTED!" << std::endl;
+      std::cout << "Client::tryConnect() - CONNECTED!: " << m_name << std::endl;
       return true;
     }
     catch(boost::system::system_error& error)
@@ -89,7 +89,7 @@ Client::connect()
   {
     throw boost::system::system_error(error);
   }
-//  std::cout << "Client::connect() - end" << std::endl;
+  std::cout << "Client::connect() - end : " << error.message() << std::endl;
 }
 
 

@@ -15,8 +15,8 @@ int main(int argc, char* argv[])
 
   ClientTestGroup clientGroup;
   clientGroup.startClientThread();
-  sleep(10);
-  clientGroup.startClientThread();
+//  sleep(10);
+//  clientGroup.startClientThread();
   sleep(100);
 
 //  Client client;

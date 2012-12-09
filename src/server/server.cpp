@@ -17,7 +17,8 @@ Server::Server()
     m_acceptor(0),
     m_port(2020),
     m_application(0),
-    m_mutex()
+    m_mutex(),
+    m_nIdCounter(0)
 {
 }
 
@@ -34,7 +35,7 @@ Server::close(int id)
 {
   m_mutex.lock();
 
-  std::cout << "Server::close()" << std::endl;
+  std::cout << "Server::close() - id: " << id << std::endl;
 
   if (m_sockets[id]->is_open())
   {
@@ -42,6 +43,8 @@ Server::close(int id)
     m_sockets[id]->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
     std::cout << "Server::close() - socket.shutdown(): " << error.message() << std::endl;
     m_sockets[id]->close();
+
+    m_sockets.erase(id);
     m_threads.erase(id);
   }
 
@@ -63,7 +66,7 @@ Server::open(int id)
     m_acceptor = new boost::asio::ip::tcp::acceptor(*m_io_service, tcp::endpoint(tcp::v4(), m_port));
   }
 
-  m_sockets[id] = new boost::asio::ip::tcp::socket(*m_io_service);
+  m_sockets[id].reset(new boost::asio::ip::tcp::socket(*m_io_service));
 
   std::cout << "Server::open() - already open: " << getNOpenSockets() << std::endl;
   std::cout << "Server::open() - threads: " << m_threads.size() << std::endl;
@@ -73,23 +76,21 @@ Server::open(int id)
 }
 
 
-void
-Server::setApplication(DummyApplication *app)
+boost::asio::ip::tcp::socket*
+Server::getRawSocket(int id)
 {
   m_mutex.lock();
-
-  m_application = app;
-
+  boost::asio::ip::tcp::socket* socket = m_sockets[id].get();
   m_mutex.unlock();
+  return socket;
 }
-
 
 
 void
 Server::startServerThread()
 {
   m_mutex.lock();
-  int id = m_sockets.size()+1;
+  int id = m_nIdCounter++;
 
   m_threads[id] = std::unique_ptr<std::thread>(new std::thread(&Server::startServing, this, id));
   m_threads[id]->detach();
@@ -102,56 +103,52 @@ void
 Server::startServing(int id)
 {
   std::cout << "Server::startServing()" << std::endl;
-//  for (;;)
-//  {
-    // start server loop
-    open(id);
+  open(id);
 
-    try
+  try
+  {
+    boost::asio::ip::tcp::socket* socket = getRawSocket(id);
+    m_acceptor->accept(*socket);
+    std::cout << "Server::startServing() - socket accepted" << std::endl;
+
+    startServerThread();
+
+    for (;;)
     {
-      m_acceptor->accept(*m_sockets[id]);
+      boost::array<char, 2048> bufIncoming;
+      boost::system::error_code error;
 
-      startServerThread();
+      // receive a command
+      size_t len = socket->read_some(boost::asio::buffer(bufIncoming), error);
 
-      for (;;)
+      if (error == boost::asio::error::eof)
       {
-        boost::array<char, 2048> bufIncoming;
-        boost::system::error_code error;
-
-        // receive a command
-        size_t len = m_sockets[id]->read_some(boost::asio::buffer(bufIncoming), error);
-
-        if (error == boost::asio::error::eof)
-        {
-          std::cout << "Server:startServing() - connection was closed by the peer." << std::endl;
-          close(id);
-          break;
-        }
-
-        if (len < 1)
-        {
-          usleep(1000);
-          continue;
-        }
-
-        std::string bufString = bufIncoming.data();
-        bufString.resize(len);
-
-        std::vector<std::string> newState_str;
-        boost::split(newState_str, bufString, boost::is_any_of("@"));
-
-//        processIncomingData(newState_str);
-        m_application->processIncomingData(newState_str, id);
+        std::cout << "Server:startServing() - connection was closed by the peer." << std::endl;
+        close(id);
+        break;
       }
+
+      if (len < 1)
+      {
+        usleep(1000);
+        continue;
+      }
+
+      std::string bufString = bufIncoming.data();
+      bufString.resize(len);
+
+      std::vector<std::string> newState_str;
+      boost::split(newState_str, bufString, boost::is_any_of("@"));
+
+      m_application->processIncomingData(newState_str, id);
     }
-    catch (std::exception& e)
-    {
-      std::cerr << "Server::startServing() - ERROR: " << e.what() << std::endl;
-      close(id);
-      throw;
-    }
+  }
+  catch (std::exception& e)
+  {
+    std::cerr << "Server::startServing() - ERROR: " << e.what() << std::endl;
     close(id);
-//  }
+    throw;
+  }
 }
 
 
@@ -172,8 +169,21 @@ Server::write(const std::vector<std::string>& messageStrings, int id)
 void
 Server::write(const std::string& message, int id)
 {
+  boost::asio::ip::tcp::socket* socket = getRawSocket(id);
+
   boost::system::error_code ignored_error;
-  boost::asio::write(*m_sockets[id], boost::asio::buffer(message), boost::asio::transfer_all(), ignored_error);
+  boost::asio::write(*socket, boost::asio::buffer(message), boost::asio::transfer_all(), ignored_error);
+}
+
+
+void
+Server::setApplication(DummyApplication *app)
+{
+  m_mutex.lock();
+
+  m_application = app;
+
+  m_mutex.unlock();
 }
 
 
@@ -189,7 +199,7 @@ Server::getNOpenSockets() const
 {
   int nOpen(0);
 
-  for (std::map<int, boost::asio::ip::tcp::socket*>::const_iterator iter = m_sockets.begin();
+  for (std::map<int, std::unique_ptr<boost::asio::ip::tcp::socket> >::const_iterator iter = m_sockets.begin();
        iter != m_sockets.end(); ++iter)
   {
     if (iter->second->is_open())
@@ -207,3 +217,6 @@ Server::getNThreads() const
 {
   return m_threads.size();
 }
+
+
+

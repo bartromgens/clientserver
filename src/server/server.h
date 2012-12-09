@@ -48,18 +48,20 @@ public:
   void startServerThread();
   int getNOpenSockets() const;
   int getNThreads() const;
+  boost::asio::ip::tcp::socket* getRawSocket(int id);
 private:
 
 private:
   std::unique_ptr<boost::asio::io_service> m_io_service;
   std::map<int, std::unique_ptr<std::thread> > m_threads;
-  std::map<int, boost::asio::ip::tcp::socket*> m_sockets;
+  std::map<int, std::unique_ptr<boost::asio::ip::tcp::socket> > m_sockets;
   boost::asio::ip::tcp::acceptor* m_acceptor;
 
   /** Server network port number */
   int m_port;
   DummyApplication* m_application;
   std::mutex m_mutex;
+  int m_nIdCounter;
 };
 
 #endif // SERVER_H
