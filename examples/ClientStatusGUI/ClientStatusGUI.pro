@@ -11,8 +11,24 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = ClientStatusGUI
 TEMPLATE = app
 
-INCLUDEPATH += /home/bart/prog/1_tools/boost_1_52_0
+# add directory of client and server sources
+INCLUDEPATH += ../../src/
+DEPENDPATH = $$INCLUDEPATH
 
+# files
+SOURCES += main.cpp\
+           clientstatuswindow.cpp \
+           client/client.cpp \
+
+HEADERS  += clientstatuswindow.h \
+            client/client.h \
+
+FORMS    += clientstatuswindow.ui \
+
+OTHER_FILES +=
+
+# boost libraries
+INCLUDEPATH += /home/bart/prog/1_tools/boost_1_52_0
 LIBS += -L/home/bart/prog/1_tools/boost_1_52_0/stage/lib
 LIBS += -lboost_system -lpthread
 LIBS += -lpthread
@@ -20,17 +36,8 @@ LIBS += -lpthread
 OBJECTS_DIR += ./tmp/objects/
 MAKEFILE += MakefileClientStatusGUI
 
+# compiler settings
 QMAKE_CXXFLAGS += -std=c++0x
 QMAKE_CXXFLAGS += -Wall
 
-
-SOURCES += main.cpp\
-        clientstatuswindow.cpp \
-    ../../src/client/client.cpp
-
-HEADERS  += clientstatuswindow.h \
-    ../../src/client/client.h
-
-FORMS    += clientstatuswindow.ui
-
-OTHER_FILES +=
+# linker settings
