@@ -70,6 +70,8 @@ Server::closeConnection(ConnectionId id)
     m_sockets.erase(id);
     m_threads.erase(id);
     m_connectionStatuses.erase(id);
+
+    m_connectionStatuses[id].generalStatus = ConnectionStatus::unavailable;
   }
 }
 
@@ -129,7 +131,6 @@ Server::startServing(ConnectionId id)
   {
     std::array<char, ClientServerData::defaultBufferSize> bufIncoming;
     boost::system::error_code error;
-
 
     // receive a command
     std::size_t len = socket->read_some(boost::asio::buffer(bufIncoming), error);
@@ -302,22 +303,22 @@ Server::getOpenThreadIds() const
 }
 
 
-Server::EnumConnectionStatus
+ConnectionStatus::EnumConnectionStatus
 Server::getConnectionStatus(ConnectionId id) const
 {
   if (m_sockets.find(id) != m_sockets.end())
   {
     if (m_sockets.at(id)->is_open())
     {
-      return connected;
+      return ConnectionStatus::connected;
     }
     else
     {
-      return listening;
+      return ConnectionStatus::listening;
     }
   }
 
-  return unavailable;
+  return ConnectionStatus::unavailable;
 }
 
 

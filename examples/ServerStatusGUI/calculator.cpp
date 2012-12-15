@@ -34,12 +34,12 @@ Calculator::notifyReceivedData(std::vector<std::string> dataStrings, int connect
     if (dataStrings[0] == "add")
     {
       double sum = atof(dataStrings[1].c_str()) + atof(dataStrings[2].c_str());
-      double final = std::pow(sum, 4) * cos(sum) + sin(sum);
-      for (std::size_t i = 0; i < 10000; ++i)
-      {
-        final += std::pow(final, 4) * cos(final) + sin(final);
-      }
-      m_server->write(std::to_string(final), connectionId);
+      double something = std::pow(sum, 4) * cos(sum) + sin(sum);
+//      for (std::size_t i = 0; i < 10; ++i)
+//      {
+//        final += std::pow(final, 4) * cos(final) + sin(final);
+//      }
+      m_server->write(std::to_string(sum), connectionId);
     }
   }
   catch (std::exception& e)

@@ -20,12 +20,14 @@ SOURCES += main.cpp \
         server/connectionstatus.cpp \
         server/server.cpp \
         server/serverobserver.cpp \
+        gui/connectionstatustablewidget.cpp \
 
 HEADERS  += serverwindow.h \
         calculator.h \
         server/connectionstatus.h \
         server/server.h \
         server/serverobserver.h \
+        gui/connectionstatustablewidget.h \
 
 FORMS    += serverwindow.ui
 

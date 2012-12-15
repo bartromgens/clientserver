@@ -20,13 +20,6 @@ public:
 
   typedef unsigned int ConnectionId;
 
-  enum EnumConnectionStatus
-  {
-    unavailable,
-    connected,
-    listening
-  };
-
   /**
    * Constructor
    */
@@ -108,7 +101,7 @@ public:
    * @param id the connection ID
    * @return the status of the connection with the given connection ID
    */
-  Server::EnumConnectionStatus getConnectionStatus(ConnectionId id) const;
+  ConnectionStatus::EnumConnectionStatus getConnectionStatus(ConnectionId id) const;
 
   std::map<ConnectionId, ConnectionStatus> getConnectionStatuses();
 

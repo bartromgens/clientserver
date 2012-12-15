@@ -135,5 +135,5 @@ ClientWindow::runClientTest(int id)
       break;
     }
   }
-//  std::cout << "ClientWindow::runClientTest() : time elapsed: " << m_time.elapsed() << std::endl;
+  std::cout << "ClientWindow::runClientTest() : time elapsed: " << m_time.elapsed() << std::endl;
 }
