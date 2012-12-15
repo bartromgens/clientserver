@@ -2,8 +2,6 @@ syntax: glob
 tmp/*
 *.pro.user
 Makefile*
-server
-client
 server.pro.user.2.6pre1
 client.pro.user.2.6pre1
 *.o
