@@ -108,8 +108,6 @@ Client::sendCommand(const std::string& command,
 
     std::string message = createMessage(command, arguments, separationCharacter);
 
-    assert(m_socket->is_open());
-
     // send to server
     boost::asio::write(*m_socket, boost::asio::buffer(message), boost::asio::transfer_all(), error);
     if (error)
@@ -126,7 +124,6 @@ Client::sendCommand(const std::string& command,
     if (error == boost::asio::error::eof)
     {
       std::cout << "Client::sendCommand() - connection closed cleanly by peer." << std::endl;
-      // Connection closed cleanly by peer.
     }
     else if (error)
     {
@@ -136,11 +133,8 @@ Client::sendCommand(const std::string& command,
   catch (std::exception& e)
   {
     std::cerr << e.what() << std::endl;
-    assert(0);
     throw;
   }
-
-//  std::cout << "Client::sendCommand() - end" << std::endl;
 
   return reply;
 }
