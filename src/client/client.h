@@ -10,7 +10,14 @@
 #include <mutex>
 #include <vector>
 
-
+/**
+ * @brief Client side of a synchronous network connection, based on a tcp socket connection.
+ *
+ * @param Requirements:
+ * - Connect to a socket (server) with given IP and port.
+ * - Send string based command and arguments to the server.
+ * - Receive a reply from the server after sending a message.
+ */
 class Client
 {
 public:
