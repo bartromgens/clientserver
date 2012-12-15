@@ -46,10 +46,24 @@ public:
    */
   void stopServer();
 
+  /**
+   * @brief writes a string message to the socket with the given id
+   * @param message the message to send
+   * @param id the connection ID
+   * @throws boost::system::system_error socket write error
+   */
   void write(const std::string& message, ConnectionId id);
-  void write(const std::vector<std::string>& messageStrings, ConnectionId id);
 
-  std::vector<std::string> convertArrayToStringVector(std::array<char, 2048> bufIncoming, size_t len);
+  /**
+   * @brief writes a vector of strings to the socket with the given id
+   * @param messageStrings the vector of strings to send to the server
+   * @param id the connection ID
+   * @param separationChar the character used to separate strings in the vector when sending it to the client
+   * @throws boost::system::system_error socket write error
+   */
+  void write(const std::vector<std::string>& messageStrings,
+             ConnectionId id,
+             std::string separationChar = ClientServerData::separationCharacter);
 
   void unregisterObserver(ServerObserver* observer);
   void registerObserver(ServerObserver* observer);
@@ -63,8 +77,18 @@ private:
 
   int openConnection(ConnectionId id);
   void closeConnection(ConnectionId id);
-  boost::asio::ip::tcp::socket* getRawSocket(ConnectionId id) const;
-  std::vector<std::string> readSome(ConnectionId id);
+  boost::asio::ip::tcp::socket* getSocket(ConnectionId id) const;
+
+  /**
+   * @brief Converts a character array to a vector of strings
+   * @param charArray the array
+   * @param len the size of the actual array
+   * @return a vector of strings
+   */
+  std::vector<std::string> convertCharArrayToStringVector(const std::array<char, ClientServerData::defaultBufferSize>& charArray,
+                                                          size_t len,
+                                                          std::string separationChar = ClientServerData::separationCharacter) const;
+
 
   /**
    * @brief Returns a vector of open socket ids

@@ -33,22 +33,13 @@ Server::openConnection(ConnectionId id)
 {
   std::lock_guard<std::mutex> lock(m_mutex);
 
-  // create io_service and acceptor if they don't exist yet
-  if (!m_io_service)
-  {
-    m_io_service.reset(new boost::asio::io_service());
-  }
-  if (!m_acceptor)
-  {
-    m_acceptor = std::unique_ptr<boost::asio::ip::tcp::acceptor>(new boost::asio::ip::tcp::acceptor(*m_io_service, tcp::endpoint(tcp::v4(), m_port)));
-  }
-
   // add a new socket to the map
   m_sockets[id].reset(new boost::asio::ip::tcp::socket(*m_io_service));
 
-  std::cout << "Server::open() - id: " << id << std::endl;
-  std::cout << "Server::open() - open sockets: " << getNOpenSockets() << std::endl;
-  std::cout << "Server::open() - running threads: " << m_threads.size() << std::endl;
+  std::cout << "Server::openConnection() - id: " << id
+            << ", open sockets: " << getNOpenSockets()
+            << ", running threads: " << m_threads.size()
+            << std::endl;
 
   return id;
 }
@@ -60,12 +51,17 @@ Server::closeConnection(ConnectionId id)
   //  std::cout << "Server::close() - id: " << id << std::endl;
   std::lock_guard<std::mutex> lock(m_mutex);
 
-  if (m_sockets[id]->is_open())
+  if (m_sockets.find(id) == m_sockets.end())
+  {
+    std::cerr << "Server::closeConnection - connection with id " << id << " does not exist." << std::endl;
+    return;
+  }
+
+  if (m_sockets[id] && m_sockets[id]->is_open())
   {
     boost::system::error_code error;
     m_sockets[id]->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
-
-    std::cout << "Server::close() - socket.shutdown(): " << error.message() << std::endl;
+    std::cout << "Server::closeConnection() - socket.shutdown() id : " << id << ", " << error.message() << std::endl;
 
     m_sockets[id]->close();
 
@@ -76,7 +72,7 @@ Server::closeConnection(ConnectionId id)
 
 
 boost::asio::ip::tcp::socket*
-Server::getRawSocket(ConnectionId id) const
+Server::getSocket(ConnectionId id) const
 {
   std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -111,67 +107,55 @@ void
 Server::startServing(ConnectionId id)
 {
   std::cout << "Server::startServing()" << std::endl;
+
   openConnection(id);
 
-  try
+  boost::asio::ip::tcp::socket* socket = getSocket(id);
+  m_acceptor->accept(*socket);
+  std::cout << "OUTIL_NETServer::startServing() - connection accepted!" << std::endl;
+
+  // IMPORTANT: after connection is accepted, start a new server thread
+  startServerThread();
+
+  bool isOk = true;
+
+  while (isOk)
   {
-    boost::asio::ip::tcp::socket* socket = getRawSocket(id);
-    m_acceptor->accept(*socket);
+    std::array<char, ClientServerData::defaultBufferSize> bufIncoming;
+    boost::system::error_code error;
 
-    // after connection is accepted, start a new server thread
-    startServerThread();
+    // receive a command
+    size_t len = socket->read_some(boost::asio::buffer(bufIncoming), error);
 
-    // wait for incoming data
-    for (;;)
+    if (error == boost::asio::error::eof)
     {
-      std::array<char, 2048> bufIncoming;
-      boost::system::error_code error;
-
-      // receive a command
-      size_t len = socket->read_some(boost::asio::buffer(bufIncoming), error);
-
-      if (error == boost::asio::error::eof)
-      {
-        std::cout << "Server:startServing() - connection was closed by the peer." << std::endl;
-        closeConnection(id);
-        break;
-      }
-      else if (error)
-      {
-        throw boost::system::system_error(error);
-      }
-
-      if (len < 1)
-      {
-        usleep(1000);
-        continue;
-      }
-
-      std::vector<std::string> newState_str = convertArrayToStringVector(bufIncoming, len);
-
-      notifyObservers(newState_str, id);
+      std::cout << "Server:startServing() - connection was closed by the peer." << std::endl;
+      break;
     }
+    else if (error)
+    {
+      std::cerr << "Server:startServing() - error reading from connection:" << error.message() << std::endl;
+      break;
+    }
+
+    std::vector<std::string> incomingStringVec = convertCharArrayToStringVector(bufIncoming, len);
+
+    notifyObservers(incomingStringVec, id);
   }
-  // boost::system::system_error is derived from std::exception
-  catch (std::exception& e)
-  {
-    std::cerr << "Server::startServing() - ERROR: " << e.what() << std::endl;
-    closeConnection(id);
-    throw;
-  }
+
+  closeConnection(id);
 }
 
 
 void
-Server::write(const std::vector<std::string>& messageStrings, ConnectionId id)
+Server::write(const std::vector<std::string>& messageStrings, ConnectionId id, std::string separationChar)
 {
   std::string message;
   for (std::size_t i = 0; i < messageStrings.size(); ++i)
   {
-    message += "@";
+    message += separationChar;
     message += messageStrings[i];
   }
-  message += "\0";
   write(message, id);
 }
 
@@ -179,7 +163,7 @@ Server::write(const std::vector<std::string>& messageStrings, ConnectionId id)
 void
 Server::write(const std::string& message, ConnectionId id)
 {
-  boost::asio::ip::tcp::socket* socket = getRawSocket(id);
+  boost::asio::ip::tcp::socket* socket = getSocket(id);
 
   assert(socket->is_open());
 
@@ -230,12 +214,14 @@ Server::notifyObservers(std::vector<std::string> dataStrings, ConnectionId id)
 
 
 std::vector<std::string>
-Server::convertArrayToStringVector(std::array<char, 2048> bufIncoming, size_t len)
+Server::convertCharArrayToStringVector(const std::array<char, ClientServerData::defaultBufferSize>& bufIncoming,
+                                       std::size_t len,
+                                       std::string separationChar) const
 {
   std::string bufString = bufIncoming.data();
   bufString.resize(len);
   std::vector<std::string> newState_str;
-  boost::split(newState_str, bufString, boost::is_any_of("@"));
+  boost::split(newState_str, bufString, boost::is_any_of(separationChar));
 
   return newState_str;
 }
