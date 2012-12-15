@@ -15,7 +15,7 @@ ServerWindow::ServerWindow(QWidget *parent) :
   m_timeStatusUpdate.start();
 
   connect(m_timer, SIGNAL(timeout()), this, SLOT(update()));
-  m_timer->start(200);
+  m_timer->start(100);
 
   m_server->startServerThread();
 }

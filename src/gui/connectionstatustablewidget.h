@@ -18,7 +18,7 @@ public:
   explicit ConnectionStatusTableWidget(QWidget *parent = 0);
   
   void updateTable(const std::vector<unsigned int>& threadIds,
-                   const std::map<Server::ConnectionId, ConnectionStatus>& connectionStatuses);
+                   std::map<Server::ConnectionId, ConnectionStatus> connectionStatuses);
 
 signals:
   

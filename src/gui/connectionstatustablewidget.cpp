@@ -34,7 +34,7 @@ ConnectionStatusTableWidget::createTableHeaders()
 
 void
 ConnectionStatusTableWidget::updateTable(const std::vector<unsigned int>& threadIds,
-                                         const std::map<Server::ConnectionId, ConnectionStatus>& connectionStatuses)
+                                         std::map<Server::ConnectionId, ConnectionStatus> connectionStatuses)
 {
   m_connectionStatuses = connectionStatuses;
 
@@ -54,16 +54,28 @@ ConnectionStatusTableWidget::updateTable(const std::vector<unsigned int>& thread
   }
 }
 
+
 void
 ConnectionStatusTableWidget::updateTableRow(int row, unsigned int id)
 {
   double totalDown_MiB = 0;
   double totalUp_MiB = 0;
+
+  double downSpeed_B = 0;
+  double upSpeed_B = 0;
+
   double downSpeed_KiB = 0;
-  double downSpeed_MiB = 0;
   double upSpeed_KiB = 0;
+
+  double downSpeed_MiB = 0;
   double upSpeed_MiB = 0;
+
   ConnectionStatus::EnumConnectionStatus status = ConnectionStatus::unavailable;
+
+  if (m_connectionStatuses.find(id) != m_connectionStatuses.end())
+  {
+    status = m_connectionStatuses.at(id).generalStatus;
+  }
 
   if (m_connectionStatuses.find(id) != m_connectionStatuses.end()
       && m_connectionStatusesOneSecondAgo.find(id) != m_connectionStatusesOneSecondAgo.end()
@@ -71,14 +83,16 @@ ConnectionStatusTableWidget::updateTableRow(int row, unsigned int id)
   {
     totalDown_MiB = m_connectionStatuses.at(id).totalDataDown_byte / 1024.0 / 1024.0;
     totalUp_MiB = m_connectionStatuses.at(id).totalDataUp_byte / 1024.0 / 1024.0;
-    downSpeed_KiB = (m_connectionStatusesOneSecondAgo.at(id).totalDataDown_byte
-                     - m_connectionStatusesTwoSecondAgo.at(id).totalDataDown_byte) / 1024.0;
-    upSpeed_KiB = (m_connectionStatusesOneSecondAgo.at(id).totalDataUp_byte
-                   - m_connectionStatusesTwoSecondAgo.at(id).totalDataUp_byte) / 1024.0;
-    downSpeed_MiB = downSpeed_KiB / 1024.0;
-    upSpeed_MiB = upSpeed_KiB / 1024.0;
 
-    status = m_connectionStatuses.at(id).generalStatus;
+    downSpeed_B = (m_connectionStatusesOneSecondAgo.at(id).totalDataDown_byte
+                   - m_connectionStatusesTwoSecondAgo.at(id).totalDataDown_byte);
+    downSpeed_KiB = downSpeed_B / 1024.0;
+    downSpeed_MiB = downSpeed_KiB / 1024.0;
+
+    upSpeed_B = (m_connectionStatusesOneSecondAgo.at(id).totalDataUp_byte
+                 - m_connectionStatusesTwoSecondAgo.at(id).totalDataUp_byte);
+    upSpeed_KiB = upSpeed_B / 1024.0;
+    upSpeed_MiB = upSpeed_KiB / 1024.0;
   }
 
   std::string statusString = "unknown";
@@ -100,22 +114,30 @@ ConnectionStatusTableWidget::updateTableRow(int row, unsigned int id)
   m_totalDownItem = new QTableWidgetItem( QString::number(totalDown_MiB, char('f'), 2) + " MiB");
   m_totalUpItem = new QTableWidgetItem( QString::number(totalUp_MiB, char('f'), 2) + " MiB");
 
-  if (downSpeed_KiB > 1000)
+  if (downSpeed_B > 1024*1024)
   {
-    m_downSpeedItem = new QTableWidgetItem( QString::number(downSpeed_MiB, char('f'), 2) + " MiB/s");
+    m_downSpeedItem = new QTableWidgetItem( QString::number(downSpeed_MiB, char('f'), 1) + " MiB/s");
+  }
+  else if (downSpeed_B > 1024)
+  {
+    m_downSpeedItem = new QTableWidgetItem( QString::number(downSpeed_KiB, char('f'), 1) + " KiB/s");
   }
   else
   {
-    m_downSpeedItem = new QTableWidgetItem( QString::number(downSpeed_KiB, char('f'), 2) + " KiB/s");
+    m_downSpeedItem = new QTableWidgetItem( QString::number(downSpeed_B, char('f'), 1) + " B/s");
   }
 
-  if (upSpeed_KiB > 1000)
+  if (upSpeed_B > 1024*1024)
   {
-    m_upSpeedItem = new QTableWidgetItem( QString::number(upSpeed_MiB, char('f'), 2) + " MiB/s");
+    m_upSpeedItem = new QTableWidgetItem( QString::number(upSpeed_MiB, char('f'), 1) + " MiB/s");
+  }
+  else if (upSpeed_B > 1024)
+  {
+    m_upSpeedItem = new QTableWidgetItem( QString::number(upSpeed_KiB, char('f'), 1) + " KiB/s");
   }
   else
   {
-    m_upSpeedItem = new QTableWidgetItem( QString::number(upSpeed_KiB, char('f'), 2) + " KiB/s");
+    m_upSpeedItem = new QTableWidgetItem( QString::number(upSpeed_B, char('f'), 1) + " B/s");
   }
 
   setItem(row, 0, m_idItem);
