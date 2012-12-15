@@ -65,7 +65,7 @@ ClientStatusWindow::connectAllClients()
   for (std::map<int, Client*>::iterator iter = m_clients.begin();
        iter != m_clients.end(); ++iter)
   {
-    iter->second->tryConnect();
+    iter->second->connect();
   }
 }
 

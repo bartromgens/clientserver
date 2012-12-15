@@ -30,8 +30,6 @@ public:
    */
   virtual ~Client();
 
-  bool tryConnect(int nTimes = 1, int interval_ms = 0);
-
   void connect();
 
   void disconnect();

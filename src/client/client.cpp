@@ -67,28 +67,7 @@ Client::connect()
     throw boost::system::system_error(error);
   }
 
-  std::cout << "Client::connect() - status: " << error.message() << std::endl;
-}
-
-
-bool
-Client::tryConnect(int nTimes, int interval_ms)
-{
-  for (int i = 0; i < nTimes; ++i)
-  {
-    try
-    {
-      connect();
-      std::cout << "Client::tryConnect() - CONNECTED!: " << m_name << std::endl;
-      return true;
-    }
-    catch(boost::system::system_error& error)
-    {
-      std::cout << "Client::tryConnect() - failed: " <<  error.what() << std::endl;
-    }
-    usleep(interval_ms*1000);
-  }
-  return false;
+  std::cout << "Client::connect() - connected: " << error.message() << std::endl;
 }
 
 
@@ -118,7 +97,6 @@ Client::sendCommand(const std::string& command,
 {
   std::lock_guard<std::mutex> lock(m_mutex);
 
-//  std::cout << "Client::sendCommand() - start" << std::endl;
   std::string reply;
 
   try
