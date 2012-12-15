@@ -11,25 +11,24 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = ServerStatusGUI
 TEMPLATE = app
 
+#include general example project settings
+include(../example_settings.pri)
 
 SOURCES += main.cpp \
         serverwindow.cpp \
         calculator.cpp \
-        server\server.cpp \
-        server\serverobserver.cpp \
+        server/server.cpp \
+        server/serverobserver.cpp \
 
 HEADERS  += serverwindow.h \
         calculator.h \
-        server\server.h \
-        server\serverobserver.h \
+        server/server.h \
+        server/serverobserver.h \
 
 FORMS    += serverwindow.ui
 
 OTHER_FILES += \
     ../example_settings.pri
-
-#include general example project settings
-include(../example_settings.pri)
 
 OBJECTS_DIR += ./tmp/objects/
 MAKEFILE += MakefileServerStatusGUI
