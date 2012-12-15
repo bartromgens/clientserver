@@ -105,8 +105,11 @@ ClientWindow::slotGetSumAllClients()
   m_time.restart();
   for (unsigned int i = 0; i < m_clients.size(); ++i)
   {
-    std::thread t1(&ClientWindow::runClientTest, this, i);
-    t1.detach();
+    if (m_clients[i]->isConnected())
+    {
+      std::thread t1(&ClientWindow::runClientTest, this, i);
+      t1.detach();
+    }
   }
 }
 
