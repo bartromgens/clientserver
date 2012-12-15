@@ -1,6 +1,7 @@
 #ifndef SERVER_H
 #define SERVER_H
 
+#include "connectionstatus.h"
 #include "shared/clientserverdata.h"
 
 #include <boost/algorithm/string/split.hpp>
@@ -19,7 +20,7 @@ public:
 
   typedef unsigned int ConnectionId;
 
-  enum ConnectionStatus
+  enum EnumConnectionStatus
   {
     unavailable,
     connected,
@@ -107,7 +108,9 @@ public:
    * @param id the connection ID
    * @return the status of the connection with the given connection ID
    */
-  Server::ConnectionStatus getConnectionStatus(ConnectionId id) const;
+  Server::EnumConnectionStatus getConnectionStatus(ConnectionId id) const;
+
+  const std::map<ConnectionId, ConnectionStatus>& getConnectionStatuses();
 
 private:
   /**
@@ -168,6 +171,8 @@ private:
   std::map<ConnectionId, std::unique_ptr<std::thread> > m_threads;
   /** map of sockets that provides blocking stream-oriented socket functionality */
   std::map<ConnectionId, std::unique_ptr<boost::asio::ip::tcp::socket> > m_sockets;
+
+  std::map<ConnectionId, ConnectionStatus> m_connectionStatuses;
 
   /** server observers that are notified when a new message comes in from a client */
   std::vector<ServerObserver*> m_observers;

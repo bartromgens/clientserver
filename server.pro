@@ -15,12 +15,14 @@ LIBS += -lboost_system -lpthread
 
 
 SOURCES += main/mainserver.cpp \
-    server/server.cpp \
+    server/connectionstatus.cpp \
     server/dummyapplication.cpp \
+    server/server.cpp \
     server/serverobserver.cpp \
 
 HEADERS += \
     server/server.h \
+    server/connectionstatus.h \
     server/dummyapplication.h \
     server/serverobserver.h \
     shared/clientserverdata.h \

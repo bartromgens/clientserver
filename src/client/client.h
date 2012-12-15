@@ -49,6 +49,8 @@ public:
    */
   void disconnect();
 
+  bool isConnected();
+
   /**
    * Sends a command with arguments to the server.
    * @param command the command

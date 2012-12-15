@@ -88,6 +88,18 @@ Client::disconnect()
 }
 
 
+bool
+Client::isConnected()
+{
+  if (m_socket)
+  {
+    return m_socket->is_open();
+  }
+
+  return false;
+}
+
+
 std::string
 Client::sendCommand(const std::string& command,
                     const std::vector<std::string>& arguments,

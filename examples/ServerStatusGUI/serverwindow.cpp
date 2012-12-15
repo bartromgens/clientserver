@@ -13,7 +13,7 @@ ServerWindow::ServerWindow(QWidget *parent) :
   createTableWidget();
 
   connect(m_timer, SIGNAL(timeout()), this, SLOT(update()));
-  m_timer->start(1000);
+  m_timer->start(200);
 }
 
 
@@ -43,6 +43,8 @@ ServerWindow::createTableWidget()
   QStringList headers;
   headers.append("ID");
   headers.append("Connection Status");
+  headers.append("Downloaded");
+  headers.append("Uploaded");
 
   ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
@@ -54,20 +56,6 @@ ServerWindow::createTableWidget()
 
   ui->tableWidget->setColumnWidth(0,30);
   ui->tableWidget->setColumnWidth(1,150);
-}
-
-
-void
-ServerWindow::slotStartServer()
-{
-  m_server->startServerThread();
-}
-
-
-void
-ServerWindow::slotStopServer()
-{
-  m_server->stopServer();
 }
 
 
@@ -95,11 +83,20 @@ ServerWindow::updateTable()
 
 
 void
-ServerWindow::updateTableRow(int row, int id)
+ServerWindow::updateTableRow(int row, Server::ConnectionId id)
 {
-  Server::ConnectionStatus status = m_server->getConnectionStatus(id);
-  std::string statusString = "unknown";
+  const std::map<Server::ConnectionId, ConnectionStatus>& connectionStatuses =  m_server->getConnectionStatuses();
+  double totalDown_MiB = 0;
+  double totalUp_MiB = 0;
 
+  if (connectionStatuses.find(id) != connectionStatuses.end())
+  {
+    totalDown_MiB = connectionStatuses.at(id).totalDataDown_byte / 1024.0 / 1024.0;
+    totalUp_MiB = connectionStatuses.at(id).totalDataUp_byte / 1024.0 / 1024.0;
+  }
+
+  Server::EnumConnectionStatus status = m_server->getConnectionStatus(id);
+  std::string statusString = "unknown";
   if (status == Server::connected)
   {
     statusString = "connected";
@@ -115,9 +112,25 @@ ServerWindow::updateTableRow(int row, int id)
 
   m_idItem = new QTableWidgetItem( QString::number(id) );
   m_statusItem = new QTableWidgetItem( QString::fromStdString(statusString) );
-//  m_designationItem = new QTableWidgetItem( QString::fromStdString(designation) );
+  m_downSpeedItem = new QTableWidgetItem( QString::number(totalDown_MiB, char('g'), 3) + " MiB");
+  m_upSpeedItem = new QTableWidgetItem( QString::number(totalUp_MiB, char('g'), 3) + " MiB");
 
   ui->tableWidget->setItem(row, 0, m_idItem);
   ui->tableWidget->setItem(row, 1, m_statusItem);
-//  ui->tableWidget->setItem(row, 2, m_designationItem);
+  ui->tableWidget->setItem(row, 2, m_downSpeedItem);
+  ui->tableWidget->setItem(row, 3, m_upSpeedItem);
 }
+
+void
+ServerWindow::slotStartServer()
+{
+  m_server->startServerThread();
+}
+
+
+void
+ServerWindow::slotStopServer()
+{
+  m_server->stopServer();
+}
+

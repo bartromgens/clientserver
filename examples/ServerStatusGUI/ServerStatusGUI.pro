@@ -17,11 +17,13 @@ include(../example_settings.pri)
 SOURCES += main.cpp \
         serverwindow.cpp \
         calculator.cpp \
+        server/connectionstatus.cpp \
         server/server.cpp \
         server/serverobserver.cpp \
 
 HEADERS  += serverwindow.h \
         calculator.h \
+        server/connectionstatus.h \
         server/server.h \
         server/serverobserver.h \
 

@@ -77,8 +77,11 @@ ClientStatusWindow::runAllClients()
   for (std::map<int, Client*>::iterator iter = m_clients.begin();
        iter != m_clients.end(); ++iter)
   {
-    std::thread t1(&ClientStatusWindow::runClient, this, iter->second);
-    t1.detach();
+    if (iter->second->isConnected())
+    {
+      std::thread t1(&ClientStatusWindow::runClient, this, iter->second);
+      t1.detach();
+    }
   }
 }
 
@@ -141,15 +144,13 @@ ClientStatusWindow::runClient(Client* client)
       arguments.push_back(std::to_string(i*2));
       arguments.push_back(std::to_string(i));
       std::string reply = client->sendCommand("add", arguments);
-      int sum = atoi(reply.c_str());
-      assert(sum == i*3);
+//      int sum = atoi(reply.c_str());
+//      assert(sum == i*3);
 //      std::cout << "ClientTestGroup::runClient() - " << client.getName() << ", reply: " << reply << std::endl;
     }
     catch (boost::system::system_error& e)
     {
       std::cout << "ClientTestGroup::runClient() - ERROR sending command: " << e.what() << std::endl;
-      assert(0);
-      throw;
     }
   }
 

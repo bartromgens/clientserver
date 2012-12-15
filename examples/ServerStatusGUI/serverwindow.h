@@ -6,6 +6,7 @@
 #include <QTimer>
 
 #include "calculator.h"
+#include "server/connectionstatus.h"
 #include "server/server.h"
 
 namespace Ui {
@@ -25,7 +26,7 @@ public:
 
 private:
   void updateTable();
-  void updateTableRow(int row, int id);
+  void updateTableRow(int row, Server::ConnectionId id);
 
 private slots:
   void update();
@@ -40,6 +41,8 @@ private:
 
   QTableWidgetItem* m_idItem;
   QTableWidgetItem* m_statusItem;
+  QTableWidgetItem* m_downSpeedItem;
+  QTableWidgetItem* m_upSpeedItem;
 
   Calculator m_calculator;
 };

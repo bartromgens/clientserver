@@ -1,5 +1,6 @@
 #include "server.h"
 #include "serverobserver.h"
+#include "connectionstatus.h"
 
 #include <iostream>
 #include <thread>
@@ -13,6 +14,7 @@ Server::Server(unsigned short port)
     m_acceptor( new boost::asio::ip::tcp::acceptor(*m_io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), m_port)) ),
     m_threads(),
     m_sockets(),
+    m_connectionStatuses(),
     m_nIdCounter(0),
     m_mutex()
 {
@@ -67,6 +69,7 @@ Server::closeConnection(ConnectionId id)
     }
     m_sockets.erase(id);
     m_threads.erase(id);
+    m_connectionStatuses.erase(id);
   }
 }
 
@@ -112,7 +115,12 @@ Server::startServing(ConnectionId id)
   openConnection(id);
 
   boost::asio::ip::tcp::socket* socket = getSocket(id);
-  m_acceptor->accept(*socket);
+
+  {
+//    std::lock_guard<std::mutex> lock(m_mutex);
+    m_acceptor->accept(*socket);
+  }
+
   std::cout << "Server::startServing() - connection accepted!" << std::endl;
 
   // IMPORTANT: after connection is accepted, start a new server thread
@@ -126,7 +134,9 @@ Server::startServing(ConnectionId id)
     boost::system::error_code error;
 
     // receive a command
-    size_t len = socket->read_some(boost::asio::buffer(bufIncoming), error);
+    std::size_t len = socket->read_some(boost::asio::buffer(bufIncoming), error);
+
+    m_connectionStatuses[id].totalDataDown_byte += static_cast<double>(len);
 
     if (error == boost::asio::error::eof)
     {
@@ -168,6 +178,8 @@ Server::write(const std::string& message, ConnectionId id)
 
   boost::system::error_code error;
   boost::asio::write(*socket, boost::asio::buffer(message), boost::asio::transfer_all(), error);
+
+  m_connectionStatuses[id].totalDataUp_byte += static_cast<double>(message.size());
 
   if (error)
   {
@@ -286,7 +298,7 @@ Server::getOpenThreadIds() const
 }
 
 
-Server::ConnectionStatus
+Server::EnumConnectionStatus
 Server::getConnectionStatus(ConnectionId id) const
 {
   if (m_sockets.find(id) != m_sockets.end())
@@ -302,6 +314,13 @@ Server::getConnectionStatus(ConnectionId id) const
   }
 
   return unavailable;
+}
+
+
+const std::map<Server::ConnectionId, ConnectionStatus>&
+Server::getConnectionStatuses()
+{
+  return m_connectionStatuses;
 }
 
 
