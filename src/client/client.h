@@ -96,16 +96,16 @@ private:
    * Set the IP address of the server, 127.0.0.1 for localhome (default)
    * @param nIP server IP address
    */
-  void setIP(const std::string &nIP);
+  void setIP(const std::string& nIP);
 
   /**
-   * Set the port of the server, (2020 default)
+   * Set the port of the server
    * @param port server port number
    */
-  void setPort(const std::string &port);
+  void setPort(const std::string& port);
 
   /**
-   * Set the port of the server, (2020 default)
+   * Set the port of the server
    * @param port server port number
    */
   void setPort(unsigned short port);

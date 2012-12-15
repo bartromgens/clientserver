@@ -160,7 +160,7 @@ Client::setIP(const std::string& ipAddress)
   boost::asio::ip::address ipv4Addr = boost::asio::ip::address::from_string(ipAddress);
   if (!ipv4Addr.is_v4())
   {
-    std::cerr << "OUTIL_NETClient::setIP() : not a correct IPv4 address." << std::endl;
+    std::cerr << "Client::setIP() : not a correct IPv4 address." << std::endl;
     assert(0);
     return;
   }
