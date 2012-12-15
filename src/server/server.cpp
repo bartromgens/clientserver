@@ -70,8 +70,6 @@ Server::closeConnection(ConnectionId id)
     m_sockets.erase(id);
     m_threads.erase(id);
     m_connectionStatuses.erase(id);
-
-    m_connectionStatuses[id].generalStatus = ConnectionStatus::unavailable;
   }
 }
 
@@ -94,6 +92,7 @@ Server::startServerThread()
 
   m_threads[id] = std::unique_ptr<std::thread>(new std::thread(&Server::startServing, this, id));
   m_threads[id]->detach();
+  m_connectionStatuses[id].setStatus(ConnectionStatus::unavailable);
 }
 
 
@@ -137,7 +136,7 @@ Server::startServing(ConnectionId id)
 
     {
       std::lock_guard<std::mutex> lock(m_mutex);
-      m_connectionStatuses[id].totalDataDown_byte += static_cast<double>(len);
+      m_connectionStatuses[id].addTotalDataDown(len);
     }
 
     if (error == boost::asio::error::eof)
@@ -180,16 +179,15 @@ Server::write(const std::string& message, ConnectionId id)
 
   boost::system::error_code error;
   boost::asio::write(*socket, boost::asio::buffer(message), boost::asio::transfer_all(), error);
-
-  {
-    std::lock_guard<std::mutex> lock(m_mutex);
-    m_connectionStatuses[id].totalDataUp_byte += static_cast<double>(message.size());
-  }
-
   if (error)
   {
     std::cerr << "Server::write() - : " << error.message() << std::endl;
     throw boost::system::system_error(error);
+  }
+  else
+  {
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_connectionStatuses[id].addTotalDataUp(message.size());
   }
 }
 
@@ -326,7 +324,18 @@ std::map<Server::ConnectionId, ConnectionStatus>
 Server::getConnectionStatuses()
 {
   std::lock_guard<std::mutex> lock(m_mutex);
+  updateConnectionStatuses();
   return m_connectionStatuses;
+}
+
+
+void
+Server::updateConnectionStatuses()
+{
+  for (auto statusIter = m_connectionStatuses.begin(); statusIter != m_connectionStatuses.end(); ++statusIter)
+  {
+    statusIter->second.setStatus( getConnectionStatus(statusIter->first) );
+  }
 }
 
 

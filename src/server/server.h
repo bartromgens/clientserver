@@ -150,6 +150,7 @@ private:
                                                           size_t len,
                                                           std::string separationChar = ClientServerData::separationCharacter) const;
 
+  void updateConnectionStatuses();
 
 private:
   /** Server network port number */
