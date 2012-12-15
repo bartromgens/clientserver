@@ -23,6 +23,8 @@ Server::Server(unsigned short port)
 
 Server::~Server()
 {
+  stopServer();
+  m_io_service->stop();
 }
 
 
@@ -91,6 +93,17 @@ Server::startServerThread()
 
   m_threads[id] = std::unique_ptr<std::thread>(new std::thread(&Server::startServing, this, id));
   m_threads[id]->detach();
+}
+
+
+void
+Server::stopServer()
+{
+  std::vector<Server::ConnectionId> openIds = getOpenSocketIds();
+  for (std::size_t i = 0; i < openIds.size(); ++i)
+  {
+    closeConnection(openIds[i]);
+  }
 }
 
 
@@ -250,6 +263,24 @@ Server::getNOpenSockets() const
   }
 
   return nOpen;
+}
+
+
+std::vector<Server::ConnectionId>
+Server::getOpenSocketIds() const
+{
+  std::vector<ConnectionId> socketIds;
+
+  for (auto iter = m_sockets.begin();
+       iter != m_sockets.end(); ++iter)
+  {
+    if (iter->second->is_open())
+    {
+      socketIds.push_back(iter->first);
+    }
+  }
+
+  return socketIds;
 }
 
 

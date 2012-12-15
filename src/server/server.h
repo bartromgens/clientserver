@@ -36,7 +36,15 @@ public:
    */
   void setPort(int port);
 
+  /**
+   * @brief Starts a new server thread that waits for a new connection
+   */
   void startServerThread();
+
+  /**
+   * @brief Closes all connections and stops serving
+   */
+  void stopServer();
 
   void write(const std::string& message, ConnectionId id);
   void write(const std::vector<std::string>& messageStrings, ConnectionId id);
@@ -58,8 +66,14 @@ private:
   boost::asio::ip::tcp::socket* getRawSocket(ConnectionId id) const;
   std::vector<std::string> readSome(ConnectionId id);
 
-  int getNThreads() const;
+  /**
+   * @brief Returns a vector of open socket ids
+   */
+  std::vector< ConnectionId > getOpenSocketIds() const;
+
   int getNOpenSockets() const;
+
+  int getNThreads() const;
 
 private:
   /** Server network port number */
