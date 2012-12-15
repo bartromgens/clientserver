@@ -1,7 +1,7 @@
 #include "clientstatuswindow.h"
 #include "ui_clientstatuswindow.h"
 
-#include "../../src/client/client.h"
+#include "client/client.h"
 
 #include <thread>
 
