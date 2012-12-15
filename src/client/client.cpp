@@ -6,15 +6,18 @@
 using boost::asio::ip::tcp;
 
 
-Client::Client()
-  : m_io_service(),
+Client::Client(const std::string& ip, unsigned short port, const std::string& name)
+  : m_io_service(new boost::asio::io_service()),
     m_socket(),
-    m_mutex(),
-    m_port("2020"),
-    m_ip("127.0.0.1"),
-    m_name("ClientNoName")
+    m_port(),
+    m_ip(),
+    m_name(name),
+    m_mutex()
 {
   std::cout << "Client::Client()" << std::endl;
+
+  setPort(port);
+  setIP(ip);
 }
 
 
@@ -35,10 +38,6 @@ Client::~Client()
 void
 Client::open()
 {
-  if (!m_io_service)
-  {
-    m_io_service.reset(new boost::asio::io_service());
-  }
   m_socket.reset(new tcp::socket(*m_io_service));
 }
 
@@ -113,7 +112,9 @@ Client::disconnect()
 
 
 std::string
-Client::sendCommand(const std::string &command, const std::vector<std::string> &arguments) const
+Client::sendCommand(const std::string& command,
+                    const std::vector<std::string>& arguments,
+                    std::string separationCharacter) const
 {
   std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -131,9 +132,8 @@ Client::sendCommand(const std::string &command, const std::vector<std::string> &
     std::string message = command;
     for (std::size_t i = 0; i < arguments.size(); ++i)
     {
-      message += "@" + arguments[i];
+      message += separationCharacter + arguments[i];
     }
-    message += "\0";
 
     assert(m_socket->is_open());
 
@@ -212,10 +212,3 @@ std::string &Client::getName() const
 {
   return m_name;
 }
-
-void
-Client::setName(const std::string &name)
-{
-  m_name = name;
-}
-

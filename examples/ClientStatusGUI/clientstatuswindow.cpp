@@ -56,7 +56,6 @@ ClientStatusWindow::createNewClient()
 {
   int id = m_nClientsCreated++;
   m_clients[id] = new Client();
-  m_clients[id]->setName("client_" + std::to_string(id));
 }
 
 
