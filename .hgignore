@@ -12,3 +12,5 @@ examples/ServerStatusGUI/ui_serverwindow.h
 examples/ClientStatusGUI/ui_clientstatuswindow.h
 examples/ServerStatusGUI/moc_serverwindow.cpp
 examples/ServerStatusGUI/ServerStatusGUI
+examples/ClientStatusGUI/ui_clientwindow.h
+examples/ClientStatusGUI/moc_clientwindow.cpp

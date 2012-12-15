@@ -13,13 +13,13 @@ TEMPLATE = app
 
 # files
 SOURCES += main.cpp\
-           clientstatuswindow.cpp \
+           clientwindow.cpp \
            client/client.cpp \
 
-HEADERS  += clientstatuswindow.h \
+HEADERS  += clientwindow.h \
             client/client.h \
 
-FORMS    += clientstatuswindow.ui \
+FORMS    += clientwindow.ui \
 
 #include general example project settings
 OTHER_FILES += \

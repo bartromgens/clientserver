@@ -1,10 +1,10 @@
-#include "clientstatuswindow.h"
 #include <QApplication>
+#include "clientwindow.h"
 
 int main(int argc, char *argv[])
 {
   QApplication a(argc, argv);
-  ClientStatusWindow w;
+  ClientWindow w;
   w.show();
   
   return a.exec();
