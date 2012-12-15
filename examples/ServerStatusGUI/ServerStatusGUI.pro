@@ -12,12 +12,18 @@ TARGET = ServerStatusGUI
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-        serverstatuswindow.cpp
+SOURCES += main.cpp \
+        serverwindow.cpp \
+        calculator.cpp \
+        server\server.cpp \
+        server\serverobserver.cpp \
 
-HEADERS  += serverstatuswindow.h
+HEADERS  += serverwindow.h \
+        calculator.h \
+        server\server.h \
+        server\serverobserver.h \
 
-FORMS    += serverstatuswindow.ui
+FORMS    += serverwindow.ui
 
 OTHER_FILES += \
     ../example_settings.pri

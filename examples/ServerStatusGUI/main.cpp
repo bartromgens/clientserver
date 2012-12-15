@@ -1,10 +1,10 @@
 #include <QApplication>
-#include "serverstatuswindow.h"
+#include "serverwindow.h"
 
 int main(int argc, char *argv[])
 {
   QApplication a(argc, argv);
-  ServerStatusWindow w;
+  ServerWindow w;
   w.show();
   
   return a.exec();
