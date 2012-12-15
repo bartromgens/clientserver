@@ -4,6 +4,7 @@ ServerObserver::ServerObserver()
 {
 }
 
+
 ServerObserver::~ServerObserver()
 {
 }
