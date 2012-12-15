@@ -36,7 +36,7 @@ Client::~Client()
 
 
 void
-Client::open()
+Client::createSocket()
 {
   m_socket.reset(new tcp::socket(*m_io_service));
 }
@@ -47,7 +47,7 @@ Client::connect()
 {
   std::lock_guard<std::mutex> lock(m_mutex);
 
-  open();
+  createSocket();
 
   tcp::resolver resolver(*m_io_service);
   tcp::resolver::query query(m_ip, m_port);

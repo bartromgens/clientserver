@@ -81,7 +81,7 @@ public:
   const std::string& getName() const;
 
 private:
-  void open();
+  void createSocket();
 
 private:
   /** provides the core I/O functionality for users of the synchronous I/O objects, including the tcp::socket and tcp::acceptor. */
