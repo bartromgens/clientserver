@@ -110,7 +110,7 @@ Server::startServing(ConnectionId id)
 
   boost::asio::ip::tcp::socket* socket = getSocket(id);
   m_acceptor->accept(*socket);
-  std::cout << "OUTIL_NETServer::startServing() - connection accepted!" << std::endl;
+  std::cout << "Server::startServing() - connection accepted!" << std::endl;
 
   // IMPORTANT: after connection is accepted, start a new server thread
   startServerThread();
@@ -163,15 +163,13 @@ Server::write(const std::string& message, ConnectionId id)
 {
   boost::asio::ip::tcp::socket* socket = getSocket(id);
 
-  assert(socket->is_open());
+  boost::system::error_code error;
+  boost::asio::write(*socket, boost::asio::buffer(message), boost::asio::transfer_all(), error);
 
-  boost::system::error_code ignored_error;
-  boost::asio::write(*socket, boost::asio::buffer(message), boost::asio::transfer_all(), ignored_error);
-
-  if (ignored_error)
+  if (error)
   {
-    std::cerr << "Server::write() - : " << ignored_error.message() << std::endl;
-    throw boost::system::system_error(ignored_error);
+    std::cerr << "Server::write() - : " << error.message() << std::endl;
+    throw boost::system::system_error(error);
   }
 }
 
