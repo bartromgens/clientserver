@@ -6,8 +6,6 @@
 #include <sstream>
 #include <vector>
 
-using boost::asio::ip::tcp;
-
 
 Server::Server(unsigned short port)
   : m_port(port),
@@ -181,6 +179,12 @@ Server::write(const std::string& message, ConnectionId id)
 void
 Server::registerObserver(ServerObserver* observer)
 {
+  if (!observer)
+  {
+    assert(0);
+    return;
+  }
+
   std::lock_guard<std::mutex> lock(m_mutex);
   m_observers.push_back(observer);
 }
@@ -189,6 +193,12 @@ Server::registerObserver(ServerObserver* observer)
 void
 Server::unregisterObserver(ServerObserver* observer)
 {
+  if (!observer)
+  {
+    assert(0);
+    return;
+  }
+
   std::lock_guard<std::mutex> lock(m_mutex);
   m_observers.erase( std::find(m_observers.begin(), m_observers.end(), observer) );
 }
@@ -203,13 +213,11 @@ Server::notifyObservers(std::vector<std::string> dataStrings, ConnectionId id)
     observers = m_observers;
   }
 
-  for (std::size_t i = 0; i < observers.size(); ++i)
-  {
-    if (observers[i])
-    {
-      observers[i]->notifyReceivedData(dataStrings, id);
-    }
-  }
+  std::for_each(observers.begin(), observers.end(),
+                [&dataStrings, &id](ServerObserver* observer)
+                {
+                  observer->notifyReceivedData(dataStrings, id);
+                });
 }
 
 
@@ -227,19 +235,12 @@ Server::convertCharArrayToStringVector(const std::array<char, ClientServerData::
 }
 
 
-void
-Server::setPort(int port)
-{
-  m_port = port;
-}
-
-
-int
+unsigned int
 Server::getNOpenSockets() const
 {
-  int nOpen(0);
+  int nOpen = 0;
 
-  for (std::map<ConnectionId, std::unique_ptr<boost::asio::ip::tcp::socket> >::const_iterator iter = m_sockets.begin();
+  for (auto iter = m_sockets.begin();
        iter != m_sockets.end(); ++iter)
   {
     if (iter->second->is_open())
@@ -270,7 +271,40 @@ Server::getOpenSocketIds() const
 }
 
 
-int
+std::vector<Server::ConnectionId>
+Server::getOpenThreadIds() const
+{
+  std::vector<ConnectionId> threadIds;
+
+  for (auto threadMapIterator = m_threads.begin(); threadMapIterator != m_threads.end(); ++threadMapIterator)
+  {
+    threadIds.push_back(threadMapIterator->first);
+  }
+
+  return threadIds;
+}
+
+
+Server::ConnectionStatus
+Server::getConnectionStatus(ConnectionId id) const
+{
+  if (m_sockets.find(id) != m_sockets.end())
+  {
+    if (m_sockets.at(id)->is_open())
+    {
+      return connected;
+    }
+    else
+    {
+      return listening;
+    }
+  }
+
+  return unavailable;
+}
+
+
+std::size_t
 Server::getNThreads() const
 {
   return m_threads.size();

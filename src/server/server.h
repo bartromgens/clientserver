@@ -19,6 +19,13 @@ public:
 
   typedef unsigned int ConnectionId;
 
+  enum ConnectionStatus
+  {
+    unavailable,
+    connected,
+    listening
+  };
+
   /**
    * Constructor
    */
@@ -28,13 +35,6 @@ public:
    * Destructor
    */
   ~Server();
-
-  /**
-   * Constructor
-   *
-   * @param port the port number to server on
-   */
-  void setPort(int port);
 
   /**
    * @brief Starts a new server thread that waits for a new connection
@@ -65,18 +65,83 @@ public:
              ConnectionId id,
              std::string separationChar = ClientServerData::separationCharacter);
 
-  void unregisterObserver(ServerObserver* observer);
+  /**
+   * @brief Register an observer
+   */
   void registerObserver(ServerObserver* observer);
+
+  /**
+   * @brief Unregister an observer
+   */
+  void unregisterObserver(ServerObserver* observer);
+
+  /**
+   * @brief Notifies the observers with the incoming data
+   * @param dataStrings the incoming data
+   * @param id the connection ID
+   */
   void notifyObservers(std::vector<std::string> dataStrings, ConnectionId id);
+
+  /**
+   * @brief Returns the number of connection threads
+   */
+  std::size_t getNThreads() const;
+
+  /**
+   * @brief Returns a vector of open socket ids
+   */
+  std::vector< ConnectionId > getOpenSocketIds() const;
+
+  /**
+   * @brief Returns the number of open sockets
+   */
+  unsigned int getNOpenSockets() const;
+
+  /**
+   * @brief Returns a vector of ids of open threads
+   */
+  std::vector<Server::ConnectionId> getOpenThreadIds() const;
+
+  /**
+   * @brief Returns the status of the connection with the given ID
+   * @param id the connection ID
+   * @return the status of the connection with the given connection ID
+   */
+  Server::ConnectionStatus getConnectionStatus(ConnectionId id) const;
 
 private:
   /**
-   * Starts serving
+   * @brief Starts serving
+   *
+   * Opens a new socket connection and waits for a client to connect.
+   * When a client connects, startServerThread is called which opens a new
+   * socket and waits for a client to connect on a new thread.
+   *
+   * @param id the connection ID
    */
   void startServing(ConnectionId id);
 
+  /**
+   * @brief Opens a new socket connection and adds it to the map of sockets.
+   * @param id the connection ID
+   */
   int openConnection(ConnectionId id);
+
+  /**
+   * @brief Closes the socket connection with given connection id
+   *
+   * A shutdown message is sent to the client and the socket closed.
+   * The socket and corresponding thread are erased from the map.
+   *
+   * @param id the connection ID
+   */
   void closeConnection(ConnectionId id);
+
+  /**
+   * @brief Returns a socket connection
+   * @param id the connection ID
+   * @return raw pointer to the socket with the given id
+   */
   boost::asio::ip::tcp::socket* getSocket(ConnectionId id) const;
 
   /**
@@ -89,15 +154,6 @@ private:
                                                           size_t len,
                                                           std::string separationChar = ClientServerData::separationCharacter) const;
 
-
-  /**
-   * @brief Returns a vector of open socket ids
-   */
-  std::vector< ConnectionId > getOpenSocketIds() const;
-
-  int getNOpenSockets() const;
-
-  int getNThreads() const;
 
 private:
   /** Server network port number */
