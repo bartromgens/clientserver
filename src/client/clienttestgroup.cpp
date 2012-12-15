@@ -30,15 +30,7 @@ ClientTestGroup::startClient(int id)
 {
   std::cout << "ClientTestGroup::startClient()" << std::endl;
   Client client;
-  client.setName("client_" + std::to_string(id));
-  bool isConnected = false;
-  isConnected = client.tryConnect(10, 10000);
-
-  if (!isConnected)
-  {
-    std::cout << "ClientTestGroup::startClient(): could not connect, closing down." << std::endl;
-    return false;
-  }
+  client.connect();
 
   int nRounds = 1000*1000;
   for (int i = 0; i < nRounds; i++)

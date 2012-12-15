@@ -3,8 +3,6 @@
 #include <cmath>
 #include <thread>
 
-using boost::asio::ip::tcp;
-
 
 Client::Client(const std::string& ip, unsigned short port, const std::string& name)
   : m_io_service(new boost::asio::io_service()),
@@ -38,7 +36,7 @@ Client::~Client()
 void
 Client::createSocket()
 {
-  m_socket.reset(new tcp::socket(*m_io_service));
+  m_socket.reset(new boost::asio::ip::tcp::socket(*m_io_service));
 }
 
 
@@ -49,10 +47,10 @@ Client::connect()
 
   createSocket();
 
-  tcp::resolver resolver(*m_io_service);
-  tcp::resolver::query query(m_ip, m_port);
-  tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
-  tcp::resolver::iterator end;
+  boost::asio::ip::tcp::resolver resolver(*m_io_service);
+  boost::asio::ip::tcp::resolver::query query(m_ip, m_port);
+  boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
+  boost::asio::ip::tcp::resolver::iterator end;
 
   boost::system::error_code error = boost::asio::error::host_not_found;
 
