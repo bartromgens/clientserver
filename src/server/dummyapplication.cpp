@@ -46,14 +46,11 @@ DummyApplication::notifyReceivedData(std::vector<std::string> dataStrings, int i
     int b = atoi(dataStrings[2].c_str());
     int sum = a + b;
     std::string message = std::to_string(sum);
-    message += "\0";
-
     write(message, id);
   }
   else
   {
     std::string message = "server: nothing to do!";
-    message += "\0";
 
     write(message, id);
   }
