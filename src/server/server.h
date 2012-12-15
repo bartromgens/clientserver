@@ -1,6 +1,8 @@
 #ifndef SERVER_H
 #define SERVER_H
 
+#include "shared/clientserverdata.h"
+
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/asio.hpp>
@@ -20,7 +22,7 @@ public:
   /**
    * Constructor
    */
-  Server(int port = 2020);
+  Server(unsigned short port = ClientServerData::defaultPort);
 
   /**
    * Destructor
@@ -28,8 +30,9 @@ public:
   ~Server();
 
   /**
-   * Set the port number
-   * @param port network connection port number
+   * Constructor
+   *
+   * @param port the port number to server on
    */
   void setPort(int port);
 

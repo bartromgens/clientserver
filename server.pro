@@ -2,6 +2,10 @@ TEMPLATE = app
 CONFIG += console
 CONFIG -= qt
 
+# add directory of client and server sources
+INCLUDEPATH += ./src/
+DEPENDPATH = $$INCLUDEPATH
+
 #INCLUDEPATH += /usr/include/boost
 # use boost 1.52, see ./boost_1_52_0/stage/lib/dir for boost static and shared build libs
 INCLUDEPATH += /home/bart/prog/1_tools/boost_1_52_0
@@ -10,15 +14,16 @@ LIBS += -L/home/bart/prog/1_tools/boost_1_52_0/stage/lib
 LIBS += -lboost_system -lpthread
 
 
-SOURCES += ./src/main/mainserver.cpp \
-    ./src/server/server.cpp \
-    src/server/dummyapplication.cpp \
-    src/server/serverobserver.cpp
+SOURCES += main/mainserver.cpp \
+    server/server.cpp \
+    server/dummyapplication.cpp \
+    server/serverobserver.cpp \
 
 HEADERS += \
-    ./src/server/server.h \
-    src/server/dummyapplication.h \
-    src/server/serverobserver.h
+    server/server.h \
+    server/dummyapplication.h \
+    server/serverobserver.h \
+    shared/clientserverdata.h \
 
 OBJECTS_DIR += ./tmp/objects/
 MAKEFILE += MakefileServer

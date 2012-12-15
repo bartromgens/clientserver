@@ -9,7 +9,7 @@
 using boost::asio::ip::tcp;
 
 
-Server::Server(int port)
+Server::Server(unsigned short port)
   : m_port(port),
     m_io_service( new boost::asio::io_service() ),
     m_acceptor( new boost::asio::ip::tcp::acceptor(*m_io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), m_port)) ),
