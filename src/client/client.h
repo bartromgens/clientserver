@@ -30,8 +30,16 @@ public:
    */
   virtual ~Client();
 
+  /**
+   * Connect to the server.
+   * @throws boost::system::system_error connection error
+   */
   void connect();
 
+  /**
+   * Disconnect the connection with the server.
+   * The socket is closed, shutdown send and io_service stopped
+   */
   void disconnect();
 
   /**
@@ -44,6 +52,38 @@ public:
   std::string sendCommand(const std::string& command,
                           const std::vector<std::string>& arguments,
                           std::string separationCharacter = ClientServerData::separationCharacter) const;
+
+  /**
+   * Returns the set server ip address.
+   */
+  const std::string& getIp() const;
+
+  /**
+   * Returns the set server port number
+   */
+  const std::string& getPort() const;
+
+  /**
+   * Returns the client name.
+   */
+  const std::string& getName() const;
+
+private:
+  /**
+   * Open the client by creating a io_service and new socket.
+   * When it does not yet exist, a new io_service is created
+   * A new socket is created (the old one deleted)
+   */
+  void createSocket();
+
+  /**
+   * Creates a message that can be writen to the socket, from a command and string vector arguments.
+   * @param command the command
+   * @param arguments the arguments
+   * @param separationCharacter the separation character.
+   * @return the message that can be written to the socket
+   */
+  std::string createMessage(const std::string& command, const std::vector<std::string>& arguments, std::string separationCharacter) const;
 
   /**
    * Set the IP address of the server, 127.0.0.1 for localhome (default)
@@ -62,33 +102,6 @@ public:
    * @param port server port number
    */
   void setPort(unsigned short port);
-
-  /**
-   * Returns the set server ip address
-   */
-  const std::string& getIp() const;
-
-  /**
-   * Returns the set server port number
-   */
-  const std::string& getPort() const;
-
-  /**
-   * Returns the client name.
-   */
-  const std::string& getName() const;
-
-private:
-  void createSocket();
-
-  /**
-   * Creates a message that can be writen to the socket, from a command and string vector arguments.
-   * @param command the command
-   * @param arguments the arguments
-   * @param separationCharacter the separation character.
-   * @return the message that can be written to the socket
-   */
-  std::string createMessage(const std::string& command, const std::vector<std::string>& arguments, std::string separationCharacter) const;
 
 private:
   /** provides the core I/O functionality for users of the synchronous I/O objects, including the tcp::socket and tcp::acceptor. */
