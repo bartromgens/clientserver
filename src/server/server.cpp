@@ -10,13 +10,13 @@ using boost::asio::ip::tcp;
 
 
 Server::Server(int port)
-  : m_io_service(),
-    m_acceptor(),
+  : m_port(port),
+    m_io_service( new boost::asio::io_service() ),
+    m_acceptor( new boost::asio::ip::tcp::acceptor(*m_io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), m_port)) ),
     m_threads(),
     m_sockets(),
-    m_port(port),
-    m_mutex(),
-    m_nIdCounter(0)
+    m_nIdCounter(0),
+    m_mutex()
 {
 }
 
@@ -27,7 +27,7 @@ Server::~Server()
 
 
 int
-Server::openConnection(int id)
+Server::openConnection(ConnectionId id)
 {
   std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -53,7 +53,7 @@ Server::openConnection(int id)
 
 
 void
-Server::closeConnection(int id)
+Server::closeConnection(ConnectionId id)
 {
   //  std::cout << "Server::close() - id: " << id << std::endl;
   std::lock_guard<std::mutex> lock(m_mutex);
@@ -74,7 +74,7 @@ Server::closeConnection(int id)
 
 
 boost::asio::ip::tcp::socket*
-Server::getRawSocket(int id) const
+Server::getRawSocket(ConnectionId id) const
 {
   std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -95,7 +95,7 @@ Server::startServerThread()
 
 
 void
-Server::startServing(int id)
+Server::startServing(ConnectionId id)
 {
   std::cout << "Server::startServing()" << std::endl;
   openConnection(id);
@@ -150,7 +150,7 @@ Server::startServing(int id)
 
 
 void
-Server::write(const std::vector<std::string>& messageStrings, int id)
+Server::write(const std::vector<std::string>& messageStrings, ConnectionId id)
 {
   std::string message;
   for (std::size_t i = 0; i < messageStrings.size(); ++i)
@@ -164,7 +164,7 @@ Server::write(const std::vector<std::string>& messageStrings, int id)
 
 
 void
-Server::write(const std::string& message, int id)
+Server::write(const std::string& message, ConnectionId id)
 {
   boost::asio::ip::tcp::socket* socket = getRawSocket(id);
 
@@ -198,7 +198,7 @@ Server::unregisterObserver(ServerObserver* observer)
 
 
 void
-Server::notifyObservers(std::vector<std::string> dataStrings, int id)
+Server::notifyObservers(std::vector<std::string> dataStrings, ConnectionId id)
 {
   std::vector<ServerObserver*> observers;
   {
@@ -240,7 +240,7 @@ Server::getNOpenSockets() const
 {
   int nOpen(0);
 
-  for (std::map<int, std::unique_ptr<boost::asio::ip::tcp::socket> >::const_iterator iter = m_sockets.begin();
+  for (std::map<ConnectionId, std::unique_ptr<boost::asio::ip::tcp::socket> >::const_iterator iter = m_sockets.begin();
        iter != m_sockets.end(); ++iter)
   {
     if (iter->second->is_open())
