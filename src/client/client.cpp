@@ -101,17 +101,12 @@ Client::sendCommand(const std::string& command,
 
   try
   {
-    std::array<char, 2048> buf;
+    std::array<char, ClientServerData::defaultBufferSize> buf;
     std::size_t len;
 
     boost::system::error_code error;
 
-    // create message to send to server
-    std::string message = command;
-    for (std::size_t i = 0; i < arguments.size(); ++i)
-    {
-      message += separationCharacter + arguments[i];
-    }
+    std::string message = createMessage(command, arguments, separationCharacter);
 
     assert(m_socket->is_open());
 
@@ -148,6 +143,19 @@ Client::sendCommand(const std::string& command,
 //  std::cout << "Client::sendCommand() - end" << std::endl;
 
   return reply;
+}
+
+
+std::string
+Client::createMessage(const std::string& command, const std::vector<std::string>& arguments, std::string separationCharacter) const
+{
+  std::string message = command;
+  for (std::size_t i = 0; i < arguments.size(); ++i)
+  {
+    message += separationCharacter + arguments[i];
+  }
+
+  return message;
 }
 
 
