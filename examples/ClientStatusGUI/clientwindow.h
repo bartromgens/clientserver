@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QTimer>
+#include <QTime>
 
 #include <memory>
 
@@ -37,6 +38,7 @@ private:
   Ui::ClientWindow* ui;
   std::vector< std::unique_ptr<Client> > m_clients;
   QTimer* m_timer;
+  QTime m_time;
 };
 
 #endif // CLIENTWINDOW_H

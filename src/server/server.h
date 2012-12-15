@@ -110,7 +110,7 @@ public:
    */
   Server::EnumConnectionStatus getConnectionStatus(ConnectionId id) const;
 
-  const std::map<ConnectionId, ConnectionStatus>& getConnectionStatuses();
+  std::map<ConnectionId, ConnectionStatus> getConnectionStatuses();
 
 private:
   /**

@@ -116,10 +116,7 @@ Server::startServing(ConnectionId id)
 
   boost::asio::ip::tcp::socket* socket = getSocket(id);
 
-  {
-//    std::lock_guard<std::mutex> lock(m_mutex);
-    m_acceptor->accept(*socket);
-  }
+  m_acceptor->accept(*socket);
 
   std::cout << "Server::startServing() - connection accepted!" << std::endl;
 
@@ -133,10 +130,14 @@ Server::startServing(ConnectionId id)
     std::array<char, ClientServerData::defaultBufferSize> bufIncoming;
     boost::system::error_code error;
 
+
     // receive a command
     std::size_t len = socket->read_some(boost::asio::buffer(bufIncoming), error);
 
-    m_connectionStatuses[id].totalDataDown_byte += static_cast<double>(len);
+    {
+      std::lock_guard<std::mutex> lock(m_mutex);
+      m_connectionStatuses[id].totalDataDown_byte += static_cast<double>(len);
+    }
 
     if (error == boost::asio::error::eof)
     {
@@ -179,7 +180,10 @@ Server::write(const std::string& message, ConnectionId id)
   boost::system::error_code error;
   boost::asio::write(*socket, boost::asio::buffer(message), boost::asio::transfer_all(), error);
 
-  m_connectionStatuses[id].totalDataUp_byte += static_cast<double>(message.size());
+  {
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_connectionStatuses[id].totalDataUp_byte += static_cast<double>(message.size());
+  }
 
   if (error)
   {
@@ -317,9 +321,10 @@ Server::getConnectionStatus(ConnectionId id) const
 }
 
 
-const std::map<Server::ConnectionId, ConnectionStatus>&
+std::map<Server::ConnectionId, ConnectionStatus>
 Server::getConnectionStatuses()
 {
+  std::lock_guard<std::mutex> lock(m_mutex);
   return m_connectionStatuses;
 }
 

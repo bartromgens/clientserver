@@ -118,6 +118,11 @@ Client::sendCommand(const std::string& command,
 
     std::string message = createMessage(command, arguments, separationCharacter);
 
+//    for (std::size_t i = message.size(); i < 2000; ++i)
+//    {
+//      message += "a";
+//    }
+
     // send to server
     boost::asio::write(*m_socket, boost::asio::buffer(message), boost::asio::transfer_all(), error);
     if (error)

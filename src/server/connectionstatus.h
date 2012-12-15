@@ -5,6 +5,7 @@ class ConnectionStatus
 {
 public:
   ConnectionStatus();
+  ~ConnectionStatus();
 
 public:
   double totalDataDown_byte;

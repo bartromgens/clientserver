@@ -7,9 +7,11 @@ ClientWindow::ClientWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::ClientWindow),
   m_clients(),
-  m_timer(new QTimer(this))
+  m_timer(new QTimer(this)),
+  m_time()
 {
   ui->setupUi(this);
+  m_time.start();
 
   createActions();
 
@@ -100,6 +102,7 @@ ClientWindow::slotCrash() const
 void
 ClientWindow::slotGetSumAllClients()
 {
+  m_time.restart();
   for (unsigned int i = 0; i < m_clients.size(); ++i)
   {
     std::thread t1(&ClientWindow::runClientTest, this, i);
@@ -111,7 +114,7 @@ ClientWindow::slotGetSumAllClients()
 void
 ClientWindow::runClientTest(int id)
 {
-  for (std::size_t i = 0; i < 500000; ++i)
+  for (std::size_t i = 0; i < 200000; ++i)
   {
     std::vector<std::string> arguments;
     arguments.push_back(std::to_string(i));
@@ -120,12 +123,14 @@ ClientWindow::runClientTest(int id)
     try
     {
       std::string reply = m_clients[id]->sendCommand("add", arguments);
+//      std::cout << "ClientWindow::slotGetSumAllClients() - client: " << id << ", reply: " << atoi(reply.c_str()) << std::endl;
+//      assert(atoi(reply.c_str()) == 3*i);
     }
     catch (std::exception& e)
     {
       std::cerr << e.what() << std::endl;
       break;
     }
-//    std::cout << "ClientWindow::slotGetSumAllClients() - client: " << id << ", reply: " << reply << std::endl;
   }
+//  std::cout << "ClientWindow::runClientTest() : time elapsed: " << m_time.elapsed() << std::endl;
 }

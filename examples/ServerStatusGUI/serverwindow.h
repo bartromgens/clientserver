@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QtGui>
+#include <QTime>
 #include <QTimer>
 
 #include "calculator.h"
@@ -38,13 +39,20 @@ private:
 
   Server* m_server;
   QTimer* m_timer;
+  QTime m_timeStatusUpdate;
 
   QTableWidgetItem* m_idItem;
   QTableWidgetItem* m_statusItem;
+  QTableWidgetItem* m_totalDownItem;
+  QTableWidgetItem* m_totalUpItem;
   QTableWidgetItem* m_downSpeedItem;
   QTableWidgetItem* m_upSpeedItem;
 
   Calculator m_calculator;
+
+  std::map<Server::ConnectionId, ConnectionStatus> m_connectionStatuses;
+  std::map<Server::ConnectionId, ConnectionStatus> m_connectionStatusesOneSecondAgo;
+  std::map<Server::ConnectionId, ConnectionStatus> m_connectionStatusesTwoSecondAgo;
 };
 
 #endif // SERVERWINDOW_H
