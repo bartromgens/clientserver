@@ -74,6 +74,11 @@ Client::disconnect()
 {
   std::lock_guard<std::mutex> lock(m_mutex);
 
+  if (!m_socket)
+  {
+    return;
+  }
+
   boost::system::error_code error;
   m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
   if (error)
@@ -117,11 +122,6 @@ Client::sendCommand(const std::string& command,
     boost::system::error_code error;
 
     std::string message = createMessage(command, arguments, separationCharacter);
-
-//    for (std::size_t i = message.size(); i < 2000; ++i)
-//    {
-//      message += "a";
-//    }
 
     // send to server
     boost::asio::write(*m_socket, boost::asio::buffer(message), boost::asio::transfer_all(), error);
