@@ -154,9 +154,27 @@ Client::createMessage(const std::string& command, const std::vector<std::string>
 
 
 void
-Client::setIP(const std::string &ipAddress)
+Client::setIP(const std::string& ipAddress)
 {
+  assert(!ipAddress.empty());
+
+  // verify IP address
+  boost::asio::ip::address ipv4Addr = boost::asio::ip::address::from_string(ipAddress);
+  if (!ipv4Addr.is_v4())
+  {
+    std::cerr << "OUTIL_NETClient::setIP() : not a correct IPv4 address." << std::endl;
+    assert(0);
+    return;
+  }
+
   m_ip = ipAddress;
+}
+
+
+const std::string&
+Client::getIp() const
+{
+  return m_ip;
 }
 
 
@@ -168,16 +186,9 @@ Client::setPort(const std::string &port)
 
 
 void
-Client::setPort(int port)
+Client::setPort(unsigned short port)
 {
-  m_port = std::to_string(port);
-}
-
-
-const std::string&
-Client::getIp() const
-{
-  return m_ip;
+  setPort(std::to_string(port));
 }
 
 

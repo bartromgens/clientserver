@@ -61,7 +61,7 @@ public:
    * Set the port of the server, (2020 default)
    * @param port server port number
    */
-  void setPort(int port);
+  void setPort(unsigned short port);
 
   /**
    * Returns the set server ip address
