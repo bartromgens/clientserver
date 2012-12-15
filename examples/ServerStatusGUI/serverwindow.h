@@ -30,6 +30,7 @@ private:
 private slots:
   void update();
   void slotStartServer();
+  void slotStopServer();
 
 private:
   Ui::ServerWindow *ui;

@@ -46,7 +46,7 @@ Server::openConnection(ConnectionId id)
 void
 Server::closeConnection(ConnectionId id)
 {
-  //  std::cout << "Server::close() - id: " << id << std::endl;
+  std::cout << "Server::close() - id: " << id << std::endl;
   std::lock_guard<std::mutex> lock(m_mutex);
 
   if (m_sockets.find(id) == m_sockets.end())
@@ -55,14 +55,16 @@ Server::closeConnection(ConnectionId id)
     return;
   }
 
-  if (m_sockets[id] && m_sockets[id]->is_open())
+  if (m_sockets[id])
   {
-    boost::system::error_code error;
-    m_sockets[id]->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
-    std::cout << "Server::closeConnection() - socket.shutdown() id : " << id << ", " << error.message() << std::endl;
+    if (m_sockets[id]->is_open())
+    {
+      boost::system::error_code error;
+      m_sockets[id]->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+      std::cout << "Server::closeConnection() - socket.shutdown() id : " << id << ", " << error.message() << std::endl;
 
-    m_sockets[id]->close();
-
+      m_sockets[id]->close();
+    }
     m_sockets.erase(id);
     m_threads.erase(id);
   }
@@ -93,10 +95,11 @@ Server::startServerThread()
 void
 Server::stopServer()
 {
-  std::vector<Server::ConnectionId> openIds = getOpenSocketIds();
-  for (std::size_t i = 0; i < openIds.size(); ++i)
+  std::cout << "Server::stopServer()" << std::endl;
+
+  for (auto iter = m_sockets.begin(); iter != m_sockets.end(); ++iter)
   {
-    closeConnection(openIds[i]);
+    closeConnection(iter->first);
   }
 }
 

@@ -27,9 +27,13 @@ ServerWindow::~ServerWindow()
 void
 ServerWindow::createActions()
 {
-  QAction* actionStart = new QAction("Sart Server", this);
+  QAction* actionStart = new QAction("Start Server", this);
   ui->mainToolBar->addAction(actionStart);
   connect(actionStart, SIGNAL(triggered()), this, SLOT(slotStartServer()));
+
+  QAction* actionStopServer = new QAction("Stop Server", this);
+  ui->mainToolBar->addAction(actionStopServer);
+  connect(actionStopServer, SIGNAL(triggered()), this, SLOT(slotStopServer()));
 }
 
 
@@ -57,6 +61,13 @@ void
 ServerWindow::slotStartServer()
 {
   m_server->startServerThread();
+}
+
+
+void
+ServerWindow::slotStopServer()
+{
+  m_server->stopServer();
 }
 
 
