@@ -91,7 +91,7 @@ Server::stopServer()
 {
   std::cout << "Server::stopServer()" << std::endl;
 
-  std::vector<Server::ConnectionId> socketIds = getOpenSocketIds();
+  std::vector<Server::ConnectionId> socketIds = getSocketIds();
   for (std::size_t i = 0; i < socketIds.size(); i++)
   {
     closeConnection(socketIds[i]);
@@ -108,9 +108,15 @@ Server::stopServer()
 void
 Server::startServer()
 {
-  std::cout << "Server::startServer()" << std::endl;
-
-  m_acceptor.reset(new boost::asio::ip::tcp::acceptor(*m_io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), m_port)));
+  try
+  {
+    m_acceptor.reset(new boost::asio::ip::tcp::acceptor(*m_io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), m_port)));
+  }
+  catch (std::exception& e)
+  {
+    std::cerr << "Server::startServer() - error: " << e.what() << std::endl;
+    return;
+  }
 
   m_io_service->reset();
 
@@ -144,6 +150,7 @@ Server::handleAccept(const boost::system::error_code& error, ConnectionId id)
   {
     std::cerr << "Server:HandleAccept() - id: " << id << ", ERROR: " << error.message() << std::endl;
     closeConnection(id);
+    return;
   }
   else
   {
