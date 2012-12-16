@@ -89,7 +89,6 @@ Client::disconnect()
   std::cout << "Client::disconnect() - socket.shutdown(): " << error.message() << std::endl;
 
   m_socket->close();
-  m_io_service->stop();
 }
 
 

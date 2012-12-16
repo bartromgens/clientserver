@@ -8,6 +8,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/asio.hpp>
 
+#include <atomic>
 #include <memory>
 #include <mutex>
 #include <thread>
@@ -30,10 +31,7 @@ public:
    */
   ~Server();
 
-  /**
-   * @brief Starts a new server thread that waits for a new connection
-   */
-  void startServerThread();
+  void startServer();
 
   /**
    * @brief Closes all connections and stops serving
@@ -86,6 +84,8 @@ public:
    */
   std::vector< ConnectionId > getOpenSocketIds() const;
 
+  std::vector<Server::ConnectionId> getSocketIds() const;
+
   /**
    * @brief Returns the number of open sockets
    */
@@ -108,7 +108,16 @@ private:
    *
    * @param id the connection ID
    */
-  void startServing(ConnectionId id);
+  void startAccepting(ConnectionId id);
+
+  void handleAccept(const boost::system::error_code& error, ConnectionId id);
+
+  /**
+   * @brief Starts a new server thread that waits for a new connection
+   */
+  void startServerThread(ConnectionId id);
+
+  void serverLoop(ConnectionId id);
 
   /**
    * @brief Opens a new socket connection and adds it to the map of sockets.
@@ -131,7 +140,9 @@ private:
    * @param id the connection ID
    * @return raw pointer to the socket with the given id
    */
-  boost::asio::ip::tcp::socket* getSocket(ConnectionId id) const;
+  std::shared_ptr<boost::asio::ip::tcp::socket> getSocket(ConnectionId id) const;
+
+  Server::ConnectionId getNextId();
 
   /**
    * @brief Converts a character array to a vector of strings
@@ -164,7 +175,7 @@ private:
   /** map of connection threads, key is the connection ID */
   std::map<ConnectionId, std::unique_ptr<std::thread> > m_threads;
   /** map of sockets that provides blocking stream-oriented socket functionality */
-  std::map<ConnectionId, std::unique_ptr<boost::asio::ip::tcp::socket> > m_sockets;
+  std::map<ConnectionId, std::shared_ptr<boost::asio::ip::tcp::socket> > m_sockets;
 
   std::map<ConnectionId, ConnectionStatus> m_connectionStatuses;
 

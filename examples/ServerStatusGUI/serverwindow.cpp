@@ -16,8 +16,6 @@ ServerWindow::ServerWindow(QWidget *parent) :
 
   connect(m_timer, SIGNAL(timeout()), this, SLOT(update()));
   m_timer->start(100);
-
-  m_server->startServerThread();
 }
 
 
@@ -61,7 +59,8 @@ ServerWindow::updateTable()
 void
 ServerWindow::slotStartServer()
 {
-  m_server->startServerThread();
+  m_serverThread.reset(new std::thread(&Server::startServer, m_server));
+  m_serverThread->detach();
 }
 
 

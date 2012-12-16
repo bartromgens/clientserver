@@ -19,7 +19,7 @@ public:
 
 private:
 
-  void startServing();
+  void startAccepting();
 
 private:
   std::unique_ptr<Server> m_server;

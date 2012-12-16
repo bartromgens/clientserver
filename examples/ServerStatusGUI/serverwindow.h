@@ -35,6 +35,8 @@ private slots:
 private:
   Ui::ServerWindow *ui;
 
+  std::unique_ptr<std::thread> m_serverThread;
+
   Server* m_server;
   QTimer* m_timer;
   QTime m_timeStatusUpdate;

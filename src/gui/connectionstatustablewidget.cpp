@@ -40,7 +40,6 @@ ConnectionStatusTableWidget::updateTable(const std::vector<unsigned int>& thread
 
   if (m_timeStatusUpdate.elapsed() > 980)
   {
-    std::cout << "ServerWindow::updateTable() - elapsed: " << m_timeStatusUpdate.elapsed() << " ms" << std::endl;
     m_timeStatusUpdate.restart();
     m_connectionStatusesTwoSecondAgo = m_connectionStatusesOneSecondAgo;
     m_connectionStatusesOneSecondAgo = m_connectionStatuses;
