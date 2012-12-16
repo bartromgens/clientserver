@@ -39,7 +39,11 @@ Calculator::notifyReceivedData(std::vector<std::string> dataStrings, int connect
       {
         something += std::pow(something, 4) * cos(something) + sin(something);
       }
-      m_server->write(std::to_string(something), connectionId);
+      m_server->write(std::to_string(sum), connectionId);
+    }
+    else
+    {
+      m_server->write("Hello!", connectionId);
     }
   }
   catch (std::exception& e)
