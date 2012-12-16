@@ -18,7 +18,7 @@
  * - Send string based command and arguments to the server.
  * - Receive a reply from the server after sending a message.
  */
-class Client
+class Client : boost::noncopyable
 {
 public:
   /**

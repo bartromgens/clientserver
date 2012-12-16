@@ -43,8 +43,6 @@ Client::createSocket()
 void
 Client::connect()
 {
-  std::lock_guard<std::mutex> lock(m_mutex);
-
   createSocket();
 
   boost::asio::ip::tcp::resolver resolver(*m_io_service);
@@ -72,7 +70,7 @@ Client::connect()
 void
 Client::disconnect()
 {
-  std::lock_guard<std::mutex> lock(m_mutex);
+//  std::lock_guard<std::mutex> lock(m_mutex);
 
   if (!m_socket)
   {
@@ -110,7 +108,7 @@ Client::sendCommand(const std::string& command,
                     const std::vector<std::string>& arguments,
                     std::string separationCharacter) const
 {
-  std::lock_guard<std::mutex> lock(m_mutex);
+//  std::lock_guard<std::mutex> lock(m_mutex);
 
   std::string reply;
 

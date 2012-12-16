@@ -14,7 +14,7 @@
 
 class ServerObserver;
 
-class Server
+class Server : boost::noncopyable
 {
 public:
 
@@ -96,13 +96,6 @@ public:
    */
   std::vector<Server::ConnectionId> getOpenThreadIds() const;
 
-  /**
-   * @brief Returns the status of the connection with the given ID
-   * @param id the connection ID
-   * @return the status of the connection with the given connection ID
-   */
-  ConnectionStatus::EnumConnectionStatus getConnectionStatus(ConnectionId id) const;
-
   std::map<ConnectionId, ConnectionStatus> getConnectionStatuses();
 
 private:
@@ -149,6 +142,13 @@ private:
   std::vector<std::string> convertCharArrayToStringVector(const std::array<char, ClientServerData::defaultBufferSize>& charArray,
                                                           size_t len,
                                                           std::string separationChar = ClientServerData::separationCharacter) const;
+
+  /**
+   * @brief Returns the status of the connection with the given ID
+   * @param id the connection ID
+   * @return the status of the connection with the given connection ID
+   */
+  ConnectionStatus::EnumConnectionStatus getConnectionStatus(ConnectionId id) const;
 
   void updateConnectionStatuses();
 

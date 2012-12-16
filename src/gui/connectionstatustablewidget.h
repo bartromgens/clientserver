@@ -20,12 +20,7 @@ public:
   void updateTable(const std::vector<unsigned int>& threadIds,
                    std::map<Server::ConnectionId, ConnectionStatus> connectionStatuses);
 
-signals:
-  
-public slots:
-
 private:
-
   void createTableHeaders();
   void updateTableRow(int row, unsigned int id);
   

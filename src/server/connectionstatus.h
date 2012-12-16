@@ -1,8 +1,6 @@
 #ifndef CONNECTIONSTATUS_H
 #define CONNECTIONSTATUS_H
 
-//#include <mutex>
-
 class ConnectionStatus
 {
 public:

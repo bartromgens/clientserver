@@ -35,11 +35,11 @@ Calculator::notifyReceivedData(std::vector<std::string> dataStrings, int connect
     {
       double sum = atof(dataStrings[1].c_str()) + atof(dataStrings[2].c_str());
       double something = std::pow(sum, 4) * cos(sum) + sin(sum);
-//      for (std::size_t i = 0; i < 10; ++i)
-//      {
-//        final += std::pow(final, 4) * cos(final) + sin(final);
-//      }
-      m_server->write(std::to_string(sum), connectionId);
+      for (std::size_t i = 0; i < 10; ++i)
+      {
+        something += std::pow(something, 4) * cos(something) + sin(something);
+      }
+      m_server->write(std::to_string(something), connectionId);
     }
   }
   catch (std::exception& e)
