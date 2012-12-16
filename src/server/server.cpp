@@ -180,8 +180,6 @@ Server::serverLoop(ConnectionId id)
     std::array<char, ClientServerData::defaultBufferSize> bufIncoming;
     boost::system::error_code error;
 
-    // receive a command
-
     if (!socket)
     {
       std::cout << "Server::serverLoop() - socket not valid - id: " << id << std::endl;
