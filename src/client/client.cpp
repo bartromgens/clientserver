@@ -1,7 +1,5 @@
 #include "client.h"
 
-#include <cmath>
-#include <thread>
 
 
 Client::Client(const std::string& ip, unsigned short port, const std::string& name)

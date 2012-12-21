@@ -1,13 +1,8 @@
 #include "server.h"
 #include "serverobserver.h"
-#include "connectionstatus.h"
 
 #include <boost/bind.hpp>
 
-#include <iostream>
-#include <thread>
-#include <sstream>
-#include <vector>
 
 
 Server::Server(unsigned short port)

@@ -2,7 +2,6 @@
 
 #include "client.h"
 
-#include <thread>
 
 ClientTestGroup::ClientTestGroup()
 {
