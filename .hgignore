@@ -17,3 +17,8 @@ examples/ClientStatusGUI/moc_clientwindow.cpp
 examples/ServerStatusGUI/ServerStatusGUI.pro.user.2.6pre1
 examples/ClientStatusGUI/ClientStatusGUI.pro.user.2.6pre1
 examples/ServerStatusGUI/moc_connectionstatustablewidget.cpp
+moc_*.cpp
+lib/libserver.so*
+lib/libclient.so*
+projects/examples/servergui/servergui
+projects/examples/clientgui/clientgui
