@@ -5,9 +5,9 @@
 
 DummyApplication::DummyApplication()
   : ServerObserver(),
-    m_server(new Server())
+    m_server()
 {
-  m_server->registerObserver(this);
+//  m_server.registerObserver(this);
 }
 
 
@@ -21,16 +21,8 @@ void
 DummyApplication::run()
 {
   std::cout << "DummyApplication:run()" << std::endl;
-  m_server->startServerThread();
+  m_server.startServer();
   std::cout << "DummyApplication:run() - end!" << std::endl;
-}
-
-
-void
-DummyApplication::startServing()
-{ 
-  std::cout << "DummyApplication:startServing()" << std::endl;
-//  m_server->startServing();
 }
 
 
@@ -60,13 +52,13 @@ DummyApplication::notifyReceivedData(std::vector<std::string> dataStrings, int i
 void
 DummyApplication::write(const std::vector<std::string>& dataStrings, int id)
 {
-  m_server->write(dataStrings, id);
+  m_server.send(dataStrings, id);
 }
 
 
 void
 DummyApplication::write(const std::string& dataString, int id)
 {
-  m_server->write(dataString, id);
+  m_server.send(dataString, id);
 }
 

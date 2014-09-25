@@ -1,13 +1,14 @@
 #ifndef CLIENTWINDOW_H
 #define CLIENTWINDOW_H
 
+#include "client.h"
+
 #include <QMainWindow>
 #include <QTimer>
 #include <QTime>
 
 #include <memory>
 
-#include "client/client.h"
 
 namespace Ui {
 class ClientWindow;

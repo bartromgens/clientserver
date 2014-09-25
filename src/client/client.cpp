@@ -38,7 +38,7 @@ Client::createSocket()
 }
 
 
-void
+bool
 Client::connect()
 {
   std::lock_guard<std::mutex> lock(m_mutex);
@@ -60,10 +60,12 @@ Client::connect()
   }
   if (error)
   {
-    throw boost::system::system_error(error);
+    std::cerr << "Client::connect() - error while trying to connect: " << error.message() << std::endl;
+    return false;
   }
 
   std::cout << "Client::connect() - connected: " << error.message() << std::endl;
+  return true;
 }
 
 
@@ -87,11 +89,12 @@ Client::disconnect()
   std::cout << "Client::disconnect() - socket.shutdown(): " << error.message() << std::endl;
 
   m_socket->close();
+  m_io_service->stop();
 }
 
 
 bool
-Client::isConnected()
+Client::isConnected() const
 {
   if (m_socket)
   {
@@ -113,6 +116,11 @@ Client::sendCommand(const std::string& command,
 
   try
   {
+    if (!isConnected())
+    {
+      throw boost::system::system_error(ECONNABORTED, boost::system::system_category());
+    }
+
     std::array<char, ClientServerData::defaultBufferSize> buf;
     std::size_t len;
 
@@ -191,7 +199,7 @@ Client::getIp() const
 
 
 void
-Client::setPort(const std::string &port)
+Client::setPort(const std::string& port)
 {
   m_port = port;
 }
@@ -210,8 +218,8 @@ Client::getPort() const
   return m_port;
 }
 
-const
-std::string &Client::getName() const
+const std::string&
+Client::getName() const
 {
   return m_name;
 }

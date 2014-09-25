@@ -28,7 +28,7 @@ Calculator::notifyReceivedData(std::vector<std::string> dataStrings, int connect
     if (dataStrings.empty())
     {
       return;
-      m_server->write("received empty message!", connectionId);
+      m_server->send("received empty message!", connectionId);
     }
 
     if (dataStrings[0] == "add")
@@ -39,11 +39,11 @@ Calculator::notifyReceivedData(std::vector<std::string> dataStrings, int connect
       {
         something += std::pow(something, 4) * cos(something) + sin(something);
       }
-      m_server->write(std::to_string(sum), connectionId);
+      m_server->send(std::to_string(sum), connectionId);
     }
     else
     {
-      m_server->write("Hello!", connectionId);
+      m_server->send("Hello!", connectionId);
     }
   }
   catch (std::exception& e)

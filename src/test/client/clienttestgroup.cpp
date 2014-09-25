@@ -16,6 +16,7 @@ ClientTestGroup::~ClientTestGroup()
 void
 ClientTestGroup::startClientThread()
 {
+  std::cout << __PRETTY_FUNCTION__ << std::endl;
   for (int i = 0; i < 4; ++i)
   {
     std::thread t1(&ClientTestGroup::startClient, this, i);
@@ -27,7 +28,7 @@ ClientTestGroup::startClientThread()
 bool
 ClientTestGroup::startClient(int id)
 {
-  std::cout << "ClientTestGroup::startClient()" << std::endl;
+  std::cout << "ClientTestGroup::startClient() -id: " << id << std::endl;
   Client client;
   client.connect();
 
@@ -44,7 +45,7 @@ ClientTestGroup::startClient(int id)
       assert(sum == i*3);
 //      std::cout << "ClientTestGroup::startClient() - " << client.getName() << ", reply: " << reply << std::endl;
     }
-    catch (boost::system::system_error& e)
+    catch (std::exception& e)
     {
       std::cout << "ClientTestGroup::startClient() - ERROR sending command: " << e.what() << std::endl;
       assert(0);

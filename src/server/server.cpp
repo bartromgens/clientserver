@@ -15,11 +15,13 @@ Server::Server(unsigned short port)
     m_nIdCounter(0),
     m_mutex()
 {
+  std::cout << "Server::Server()" << std::endl;
 }
 
 
 Server::~Server()
 {
+  std::cout << "Server::~Server()" << std::endl;
   stopServer();
 }
 
@@ -30,7 +32,7 @@ Server::openConnection(ConnectionId id)
   std::lock_guard<std::mutex> lock(m_mutex);
 
   // add a new socket to the map
-  m_sockets[id].reset(new boost::asio::ip::tcp::socket(*m_io_service));
+  m_sockets[id].reset( new boost::asio::ip::tcp::socket(*m_io_service) );
 
   std::cout << "Server::openConnection() - id: " << id
             << ", open sockets: " << getNOpenSockets()
@@ -60,6 +62,7 @@ Server::closeConnection(ConnectionId id)
       boost::system::error_code error;
       m_sockets[id]->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
       std::cout << "Server::closeConnection() - socket.shutdown() id : " << id << ", " << error.message() << std::endl;
+      m_sockets[id]->close();
     }
     m_sockets.erase(id);
     m_threads.erase(id);
@@ -94,7 +97,11 @@ Server::stopServer()
 
   {
     std::lock_guard<std::mutex> lock(m_mutex);
-    m_acceptor->close();
+
+    if (m_acceptor && m_acceptor->is_open())
+    {
+      m_acceptor->close();
+    }
     m_io_service->stop();
   }
 }
@@ -115,7 +122,7 @@ Server::startServer()
 
   m_io_service->reset();
 
-  startAccepting(getNextId());
+  startAccepting(getUniqueConnectionId());
 
   m_io_service->run();
 }
@@ -130,10 +137,7 @@ Server::startAccepting(ConnectionId id)
 
   std::shared_ptr<boost::asio::ip::tcp::socket> socket = getSocket(id);
 
-  m_acceptor->async_accept(*socket,
-    boost::bind( &Server::handleAccept, this,
-      boost::asio::placeholders::error, id ) );
-
+  m_acceptor->async_accept(*socket, boost::bind( &Server::handleAccept, this, boost::asio::placeholders::error, id ) );
 }
 
 
@@ -147,14 +151,11 @@ Server::handleAccept(const boost::system::error_code& error, ConnectionId id)
     closeConnection(id);
     return;
   }
-  else
-  {
-    startServerThread(id);
-  }
 
-  // IMPORTANT: after connection is accepted and started on its own thread, create new socket to accept...
-  ConnectionId newId = getNextId();
-  startAccepting(newId);
+  startServerThread(id);
+
+  // IMPORTANT: after a connection is accepted and started on its own thread, create new socket to accept...
+  startAccepting( getUniqueConnectionId() );
 }
 
 
@@ -218,7 +219,7 @@ Server::serverLoop(ConnectionId id)
 
 
 Server::ConnectionId
-Server::getNextId()
+Server::getUniqueConnectionId()
 {
   std::lock_guard<std::mutex> lock(m_mutex);
   return m_nIdCounter++;
@@ -226,7 +227,7 @@ Server::getNextId()
 
 
 void
-Server::write(const std::vector<std::string>& messageStrings, ConnectionId id, std::string separationChar)
+Server::send(const std::vector<std::string>& messageStrings, ConnectionId id, std::string separationChar)
 {
   std::string message;
   for (std::size_t i = 0; i < messageStrings.size(); ++i)
@@ -234,14 +235,22 @@ Server::write(const std::vector<std::string>& messageStrings, ConnectionId id, s
     message += separationChar;
     message += messageStrings[i];
   }
-  write(message, id);
+  send(message, id);
 }
 
 
 void
-Server::write(const std::string& message, ConnectionId id)
+Server::send(const std::string& message, ConnectionId id)
 {
   std::shared_ptr<boost::asio::ip::tcp::socket> socket = getSocket(id);
+
+  if (!socket)
+  {
+    std::cerr << "Server::write() - socket for connection id " << id << " does not exist!" << std::endl;
+    return;
+  }
+
+  assert(socket->is_open());
 
   boost::system::error_code error;
   boost::asio::write(*socket, boost::asio::buffer(message), boost::asio::transfer_all(), error);
@@ -261,6 +270,7 @@ Server::write(const std::string& message, ConnectionId id)
 void
 Server::registerObserver(ServerObserver* observer)
 {
+  std::cout << "Server::registerObserver()" << std::endl;
   if (!observer)
   {
     assert(0);
@@ -322,8 +332,7 @@ Server::getNOpenSockets() const
 {
   int nOpen = 0;
 
-  for (auto iter = m_sockets.begin();
-       iter != m_sockets.end(); ++iter)
+  for (auto iter = m_sockets.begin(); iter != m_sockets.end(); ++iter)
   {
     if (iter->second->is_open())
     {
@@ -341,8 +350,7 @@ Server::getOpenSocketIds() const
   std::lock_guard<std::mutex> lock(m_mutex);
   std::vector<ConnectionId> socketIds;
 
-  for (auto iter = m_sockets.begin();
-       iter != m_sockets.end(); ++iter)
+  for (auto iter = m_sockets.begin(); iter != m_sockets.end(); ++iter)
   {
     if (iter->second->is_open())
     {
@@ -360,8 +368,7 @@ Server::getSocketIds() const
   std::lock_guard<std::mutex> lock(m_mutex);
   std::vector<ConnectionId> socketIds;
 
-  for (auto iter = m_sockets.begin();
-       iter != m_sockets.end(); ++iter)
+  for (auto iter = m_sockets.begin(); iter != m_sockets.end(); ++iter)
   {
     socketIds.push_back(iter->first);
   }
@@ -376,9 +383,9 @@ Server::getOpenThreadIds() const
   std::lock_guard<std::mutex> lock(m_mutex);
   std::vector<ConnectionId> threadIds;
 
-  for (auto threadMapIterator = m_threads.begin(); threadMapIterator != m_threads.end(); ++threadMapIterator)
+  for (auto iter = m_threads.begin(); iter != m_threads.end(); ++iter)
   {
-    threadIds.push_back(threadMapIterator->first);
+    threadIds.push_back(iter->first);
   }
 
   return threadIds;
@@ -416,9 +423,9 @@ Server::getConnectionStatuses()
 void
 Server::updateConnectionStatuses()
 {
-  for (auto statusIter = m_connectionStatuses.begin(); statusIter != m_connectionStatuses.end(); ++statusIter)
+  for (auto iter = m_connectionStatuses.begin(); iter != m_connectionStatuses.end(); ++iter)
   {
-    statusIter->second.setStatus( getConnectionStatus(statusIter->first) );
+    iter->second.setStatus( getConnectionStatus(iter->first) );
   }
 }
 

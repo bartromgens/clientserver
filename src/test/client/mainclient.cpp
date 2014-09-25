@@ -1,5 +1,5 @@
-#include "./src/client/client.h"
-#include "./src/client/clienttestgroup.h"
+#include "client/client.h"
+#include "client/clienttestgroup.h"
 
 #include <boost/asio.hpp>
 

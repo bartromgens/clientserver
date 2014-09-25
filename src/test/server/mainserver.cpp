@@ -16,7 +16,5 @@ int main(int argc, char* argv[])
   DummyApplication app;
   app.run();
 
-  usleep(1000*1000*1000);
-
   std::cout << "main() - end!" << std::endl;
 }

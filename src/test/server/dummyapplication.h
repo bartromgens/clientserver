@@ -22,7 +22,7 @@ private:
   void startAccepting();
 
 private:
-  std::unique_ptr<Server> m_server;
+  Server m_server;
 };
 
 #endif // DUMMYAPPLICATION_H

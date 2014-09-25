@@ -1,15 +1,12 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2012-12-15T14:10:12
-#
-#-------------------------------------------------
-
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
-TARGET = ServerStatusGUI
+TARGET = servergui
 TEMPLATE = app
+
+INCLUDEPATH = ../../../include
+
+LIBS += -L/home/bart/dev/clientserver/lib
+LIBS += -lserver
 
 #include general example project settings
 include(../example_settings.pri)
@@ -35,4 +32,3 @@ OTHER_FILES += \
     ../example_settings.pri
 
 OBJECTS_DIR += ./tmp/objects/
-MAKEFILE += MakefileServerStatusGUI
