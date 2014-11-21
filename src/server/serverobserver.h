@@ -29,6 +29,8 @@ public:
    */
   virtual void notifyReceivedData(std::vector<std::string> dataStrings, int id) = 0;
 
+private:
+  Server* m_server;
 };
 
 #endif // SERVEROBSERVER_H

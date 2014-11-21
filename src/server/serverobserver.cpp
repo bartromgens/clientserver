@@ -4,11 +4,14 @@
 
 
 ServerObserver::ServerObserver(Server* server)
+  : m_server(server)
 {
-  server->registerObserver(this);
+  assert(m_server);
+  m_server->registerObserver(this);
 }
 
 
 ServerObserver::~ServerObserver()
 {
+  m_server->unregisterObserver(this);
 }
