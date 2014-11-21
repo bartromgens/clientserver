@@ -7,22 +7,25 @@ DESTDIR = ../../lib
 
 INCLUDEPATH += ../../src/
 DEPENDPATH = $$INCLUDEPATH
-VPATH = $$INCLUDEPATH
+VPATH += $$INCLUDEPATH
 
 LIBS += -lboost_system
 LIBS += -lpthread
 
-
 SOURCES += \
     server/server.cpp \
     server/connectionstatus.cpp \
+    server/serverobserver.cpp \
 
 HEADERS += \
-    src/server/server.h \
-    src/server/connectionstatus.h \
-    src/shared/clientserverdata.h \
+    server/server.h \
+    server/connectionstatus.h \
+    shared/clientserverdata.h \
+    server/serverobserver.h \
 
 OBJECTS_DIR += ./tmp/objects/
 
 QMAKE_CXXFLAGS += -std=c++0x
 QMAKE_CXXFLAGS += -Wall
+
+CONFIG += silent

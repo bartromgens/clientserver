@@ -6,8 +6,8 @@ TARGET = client
 DESTDIR = ../../lib
 
 INCLUDEPATH += ../../src/
-DEPENDPATH = $$INCLUDEPATH
-VPATH = $$INCLUDEPATH
+DEPENDPATH += $$INCLUDEPATH
+VPATH += $$INCLUDEPATH
 
 LIBS += -lboost_system
 LIBS += -lpthread
@@ -22,7 +22,8 @@ HEADERS += \
 
 OBJECTS_DIR += ./tmp/objects/
 
-
 QMAKE_CXXFLAGS += -std=c++0x
 QMAKE_CXXFLAGS += -Wall
 
+
+CONFIG += silent

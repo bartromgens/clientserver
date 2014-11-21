@@ -3,13 +3,13 @@ QT       += core gui
 TARGET = servergui
 TEMPLATE = app
 
-INCLUDEPATH = ../../../include
-
 LIBS += -L/home/bart/dev/clientserver/lib
 LIBS += -lserver
 
+
 #include general example project settings
 include(../example_settings.pri)
+VPATH += $$INCLUDEPATH
 
 SOURCES += main.cpp \
         serverwindow.cpp \
@@ -32,3 +32,5 @@ OTHER_FILES += \
     ../example_settings.pri
 
 OBJECTS_DIR += ./tmp/objects/
+
+CONFIG += silent

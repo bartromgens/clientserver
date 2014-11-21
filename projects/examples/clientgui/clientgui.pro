@@ -3,8 +3,6 @@ QT       += core gui
 TARGET = clientgui
 TEMPLATE = app
 
-INCLUDEPATH = ../../../include
-
 LIBS += -L/home/bart/dev/clientserver/lib
 LIBS += -lclient
 
