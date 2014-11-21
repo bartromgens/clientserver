@@ -3,10 +3,9 @@
 #include <QTime>
 
 Calculator::Calculator(Server *server)
-  : ServerObserver(),
+  : ServerObserver(server),
     m_server(server)
 {
-  m_server->registerObserver(this);
 }
 
 

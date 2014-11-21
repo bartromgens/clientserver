@@ -15,12 +15,12 @@ public:
   /**
    * Constructor.
    */
-  ServerObserver();
+  explicit ServerObserver(Server* server);
 
   /**
    * Destructor
    */
-  ~ServerObserver();
+  virtual ~ServerObserver();
 
   /**
    * notifyReceivedData

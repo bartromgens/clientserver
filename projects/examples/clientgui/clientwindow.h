@@ -1,7 +1,7 @@
 #ifndef CLIENTWINDOW_H
 #define CLIENTWINDOW_H
 
-#include "client.h"
+#include "client/client.h"
 
 #include <QMainWindow>
 #include <QTimer>

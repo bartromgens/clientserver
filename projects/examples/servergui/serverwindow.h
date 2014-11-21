@@ -20,7 +20,7 @@ class ServerWindow : public QMainWindow
   
 public:
   explicit ServerWindow(QWidget *parent = 0);
-  ~ServerWindow();
+  virtual ~ServerWindow();
   
   void createActions();
 

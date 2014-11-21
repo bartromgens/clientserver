@@ -4,7 +4,7 @@
 #include "server/connectionstatus.h"
 #include "server/server.h"
 
-#include <QtGui>
+#include <QHeaderView>
 #include <QTableWidget>
 #include <QTime>
 

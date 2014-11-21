@@ -7,8 +7,8 @@
 class Calculator : public ServerObserver
 {
 public:
-  Calculator(Server* server);
-  ~Calculator();
+  explicit Calculator(Server* server);
+  virtual ~Calculator();
 
   virtual void notifyReceivedData(std::vector<std::string> dataStrings, int connectionId);
 
