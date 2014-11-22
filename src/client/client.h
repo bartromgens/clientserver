@@ -70,7 +70,7 @@ public:
   /**
    * Returns the set server port number
    */
-  const std::string& getPort() const;
+  unsigned short getPort() const;
 
   /**
    * Returns the client name.
@@ -104,12 +104,6 @@ private:
    * Set the port of the server
    * @param port server port number
    */
-  void setPort(const std::string& port);
-
-  /**
-   * Set the port of the server
-   * @param port server port number
-   */
   void setPort(unsigned short port);
 
 private:
@@ -119,7 +113,7 @@ private:
   std::unique_ptr<boost::asio::ip::tcp::socket> m_socket;
 
   /** Server port number */
-  std::string m_port;
+  unsigned short m_port;
   /** IP address of the server to connect to */
   std::string m_ip;
   /** Client name*/

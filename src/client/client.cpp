@@ -5,7 +5,7 @@
 Client::Client(const std::string& ip, unsigned short port, const std::string& name)
   : m_io_service(new boost::asio::io_service()),
     m_socket(),
-    m_port(),
+    m_port(port),
     m_ip(),
     m_name(name),
     m_mutex()
@@ -46,7 +46,7 @@ Client::connect()
   createSocket();
 
   boost::asio::ip::tcp::resolver resolver(*m_io_service);
-  boost::asio::ip::tcp::resolver::query query(m_ip, m_port);
+  boost::asio::ip::tcp::resolver::query query(m_ip, std::to_string(m_port));
   boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
   boost::asio::ip::tcp::resolver::iterator end;
 
@@ -199,24 +199,18 @@ Client::getIp() const
 
 
 void
-Client::setPort(const std::string& port)
+Client::setPort(unsigned short port)
 {
   m_port = port;
 }
 
 
-void
-Client::setPort(unsigned short port)
-{
-  setPort(std::to_string(port));
-}
-
-
-const std::string&
+unsigned short
 Client::getPort() const
 {
   return m_port;
 }
+
 
 const std::string&
 Client::getName() const
