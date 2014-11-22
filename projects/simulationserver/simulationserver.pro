@@ -7,15 +7,17 @@ LIBS += -L/home/bart/dev/clientserver/lib
 LIBS += -lserver
 
 #include general example project settings
-include(example_settings.pri)
+include(../common_settings.pri)
 
-SOURCES += main.cpp \
+SOURCES += \
+        main.cpp \
         serverwindow.cpp \
         gui/connectionstatustablewidget.cpp \
         simulationserver.cpp \
         message.cpp \
 
-HEADERS  += serverwindow.h \
+HEADERS  += \
+        serverwindow.h \
         server/connectionstatus.h \
         gui/connectionstatustablewidget.h \
         simulationserver.h \
@@ -24,9 +26,6 @@ HEADERS  += serverwindow.h \
 FORMS    += serverwindow.ui
 
 OTHER_FILES += \
-    ../example_settings.pri \
-    test.json
-
-OBJECTS_DIR += ./tmp/objects/
+    ../common_settings.pri \
 
 CONFIG += silent

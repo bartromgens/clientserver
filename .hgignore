@@ -22,3 +22,6 @@ lib/libserver.so*
 lib/libclient.so*
 projects/examples/servergui/servergui
 projects/examples/clientgui/clientgui
+*/generated/*
+projects/simulationclient/simulationclient
+projects/simulationserver/simulationserver

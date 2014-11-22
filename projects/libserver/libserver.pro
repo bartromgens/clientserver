@@ -23,7 +23,14 @@ HEADERS += \
     shared/clientserverdata.h \
     server/serverobserver.h \
 
-OBJECTS_DIR += ./tmp/objects/
+CONFIG(debug, debug|release) {
+  OBJECTS_DIR = ./tmp/debug
+} else {
+  OBJECTS_DIR = ./tmp/release
+}
+
+UI_DIR += ./generated
+MOC_DIR += ./generated
 
 QMAKE_CXXFLAGS += -std=c++0x
 QMAKE_CXXFLAGS += -Wall

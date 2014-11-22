@@ -7,7 +7,7 @@ LIBS += -L/home/bart/dev/clientserver/lib
 LIBS += -lclient
 
 #include general example project settings
-include(example_settings.pri)
+include(../common_settings.pri)
 
 SOURCES += \
         main.cpp \
@@ -22,8 +22,6 @@ HEADERS  += \
 FORMS    +=  clientwindow.ui
 
 OTHER_FILES += \
-    ../example_settings.pri
-
-OBJECTS_DIR += ./tmp/objects/
+    ../common_settings.pri \
 
 CONFIG += silent
