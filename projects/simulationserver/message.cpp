@@ -4,7 +4,6 @@
 #include <algorithm>
 
 // Message //
-
 const int Message::ms_version = 1;
 
 Message::Message()
@@ -19,7 +18,7 @@ Message*
 Message::createMessageFromJson(const std::string& json)
 {
   MessageType type = Message::getMessageTypeFromJson(json);
-  Message* message;
+  Message* message = 0;
   switch (type)
   {
     case parameters:
