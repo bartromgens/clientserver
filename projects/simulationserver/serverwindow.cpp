@@ -2,7 +2,7 @@
 #include "ui_serverwindow.h"
 
 #include "simulationserver.h"
-#include "message.h"
+
 
 ServerWindow::ServerWindow(QWidget *parent) :
   QMainWindow(parent),

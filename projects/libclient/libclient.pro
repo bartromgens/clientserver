@@ -15,6 +15,7 @@ LIBS += -lpthread
 
 SOURCES += \
     client/client.cpp \
+    shared/message.cpp \
 
 HEADERS += \
     client/client.h \

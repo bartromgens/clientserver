@@ -4,7 +4,7 @@
 #include "server/server.h"
 #include "server/serverobserver.h"
 
-class Message;
+class MessageJSON;
 
 class SimulationServer : public ServerObserver
 {
@@ -13,10 +13,10 @@ public:
   virtual ~SimulationServer();
 
 protected:
-  virtual void notifyReceivedData(std::vector<std::string> dataStrings, int connectionId);
+  virtual void notifyReceivedData(const Message& message, int connectionId);
 
 private:
-  void sendMessage(Message* message, int connectionId);
+  void sendMessage(MessageJSON* message, int connectionId);
 
 private:
   Server* m_server;

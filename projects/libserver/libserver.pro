@@ -13,15 +13,17 @@ LIBS += -lboost_system
 LIBS += -lpthread
 
 SOURCES += \
-    server/server.cpp \
     server/connectionstatus.cpp \
+    server/server.cpp \
     server/serverobserver.cpp \
+    shared/message.cpp \
 
 HEADERS += \
-    server/server.h \
     server/connectionstatus.h \
-    shared/clientserverdata.h \
+    server/server.h \
     server/serverobserver.h \
+    shared/clientserverdata.h \
+    shared/message.h \
 
 CONFIG(debug, debug|release) {
   OBJECTS_DIR = ./tmp/debug

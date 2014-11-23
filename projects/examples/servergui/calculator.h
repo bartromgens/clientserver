@@ -10,7 +10,7 @@ public:
   explicit Calculator(Server* server);
   virtual ~Calculator();
 
-  virtual void notifyReceivedData(std::vector<std::string> dataStrings, int connectionId);
+  virtual void notifyReceivedData(const Message &message, int connectionId);
 
 private:
   Server* m_server;

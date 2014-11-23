@@ -1,8 +1,9 @@
 #include "server.h"
 #include "serverobserver.h"
 
-#include <boost/bind.hpp>
+#include "shared/message.h"
 
+#include <boost/bind.hpp>
 
 
 Server::Server(unsigned short port)
@@ -207,9 +208,12 @@ Server::serverLoop(ConnectionId id)
       break;
     }
 
-    std::vector<std::string> incomingStringVec = convertCharArrayToStringVector(bufIncoming, len);
+//    std::vector<std::string> incomingStringVec = convertCharArrayToStringVector(bufIncoming, len);
 
-    notifyObservers(incomingStringVec, id);
+    Message message;
+    message.fromRawString( bufIncoming.data() );
+
+    notifyObservers(message, id);
   }
 
   closeConnection(id);
@@ -226,21 +230,21 @@ Server::getUniqueConnectionId()
 }
 
 
-void
-Server::send(const std::vector<std::string>& messageStrings, ConnectionId id, std::string separationChar)
-{
-  std::string message;
-  for (std::size_t i = 0; i < messageStrings.size(); ++i)
-  {
-    message += separationChar;
-    message += messageStrings[i];
-  }
-  send(message, id);
-}
+//void
+//Server::send(const std::vector<std::string>& messageStrings, ConnectionId id, std::string separationChar)
+//{
+//  std::string message;
+//  for (std::size_t i = 0; i < messageStrings.size(); ++i)
+//  {
+//    message += separationChar;
+//    message += messageStrings[i];
+//  }
+//  send(message, id);
+//}
 
 
 void
-Server::send(const std::string& message, ConnectionId id)
+Server::send(const Message& message, ConnectionId id)
 {
   std::shared_ptr<boost::asio::ip::tcp::socket> socket = getSocket(id);
 
@@ -252,8 +256,10 @@ Server::send(const std::string& message, ConnectionId id)
 
   assert(socket->is_open());
 
+  std::string messageString = message.createMessage();
+
   boost::system::error_code error;
-  boost::asio::write(*socket, boost::asio::buffer(message), boost::asio::transfer_all(), error);
+  boost::asio::write(*socket, boost::asio::buffer( messageString ), boost::asio::transfer_all(), error);
   if (error)
   {
     std::cerr << "Server::write() - : " << error.message() << std::endl;
@@ -262,7 +268,7 @@ Server::send(const std::string& message, ConnectionId id)
   else
   {
     std::lock_guard<std::mutex> lock(m_mutex);
-    m_connectionStatuses[id].addTotalDataUp(message.size());
+    m_connectionStatuses[id].addTotalDataUp(messageString.size());
   }
 }
 
@@ -297,7 +303,7 @@ Server::unregisterObserver(ServerObserver* observer)
 
 
 void
-Server::notifyObservers(std::vector<std::string> dataStrings, ConnectionId id)
+Server::notifyObservers(const Message& message, ConnectionId id)
 {
   std::vector<ServerObserver*> observers;
   {
@@ -306,9 +312,9 @@ Server::notifyObservers(std::vector<std::string> dataStrings, ConnectionId id)
   }
 
   std::for_each(observers.begin(), observers.end(),
-                [&dataStrings, &id](ServerObserver* observer)
+                [&message, &id](ServerObserver* observer)
                 {
-                  observer->notifyReceivedData(dataStrings, id);
+                  observer->notifyReceivedData(message, id);
                 });
 }
 

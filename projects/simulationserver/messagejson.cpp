@@ -1,24 +1,24 @@
-#include "message.h"
+#include "messagejson.h"
 
 #include <vector>
 #include <algorithm>
 
-// Message //
-const int Message::ms_version = 1;
+// MessageJSON //
+const int MessageJSON::ms_version = 1;
 
-Message::Message()
+MessageJSON::MessageJSON()
 {
 }
 
-Message::~Message()
+MessageJSON::~MessageJSON()
 {
 }
 
-Message*
-Message::createMessageFromJson(const std::string& json)
+MessageJSON*
+MessageJSON::createMessageFromJson(const std::string& json)
 {
-  MessageType type = Message::getMessageTypeFromJson(json);
-  Message* message = 0;
+  MessageType type = MessageJSON::getMessageTypeFromJson(json);
+  MessageJSON* message = 0;
   switch (type)
   {
     case parameters:
@@ -46,13 +46,13 @@ Message::createMessageFromJson(const std::string& json)
 }
 
 int
-Message::getVersion()
+MessageJSON::getVersion()
 {
   return ms_version;
 }
 
 boost::property_tree::ptree
-Message::getTreeFromJson(const std::string& json)
+MessageJSON::getTreeFromJson(const std::string& json)
 {
   boost::property_tree::ptree pt;
   if (json.empty())
@@ -76,8 +76,8 @@ Message::getTreeFromJson(const std::string& json)
   return pt;
 }
 
-Message::MessageType
-Message::getMessageTypeFromJson(const std::string& json)
+MessageJSON::MessageType
+MessageJSON::getMessageTypeFromJson(const std::string& json)
 {
   boost::property_tree::ptree pt = getTreeFromJson(json);
 
@@ -94,7 +94,7 @@ Message::getMessageTypeFromJson(const std::string& json)
 }
 
 void
-Message::addCommandIdAndVersion(boost::property_tree::ptree& pt) const
+MessageJSON::addCommandIdAndVersion(boost::property_tree::ptree& pt) const
 {
   pt.put("message.id", getMessageType());
   pt.put("message.version", getVersion());
@@ -102,7 +102,7 @@ Message::addCommandIdAndVersion(boost::property_tree::ptree& pt) const
 
 
 void
-Message::print(boost::property_tree::ptree pt)
+MessageJSON::print(boost::property_tree::ptree pt)
 {
     using boost::property_tree::ptree;
     ptree::const_iterator end = pt.end();
@@ -116,7 +116,7 @@ Message::print(boost::property_tree::ptree pt)
 
 // GetParameters //
 Parameters::Parameters() :
-  Message(),
+  MessageJSON(),
   m_parameters()
 {
 }
@@ -193,7 +193,7 @@ Parameters::deserialize(const std::string& json)
   }
 }
 
-Message*
+MessageJSON*
 Parameters::createReply() const
 {
   return 0;
@@ -226,7 +226,7 @@ GetParameters::deserialize(const std::string& /*json*/)
 
 }
 
-Message*
+MessageJSON*
 GetParameters::createReply() const
 {
   std::vector<Parameter> parameters;
@@ -235,7 +235,7 @@ GetParameters::createReply() const
   Parameters* paramsraw = new Parameters();
   paramsraw->setParameters(parameters);
 
-  Message* params(paramsraw);
+  MessageJSON* params(paramsraw);
 
   return params;
 }

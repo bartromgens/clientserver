@@ -13,11 +13,11 @@ SOURCES += \
         main.cpp \
         clientwindow.cpp \
         client/client.cpp \
-        ../simulationserver/message.cpp \
+        ../simulationserver/messagejson.cpp \
 
 HEADERS  += \
         clientwindow.h \
-        ../simulationserver/message.h \
+        ../simulationserver/messagejson.h \
 
 FORMS    +=  clientwindow.ui
 

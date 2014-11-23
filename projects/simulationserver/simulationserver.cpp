@@ -1,6 +1,6 @@
 #include "simulationserver.h"
 
-#include "message.h"
+#include "messagejson.h"
 
 SimulationServer::SimulationServer(Server* server)
   : ServerObserver(server),
@@ -16,7 +16,7 @@ SimulationServer::~SimulationServer()
 
 
 void
-SimulationServer::sendMessage(Message* message, int connectionId)
+SimulationServer::sendMessage(MessageJSON* message, int connectionId)
 {
   std::cout << __PRETTY_FUNCTION__ << std::endl;
   if (!message)
@@ -25,26 +25,29 @@ SimulationServer::sendMessage(Message* message, int connectionId)
     return;
   }
   std::cout << message->serialize() << std::endl;
-  m_server->send(message->serialize(), connectionId);
+
+  Message messageRaw;
+  messageRaw.setData( message->serialize() );
+  m_server->send( messageRaw, connectionId);
 }
 
 
 void
-SimulationServer::notifyReceivedData(std::vector<std::string> dataStrings, int connectionId)
+SimulationServer::notifyReceivedData(const Message& message, int connectionId)
 {
   std::cout << __PRETTY_FUNCTION__ << std::endl;
-  std::string json = dataStrings.front();
+  std::string json = message.getData();
   std::cout << json << std::endl;
 
   try
   {
-    Message* received = Message::createMessageFromJson(json);
+    MessageJSON* received = MessageJSON::createMessageFromJson(json);
     if (!received)
     {
       return;
     }
 
-    Message* reply = received->createReply();
+    MessageJSON* reply = received->createReply();
     if (!reply)
     {
       return;

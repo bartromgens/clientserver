@@ -13,6 +13,8 @@
 #include <mutex>
 #include <thread>
 
+class Message;
+
 class ServerObserver;
 
 class Server : boost::noncopyable
@@ -44,18 +46,18 @@ public:
    * @param id the connection ID
    * @throws boost::system::system_error socket write error
    */
-  void send(const std::string& message, ConnectionId id);
+  void send(const Message& message, ConnectionId id);
 
-  /**
-   * writes a vector of strings to the socket with the given id
-   * @param messageStrings the vector of strings to send to the server
-   * @param id the connection ID
-   * @param separationChar the character used to separate strings in the vector when sending it to the client
-   * @throws boost::system::system_error socket write error
-   */
-  void send(const std::vector<std::string>& messageStrings,
-            ConnectionId id,
-            std::string separationChar = ClientServerData::separationCharacter);
+//  /**
+//   * writes a vector of strings to the socket with the given id
+//   * @param messageStrings the vector of strings to send to the server
+//   * @param id the connection ID
+//   * @param separationChar the character used to separate strings in the vector when sending it to the client
+//   * @throws boost::system::system_error socket write error
+//   */
+//  void send(const std::vector<std::string>& messageStrings,
+//            ConnectionId id,
+//            std::string separationChar = ClientServerData::separationCharacter);
 
   /**
    * Register an observer
@@ -72,7 +74,7 @@ public:
    * @param dataStrings the incoming data
    * @param id the connection ID
    */
-  void notifyObservers(std::vector<std::string> dataStrings, ConnectionId id);
+  void notifyObservers(const Message& message, ConnectionId id);
 
   /**
    * Returns the number of connection threads

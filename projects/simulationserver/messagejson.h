@@ -1,5 +1,5 @@
-#ifndef MESSAGE_H
-#define MESSAGE_H
+#ifndef MESSAGEJSON_H
+#define MESSAGEJSON_H
 
 #include "boost/property_tree/ptree.hpp"
 #include "boost/property_tree/json_parser.hpp"
@@ -19,7 +19,7 @@ struct Parameter
 };
 
 
-class Message : boost::noncopyable
+class MessageJSON : boost::noncopyable
 {
 public:
   enum MessageType
@@ -30,16 +30,16 @@ public:
   };
 
 public:
-  explicit Message();
-  virtual ~Message();
+  explicit MessageJSON();
+  virtual ~MessageJSON();
 
   virtual std::string serialize() const = 0;
   virtual void deserialize(const std::string& json) = 0;
 
-  static Message* createMessageFromJson(const std::string& json);
-  virtual Message* createReply() const = 0;
+  static MessageJSON* createMessageFromJson(const std::string& json);
+  virtual MessageJSON* createReply() const = 0;
 
-  virtual Message::MessageType getMessageType() const = 0;
+  virtual MessageJSON::MessageType getMessageType() const = 0;
 
   static MessageType getMessageTypeFromJson(const std::string& json);
 
@@ -56,7 +56,7 @@ private:
 };
 
 
-class GetParameters : public Message
+class GetParameters : public MessageJSON
 {
 public:
   GetParameters();
@@ -65,9 +65,9 @@ public:
   virtual std::string serialize() const;
   virtual void deserialize(const std::string& json);
 
-  virtual Message* createReply() const;
+  virtual MessageJSON* createReply() const;
 
-  virtual Message::MessageType getMessageType() const
+  virtual MessageJSON::MessageType getMessageType() const
   {
     return getParameters;
   }
@@ -75,7 +75,7 @@ public:
 };
 
 
-class Parameters : public Message
+class Parameters : public MessageJSON
 {
 public:
   Parameters();
@@ -84,12 +84,12 @@ public:
   virtual std::string serialize() const;
   virtual void deserialize(const std::string& json);
 
-  virtual Message* createReply() const;
+  virtual MessageJSON* createReply() const;
 
   void setParameters(const std::vector<Parameter>& parameters );
   const std::vector<Parameter>& getParameters() const;
 
-  virtual Message::MessageType getMessageType() const
+  virtual MessageJSON::MessageType getMessageType() const
   {
     return parameters;
   }
@@ -98,4 +98,4 @@ private:
   std::vector<Parameter> m_parameters;
 };
 
-#endif // MESSAGES_H
+#endif // MESSAGEJSON_H
