@@ -25,6 +25,20 @@ Message::~Message()
 }
 
 
+const std::string&
+Message::getData() const
+{
+  return m_data;
+}
+
+
+void
+Message::setData(const std::string &data)
+{
+  m_data = data;
+}
+
+
 std::string
 Message::createMessage() const
 {

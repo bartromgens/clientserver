@@ -15,23 +15,17 @@ public:
   explicit Message(unsigned int version, unsigned int id);
   virtual ~Message();
 
-  const std::string& getData() const
-  {
-    return m_data;
-  }
-
-  void setData(const std::string& data)
-  {
-    m_data = data;
-  }
-
   std::string createMessage() const;
   void fromRawString(const std::string& dataRaw);
+
+  const std::string& getData() const;
+  void setData(const std::string& data);
 
 private:
   unsigned int m_version;
   unsigned int m_id;
   std::string m_data;
+
   static const std::string m_separationCharacter;
 };
 
