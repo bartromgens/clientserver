@@ -48,17 +48,6 @@ public:
    */
   void send(const Message& message, ConnectionId id);
 
-//  /**
-//   * writes a vector of strings to the socket with the given id
-//   * @param messageStrings the vector of strings to send to the server
-//   * @param id the connection ID
-//   * @param separationChar the character used to separate strings in the vector when sending it to the client
-//   * @throws boost::system::system_error socket write error
-//   */
-//  void send(const std::vector<std::string>& messageStrings,
-//            ConnectionId id,
-//            std::string separationChar = ClientServerData::separationCharacter);
-
   /**
    * Register an observer
    */
@@ -71,7 +60,7 @@ public:
 
   /**
    * Notifies the observers with the incoming data
-   * @param dataStrings the incoming data
+   * @param message the incoming message
    * @param id the connection ID
    */
   void notifyObservers(const Message& message, ConnectionId id);

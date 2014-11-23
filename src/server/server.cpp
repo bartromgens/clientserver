@@ -227,19 +227,6 @@ Server::getUniqueConnectionId()
 }
 
 
-//void
-//Server::send(const std::vector<std::string>& messageStrings, ConnectionId id, std::string separationChar)
-//{
-//  std::string message;
-//  for (std::size_t i = 0; i < messageStrings.size(); ++i)
-//  {
-//    message += separationChar;
-//    message += messageStrings[i];
-//  }
-//  send(message, id);
-//}
-
-
 void
 Server::send(const Message& message, ConnectionId id)
 {

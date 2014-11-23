@@ -32,19 +32,12 @@ Client::~Client()
 }
 
 
-void
-Client::createSocket()
-{
-  m_socket.reset(new boost::asio::ip::tcp::socket(*m_io_service));
-}
-
-
 bool
 Client::connect()
 {
   std::lock_guard<std::mutex> lock(m_mutex);
 
-  createSocket();
+  m_socket.reset(new boost::asio::ip::tcp::socket(*m_io_service));
 
   boost::asio::ip::tcp::resolver resolver(*m_io_service);
   boost::asio::ip::tcp::resolver::query query(m_ip, std::to_string(m_port));

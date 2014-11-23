@@ -78,12 +78,6 @@ public:
   const std::string& getName() const;
 
 private:
-  /**
-   * Open the client by creating a io_service and new socket.
-   * When it does not yet exist, a new io_service is created
-   * A new socket is created (the old one deleted)
-   */
-  void createSocket();
 
   /**
    * Set the IP address of the server, 127.0.0.1 for localhome (default)
