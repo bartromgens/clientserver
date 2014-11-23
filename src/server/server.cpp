@@ -56,19 +56,21 @@ Server::closeConnection(ConnectionId id)
     return;
   }
 
-  if (m_sockets[id])
+  if (!m_sockets[id])
   {
-    if (m_sockets[id]->is_open())
-    {
-      boost::system::error_code error;
-      m_sockets[id]->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
-      std::cout << "Server::closeConnection() - socket.shutdown() id : " << id << ", " << error.message() << std::endl;
-      m_sockets[id]->close();
-    }
-    m_sockets.erase(id);
-    m_threads.erase(id);
-    m_connectionStatuses.erase(id);
+    return;
   }
+
+  if (m_sockets[id]->is_open())
+  {
+    boost::system::error_code error;
+    m_sockets[id]->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+    std::cout << "Server::closeConnection() - socket.shutdown() id : " << id << ", " << error.message() << std::endl;
+    m_sockets[id]->close();
+  }
+  m_sockets.erase(id);
+  m_threads.erase(id);
+  m_connectionStatuses.erase(id);
 }
 
 
@@ -96,15 +98,13 @@ Server::stopServer()
     closeConnection(socketIds[i]);
   }
 
-  {
-    std::lock_guard<std::mutex> lock(m_mutex);
+  std::lock_guard<std::mutex> lock(m_mutex);
 
-    if (m_acceptor && m_acceptor->is_open())
-    {
-      m_acceptor->close();
-    }
-    m_io_service->stop();
+  if (m_acceptor && m_acceptor->is_open())
+  {
+    m_acceptor->close();
   }
+  m_io_service->stop();
 }
 
 
@@ -181,15 +181,14 @@ Server::serverLoop(ConnectionId id)
 
   while (isOk)
   {
-    std::array<char, ClientServerData::defaultBufferSize> bufIncoming;
-    boost::system::error_code error;
-
     if (!socket)
     {
       std::cout << "Server::serverLoop() - socket not valid - id: " << id << std::endl;
       assert(socket);
     }
 
+    std::array<char, ClientServerData::defaultBufferSize> bufIncoming;
+    boost::system::error_code error;
     std::size_t len = socket->read_some(boost::asio::buffer(bufIncoming), error);
 
     {
@@ -207,8 +206,6 @@ Server::serverLoop(ConnectionId id)
       std::cerr << "Server:serverLoop() - error reading from connection:" << error.message() << std::endl;
       break;
     }
-
-//    std::vector<std::string> incomingStringVec = convertCharArrayToStringVector(bufIncoming, len);
 
     Message message;
     message.fromRawString( bufIncoming.data() );
@@ -316,20 +313,6 @@ Server::notifyObservers(const Message& message, ConnectionId id)
                 {
                   observer->notifyReceivedData(message, id);
                 });
-}
-
-
-std::vector<std::string>
-Server::convertCharArrayToStringVector(const std::array<char, ClientServerData::defaultBufferSize>& bufIncoming,
-                                       std::size_t len,
-                                       std::string separationChar) const
-{
-  std::string bufString = bufIncoming.data();
-  bufString.resize(len);
-  std::vector<std::string> newState_str;
-  boost::split(newState_str, bufString, boost::is_any_of(separationChar));
-
-  return newState_str;
 }
 
 

@@ -32,7 +32,7 @@ private:
   unsigned int m_version;
   unsigned int m_id;
   std::string m_data;
-  std::string m_sepChar;
+  static const std::string m_separationCharacter;
 };
 
 #endif // MESSAGE_H

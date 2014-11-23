@@ -147,16 +147,6 @@ private:
   Server::ConnectionId getUniqueConnectionId();
 
   /**
-   * Converts a character array to a vector of strings
-   * @param charArray the array
-   * @param len the size of the actual array
-   * @return a vector of strings
-   */
-  std::vector<std::string> convertCharArrayToStringVector(const std::array<char, ClientServerData::defaultBufferSize>& charArray,
-                                                          size_t len,
-                                                          std::string separationChar = ClientServerData::separationCharacter) const;
-
-  /**
    * Returns the status of the connection with the given ID
    * @param id the connection ID
    * @return the status of the connection with the given connection ID

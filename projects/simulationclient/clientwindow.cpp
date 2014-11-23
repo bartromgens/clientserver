@@ -1,7 +1,9 @@
 #include "clientwindow.h"
 #include "ui_clientwindow.h"
 
-#include "../simulationserver/message.h"
+#include "shared/message.h"
+
+#include "../simulationserver/messagejson.h"
 
 #include <thread>
 
@@ -123,10 +125,12 @@ ClientWindow::runClientTest(int id)
 
   GetParameters command;
   std::string json = command.serialize();
-  std::vector<std::string> arguments;
   std::cout << json << std::endl;
 
-  std::string reply = m_clients[id]->sendCommand( json, arguments );
+  Message message(0, 0);
+  message.setData( json );
+
+  std::string reply = m_clients[id]->sendMessage( message );
   Parameters parametersMessage;
   parametersMessage.deserialize(reply);
 

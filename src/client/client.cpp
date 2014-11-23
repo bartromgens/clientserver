@@ -1,5 +1,6 @@
 #include "client.h"
 
+#include "shared/message.h"
 
 
 Client::Client(const std::string& ip, unsigned short port, const std::string& name)
@@ -106,12 +107,9 @@ Client::isConnected() const
 
 
 std::string
-Client::sendCommand(const std::string& command,
-                    const std::vector<std::string>& arguments,
-                    std::string separationCharacter) const
+Client::sendMessage(const Message& message) const
 {
   std::lock_guard<std::mutex> lock(m_mutex);
-
   std::string reply;
 
   try
@@ -121,34 +119,29 @@ Client::sendCommand(const std::string& command,
       throw boost::system::system_error(ECONNABORTED, boost::system::system_category());
     }
 
-    std::array<char, ClientServerData::defaultBufferSize> buf;
-    std::size_t len;
-
-    boost::system::error_code error;
-
-    std::string message = createMessage(command, arguments, separationCharacter);
-
     // send to server
-    boost::asio::write(*m_socket, boost::asio::buffer(message), boost::asio::transfer_all(), error);
+    boost::system::error_code error;
+    boost::asio::write(*m_socket, boost::asio::buffer( message.createMessage() ), boost::asio::transfer_all(), error);
     if (error)
     {
       throw boost::system::system_error(error);
     }
 
     // receive reply
-    len = m_socket->read_some(boost::asio::buffer(buf), error);
-
-    reply = buf.data();
-    reply.resize(len);
+    std::array<char, ClientServerData::defaultBufferSize> buffer;
+    std::size_t len = m_socket->read_some(boost::asio::buffer(buffer), error);
 
     if (error == boost::asio::error::eof)
     {
-      std::cout << "Client::sendCommand() - connection closed cleanly by peer." << std::endl;
+      std::cout << "Client::sendMessage() - connection closed cleanly by peer." << std::endl;
     }
     else if (error)
     {
       throw boost::system::system_error(error); // Some other error.
     }
+
+    reply = buffer.data();
+    reply.resize(len);
   }
   catch (std::exception& e)
   {
@@ -157,19 +150,6 @@ Client::sendCommand(const std::string& command,
   }
 
   return reply;
-}
-
-
-std::string
-Client::createMessage(const std::string& command, const std::vector<std::string>& arguments, std::string separationCharacter) const
-{
-  std::string message = command;
-  for (std::size_t i = 0; i < arguments.size(); ++i)
-  {
-    message += separationCharacter + arguments[i];
-  }
-
-  return message;
 }
 
 

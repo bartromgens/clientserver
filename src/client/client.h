@@ -10,6 +10,8 @@
 #include <mutex>
 #include <vector>
 
+class Message;
+
 /**
  * Client side of a synchronous network connection, based on a tcp socket connection.
  *
@@ -58,9 +60,7 @@ public:
    * @throws boost::system::system_error read or write error
    * @return the server reply message
    */
-  std::string sendCommand(const std::string& command,
-                          const std::vector<std::string>& arguments,
-                          std::string separationCharacter = ClientServerData::separationCharacter) const;
+  std::string sendMessage(const Message &message) const;
 
   /**
    * Returns the set server ip address.
@@ -84,15 +84,6 @@ private:
    * A new socket is created (the old one deleted)
    */
   void createSocket();
-
-  /**
-   * Creates a message that can be writen to the socket, from a command and string vector arguments.
-   * @param command the command
-   * @param arguments the arguments
-   * @param separationCharacter the separation character.
-   * @return the message that can be written to the socket
-   */
-  std::string createMessage(const std::string& command, const std::vector<std::string>& arguments, std::string separationCharacter) const;
 
   /**
    * Set the IP address of the server, 127.0.0.1 for localhome (default)

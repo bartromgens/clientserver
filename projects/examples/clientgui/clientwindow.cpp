@@ -129,7 +129,7 @@ ClientWindow::runClientTest(int id)
 
     try
     {
-      std::string reply = m_clients[id]->sendCommand("add", arguments);
+//      std::string reply = m_clients[id]->sendMessage("add", arguments);
 //      std::cout << "ClientWindow::slotGetSumAllClients() - client: " << id << ", reply: " << atoi(reply.c_str()) << std::endl;
 //      assert(atoi(reply.c_str()) == 3*i);
     }
