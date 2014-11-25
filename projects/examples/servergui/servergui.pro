@@ -3,6 +3,10 @@ QT       += core gui
 TARGET = servergui
 TEMPLATE = app
 
+LIBS += -L/home/bart/dev/clientserver/lib
+LIBS += -lserver
+
+
 #include general example project settings
 include(../example_settings.pri)
 VPATH += $$INCLUDEPATH
@@ -26,5 +30,3 @@ FORMS    += serverwindow.ui
 
 OTHER_FILES += \
     ../example_settings.pri
-
-CONFIG += silent

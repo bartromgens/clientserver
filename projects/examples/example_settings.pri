@@ -2,14 +2,11 @@
 INCLUDEPATH += ../../../src/
 DEPENDPATH = $$INCLUDEPATH
 
-# client library
-LIBS += -L../../../lib
-LIBS += -lclient
-LIBS += -lserver
-
 # boost libraries
 LIBS += -lboost_system
 LIBS += -lpthread
+
+CONFIG += silent
 
 # compiler settings
 QMAKE_CXXFLAGS += -std=c++0x
@@ -23,4 +20,3 @@ CONFIG(debug, debug|release) {
 
 UI_DIR += ./generated
 MOC_DIR += ./generated
-
