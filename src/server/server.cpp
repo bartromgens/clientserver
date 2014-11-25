@@ -52,7 +52,7 @@ Server::closeConnection(ConnectionId id)
 
   if (m_sockets.find(id) == m_sockets.end())
   {
-    std::cerr << "Server::closeConnection - connection with id " << id << " does not exist." << std::endl;
+    std::cerr << "Server::closeConnection - ERROR: connection with id " << id << " does not exist." << std::endl;
     return;
   }
 
@@ -117,7 +117,7 @@ Server::startServer()
   }
   catch (std::exception& e)
   {
-    std::cerr << "Server::startServer() - error: " << e.what() << std::endl;
+    std::cerr << "Server::startServer() - ERROR: " << e.what() << std::endl;
     return;
   }
 
@@ -203,7 +203,7 @@ Server::serverLoop(ConnectionId id)
     }
     else if (error)
     {
-      std::cerr << "Server:serverLoop() - error reading from connection:" << error.message() << std::endl;
+      std::cerr << "Server:serverLoop() - ERROR: reading from connection:" << error.message() << std::endl;
       break;
     }
 
@@ -230,11 +230,12 @@ Server::getUniqueConnectionId()
 void
 Server::send(const Message& message, ConnectionId id)
 {
+  std::cout << __PRETTY_FUNCTION__ << std::endl;
   std::shared_ptr<boost::asio::ip::tcp::socket> socket = getSocket(id);
 
   if (!socket)
   {
-    std::cerr << "Server::write() - socket for connection id " << id << " does not exist!" << std::endl;
+    std::cerr << "Server::write() - ERROR: socket for connection id " << id << " does not exist!" << std::endl;
     return;
   }
 
@@ -246,7 +247,7 @@ Server::send(const Message& message, ConnectionId id)
   boost::asio::write(*socket, boost::asio::buffer( messageString ), boost::asio::transfer_all(), error);
   if (error)
   {
-    std::cerr << "Server::write() - : " << error.message() << std::endl;
+    std::cerr << "Server::write() - ERROR: " << error.message() << std::endl;
     throw boost::system::system_error(error);
   }
   else
