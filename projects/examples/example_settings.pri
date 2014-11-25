@@ -12,6 +12,8 @@ CONFIG += silent
 QMAKE_CXXFLAGS += -std=c++0x
 QMAKE_CXXFLAGS += -Wall
 
+QMAKE_CXXFLAGS += -Wno-unused-local-typedefs
+
 CONFIG(debug, debug|release) {
   OBJECTS_DIR = ./tmp/debug
 } else {

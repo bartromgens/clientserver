@@ -26,3 +26,5 @@ SUBDIRS += simulationserver
 SUBDIRS += simulationclient
 
 CONFIG += silent
+
+CONFIG += warn_on
