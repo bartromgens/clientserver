@@ -5,19 +5,28 @@ TEMPLATE = subdirs
 libclient.subdir = projects/libserver
 libserver.subdir = projects/libclient
 
+# tests
+tests.subdir = projects/tests
+tests.depends += libclient
+tests.depends += libserver
+
 # examples
 clientgui.subdir = projects/examples/clientgui
 servergui.subdir = projects/examples/servergui
+clientgui.depends = libclient
+servergui.depends = libserver
 
-#simulationserver
+# simulationserver
 simulationclient.subdir = projects/simulationclient
 simulationserver.subdir = projects/simulationserver
-
 simulationclient.depends = libclient
 simulationserver.depends = libserver
 
+
 SUBDIRS += libclient
 SUBDIRS += libserver
+
+SUBDIRS += tests
 
 SUBDIRS += clientgui
 SUBDIRS += servergui
