@@ -43,15 +43,18 @@ public:
 
   virtual std::string getName() const = 0;
 
-  static MessageType getMessageTypeFromJson(const std::string& json);
 
 protected:
   static int getVersion();
 
-  void addCommandIdAndVersion(boost::property_tree::ptree& pt) const;
   static boost::property_tree::ptree getTreeFromJson(const std::string& json);
+  void addTypeAndVersion(boost::property_tree::ptree& pt) const;
+  bool checkMessageVersionAndTypeName(const boost::property_tree::ptree& pt) const;
 
   static void print(boost::property_tree::ptree pt);
+
+private:
+  static MessageType getMessageTypeFromJson(const std::string& json);
 
 private:
   static const int ms_version;
@@ -78,7 +81,6 @@ public:
   {
     return "GetParameters";
   }
-
 };
 
 
@@ -94,7 +96,7 @@ public:
 
   virtual std::unique_ptr<MessageJSON> createReply() const;
 
-  void setParameters(const std::vector<Parameter>& parameters );
+  void setParameters(const std::vector<Parameter>& parameters);
   const std::vector<Parameter>& getParameters() const;
 
   virtual MessageJSON::MessageType getMessageType() const

@@ -94,24 +94,35 @@ MessageJSON::getMessageTypeFromJson(const std::string& json)
 }
 
 void
-MessageJSON::addCommandIdAndVersion(boost::property_tree::ptree& pt) const
+MessageJSON::addTypeAndVersion(boost::property_tree::ptree& pt) const
 {
   pt.put("message.type", getMessageType());
   pt.put("message.version", getVersion());
+  pt.put("message.type_name", getName());
 }
 
+bool
+MessageJSON::checkMessageVersionAndTypeName(const boost::property_tree::ptree& pt) const
+{
+  int version = pt.get<int>("message.version");
+  std::string typeName = pt.get<std::string>("message.type_name");
+  if ( version == getVersion() || typeName == getName() )
+  {
+    return false;
+  }
+  return true;
+}
 
 void
 MessageJSON::print(boost::property_tree::ptree pt)
 {
-    using boost::property_tree::ptree;
-    ptree::const_iterator end = pt.end();
-    for (ptree::const_iterator it = pt.begin(); it != end; ++it) {
-        std::cout << it->first << ": " << it->second.get_value<std::string>() << std::endl;
-        print(it->second);
-    }
+  auto end = pt.end();
+  for (auto it = pt.begin(); it != end; ++it)
+  {
+    std::cout << it->first << ": " << it->second.get_value<std::string>() << std::endl;
+    print(it->second);
+  }
 }
-
 
 
 // GetParameters //
@@ -141,7 +152,7 @@ std::string
 Parameters::serialize() const
 {
   boost::property_tree::ptree pt;
-  addCommandIdAndVersion(pt);
+  addTypeAndVersion(pt);
 
   boost::property_tree::ptree parameters;
   for (auto iter = m_parameters.begin(); iter != m_parameters.end(); ++iter)
@@ -171,6 +182,8 @@ Parameters::deserialize(const std::string& json)
   {
     return;
   }
+
+  assert( checkMessageVersionAndTypeName(pt) );
 
   try
   {
@@ -213,7 +226,7 @@ std::string
 GetParameters::serialize() const
 {
   boost::property_tree::ptree pt;
-  addCommandIdAndVersion(pt);
+  addTypeAndVersion(pt);
 
   std::stringstream ss;
   write_json(ss, pt);
