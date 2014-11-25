@@ -14,21 +14,22 @@ MessageJSON::~MessageJSON()
 {
 }
 
-MessageJSON*
+std::unique_ptr<MessageJSON>
 MessageJSON::createMessageFromJson(const std::string& json)
 {
   MessageType type = MessageJSON::getMessageTypeFromJson(json);
-  MessageJSON* message = 0;
+
+  std::unique_ptr<MessageJSON> message;
   switch (type)
   {
     case parameters:
     {
-      message = new Parameters() ;
+      message.reset( new Parameters() ) ;
       break;
     }
     case getParameters:
     {
-      message = new GetParameters() ;
+      message.reset( new GetParameters() ) ;
       break;
     }
     case none:
@@ -41,6 +42,8 @@ MessageJSON::createMessageFromJson(const std::string& json)
   {
     message->deserialize(json);
   }
+
+  std::cout << __PRETTY_FUNCTION__ << " - created type: " << message->getName() << std::endl;
 
   return message;
 }
@@ -86,17 +89,14 @@ MessageJSON::getMessageTypeFromJson(const std::string& json)
     return none;
   }
 
-  boost::property_tree::ptree versionTree = pt.get_child("message");
-  auto messageInfoIter = versionTree.begin();
-  MessageType type = static_cast<MessageType>(messageInfoIter->second.get_value<int>());
-
+  MessageType type = static_cast<MessageType>( pt.get<int>("message.type") );
   return type;
 }
 
 void
 MessageJSON::addCommandIdAndVersion(boost::property_tree::ptree& pt) const
 {
-  pt.put("message.id", getMessageType());
+  pt.put("message.type", getMessageType());
   pt.put("message.version", getVersion());
 }
 
@@ -193,7 +193,7 @@ Parameters::deserialize(const std::string& json)
   }
 }
 
-MessageJSON*
+std::unique_ptr<MessageJSON>
 Parameters::createReply() const
 {
   return 0;
@@ -226,16 +226,14 @@ GetParameters::deserialize(const std::string& /*json*/)
 
 }
 
-MessageJSON*
+std::unique_ptr<MessageJSON>
 GetParameters::createReply() const
 {
   std::vector<Parameter> parameters;
   parameters.push_back( Parameter("force", 1) );
   parameters.push_back( Parameter("diameter", 2) );
-  Parameters* paramsraw = new Parameters();
-  paramsraw->setParameters(parameters);
 
-  MessageJSON* params(paramsraw);
-
-  return params;
+  Parameters* paramRaw = new Parameters();
+  paramRaw->setParameters(parameters);
+  return std::unique_ptr<MessageJSON>( paramRaw );
 }

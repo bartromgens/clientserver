@@ -130,9 +130,9 @@ ClientWindow::runClientTest(int id)
   Message message(0, 0);
   message.setData( json );
 
-  std::string reply = m_clients[id]->sendMessage( message );
+  Message reply = m_clients[id]->sendMessage( message );
   Parameters parametersMessage;
-  parametersMessage.deserialize(reply);
+  parametersMessage.deserialize( reply.getData() );
 
   std::vector<Parameter> parameters = parametersMessage.getParameters();
 

@@ -2,6 +2,8 @@
 
 #include "messagejson.h"
 
+#include "shared/message.h"
+
 SimulationServer::SimulationServer(Server* server)
   : ServerObserver(server),
     m_server(server)
@@ -41,18 +43,18 @@ SimulationServer::notifyReceivedData(const Message& message, int connectionId)
 
   try
   {
-    MessageJSON* received = MessageJSON::createMessageFromJson(json);
+    std::unique_ptr<MessageJSON> received = MessageJSON::createMessageFromJson(json);
     if (!received)
     {
       return;
     }
 
-    MessageJSON* reply = received->createReply();
+    std::unique_ptr<MessageJSON> reply = received->createReply();
     if (!reply)
     {
       return;
     }
-    sendMessage(reply, connectionId);
+    sendMessage(reply.get(), connectionId);
   }
   catch (std::exception& error)
   {

@@ -8,6 +8,7 @@ LIBS += -lserver
 
 #include general example project settings
 include(../common_settings.pri)
+VPATH += $$INCLUDEPATH
 
 SOURCES += \
         main.cpp \

@@ -60,7 +60,7 @@ public:
    * @throws boost::system::system_error read or write error
    * @return the server reply message
    */
-  std::string sendMessage(const Message &message) const;
+  Message sendMessage(const Message& message) const;
 
   /**
    * Returns the set server ip address.

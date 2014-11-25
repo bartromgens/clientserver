@@ -54,7 +54,7 @@ Client::connect()
   }
   if (error)
   {
-    std::cerr << "Client::connect() - error while trying to connect: " << error.message() << std::endl;
+    std::cerr << "Client::connect() - ERROR: " << error.message() << std::endl;
     return false;
   }
 
@@ -77,7 +77,7 @@ Client::disconnect()
   m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
   if (error)
   {
-    std::cerr << "Client::disconnect() - shutdown ERROR: " << error.message() << std::endl;
+    std::cerr << "Client::disconnect() - ERROR: " << error.message() << std::endl;
   }
 
   std::cout << "Client::disconnect() - socket.shutdown(): " << error.message() << std::endl;
@@ -99,11 +99,11 @@ Client::isConnected() const
 }
 
 
-std::string
+Message
 Client::sendMessage(const Message& message) const
 {
+  std::cout << __PRETTY_FUNCTION__ << std::endl;
   std::lock_guard<std::mutex> lock(m_mutex);
-  std::string reply;
 
   try
   {
@@ -133,16 +133,20 @@ Client::sendMessage(const Message& message) const
       throw boost::system::system_error(error); // Some other error.
     }
 
-    reply = buffer.data();
+    std::string reply = buffer.data();
     reply.resize(len);
+
+    Message replyMessage;
+    replyMessage.fromRawString(reply);
+    return replyMessage;
   }
   catch (std::exception& e)
   {
-    std::cerr << e.what() << std::endl;
+    std::cerr << "Client::sendMessage() - ERROR: " << e.what() << std::endl;
     throw;
   }
 
-  return reply;
+  return Message();
 }
 
 
@@ -155,7 +159,7 @@ Client::setIP(const std::string& ipAddress)
   boost::asio::ip::address ipv4Addr = boost::asio::ip::address::from_string(ipAddress);
   if (!ipv4Addr.is_v4())
   {
-    std::cerr << "Client::setIP() : not a correct IPv4 address." << std::endl;
+    std::cerr << "Client::setIP() - ERROR: not a correct IPv4 address." << std::endl;
     assert(0);
     return;
   }

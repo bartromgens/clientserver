@@ -36,10 +36,12 @@ public:
   virtual std::string serialize() const = 0;
   virtual void deserialize(const std::string& json) = 0;
 
-  static MessageJSON* createMessageFromJson(const std::string& json);
-  virtual MessageJSON* createReply() const = 0;
+  static std::unique_ptr<MessageJSON> createMessageFromJson(const std::string& json);
+  virtual std::unique_ptr<MessageJSON> createReply() const = 0;
 
   virtual MessageJSON::MessageType getMessageType() const = 0;
+
+  virtual std::string getName() const = 0;
 
   static MessageType getMessageTypeFromJson(const std::string& json);
 
@@ -65,11 +67,16 @@ public:
   virtual std::string serialize() const;
   virtual void deserialize(const std::string& json);
 
-  virtual MessageJSON* createReply() const;
+  virtual std::unique_ptr<MessageJSON> createReply() const;
 
   virtual MessageJSON::MessageType getMessageType() const
   {
     return getParameters;
+  }
+
+  virtual std::string getName() const
+  {
+    return "GetParameters";
   }
 
 };
@@ -79,12 +86,13 @@ class Parameters : public MessageJSON
 {
 public:
   Parameters();
+  Parameters(const std::string& json);
   virtual ~Parameters();
 
   virtual std::string serialize() const;
   virtual void deserialize(const std::string& json);
 
-  virtual MessageJSON* createReply() const;
+  virtual std::unique_ptr<MessageJSON> createReply() const;
 
   void setParameters(const std::vector<Parameter>& parameters );
   const std::vector<Parameter>& getParameters() const;
@@ -92,6 +100,11 @@ public:
   virtual MessageJSON::MessageType getMessageType() const
   {
     return parameters;
+  }
+
+  virtual std::string getName() const
+  {
+    return "Parameters";
   }
 
 private:
