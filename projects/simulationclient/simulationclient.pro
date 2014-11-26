@@ -8,16 +8,14 @@ LIBS += -lclient
 
 #include general example project settings
 include(../common_settings.pri)
+VPATH += $$INCLUDEPATH
 
 SOURCES += \
         main.cpp \
         clientwindow.cpp \
-        client/client.cpp \
-        ../simulationserver/messagejson.cpp \
 
 HEADERS  += \
         clientwindow.h \
-        ../simulationserver/messagejson.h \
 
 FORMS    +=  clientwindow.ui
 

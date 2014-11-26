@@ -1,6 +1,6 @@
 #include "simulationserver.h"
 
-#include "messagejson.h"
+#include "shared/messagejson.h"
 
 #include "shared/message.h"
 

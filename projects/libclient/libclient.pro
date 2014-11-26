@@ -16,10 +16,13 @@ LIBS += -lpthread
 SOURCES += \
     client/client.cpp \
     shared/message.cpp \
+    shared/messagejson.cpp \
 
 HEADERS += \
     client/client.h \
     shared/clientserverdata.h \
+    shared/message.h \
+    shared/messagejson.h \
 
 CONFIG(debug, debug|release) {
   OBJECTS_DIR = ./tmp/debug

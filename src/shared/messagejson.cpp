@@ -1,4 +1,4 @@
-#include "messagejson.h"
+#include "shared/messagejson.h"
 
 #include <vector>
 #include <algorithm>
@@ -106,7 +106,10 @@ MessageJSON::checkMessageVersionAndTypeName(const boost::property_tree::ptree& p
 {
   int version = pt.get<int>("message.version");
   std::string typeName = pt.get<std::string>("message.type_name");
-  if ( version == getVersion() || typeName == getName() )
+  std::cout << version << " " << typeName << std::endl;
+  std::cout << getVersion() << " " << getName() << std::endl;
+  std::cout << (version != getVersion()) << " " << (typeName != getName()) << std::endl;
+  if ( version != getVersion() || typeName != getName() )
   {
     return false;
   }

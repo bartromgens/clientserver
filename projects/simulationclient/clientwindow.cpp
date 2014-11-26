@@ -3,7 +3,7 @@
 
 #include "shared/message.h"
 
-#include "../simulationserver/messagejson.h"
+#include "shared/messagejson.h"
 
 #include <thread>
 

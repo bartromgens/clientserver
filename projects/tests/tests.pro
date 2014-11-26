@@ -20,4 +20,5 @@ OTHER_FILES += \
     ../common_settings.pri \
 
 CONFIG += silent
-QMAKE_CXXFLAGS += -Wno-unused-local-typedefs
+
+DEFINES -= NDEBUG

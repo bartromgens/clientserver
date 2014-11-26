@@ -15,14 +15,14 @@ SOURCES += \
         serverwindow.cpp \
         gui/connectionstatustablewidget.cpp \
         simulationserver.cpp \
-        messagejson.cpp \
+        shared/messagejson.cpp \
 
 HEADERS  += \
         serverwindow.h \
         server/connectionstatus.h \
         gui/connectionstatustablewidget.h \
         simulationserver.h \
-        messagejson.h \
+        shared/messagejson.h \
 
 FORMS    += serverwindow.ui
 

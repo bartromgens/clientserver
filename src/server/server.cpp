@@ -210,6 +210,8 @@ Server::serverLoop(ConnectionId id)
     Message message;
     message.fromRawString( bufIncoming.data() );
 
+//    send(message, id);
+
     notifyObservers(message, id);
   }
 
