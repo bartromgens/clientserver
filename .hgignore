@@ -2,21 +2,8 @@ syntax: glob
 tmp/*
 *.pro.user
 Makefile*
-server.pro.user.2.6pre1
-client.pro.user.2.6pre1
 *.o
-examples/ClientStatusGUI/ClientStatusGUI
-examples/ClientStatusGUI/moc_clientstatuswindow.cpp
 .*~
-examples/ServerStatusGUI/ui_serverwindow.h
-examples/ClientStatusGUI/ui_clientstatuswindow.h
-examples/ServerStatusGUI/moc_serverwindow.cpp
-examples/ServerStatusGUI/ServerStatusGUI
-examples/ClientStatusGUI/ui_clientwindow.h
-examples/ClientStatusGUI/moc_clientwindow.cpp
-examples/ServerStatusGUI/ServerStatusGUI.pro.user.2.6pre1
-examples/ClientStatusGUI/ClientStatusGUI.pro.user.2.6pre1
-examples/ServerStatusGUI/moc_connectionstatustablewidget.cpp
 moc_*.cpp
 lib/libserver.so*
 lib/libclient.so*
@@ -25,3 +12,4 @@ projects/examples/clientgui/clientgui
 */generated/*
 projects/simulationclient/simulationclient
 projects/simulationserver/simulationserver
+projects/tests/tests
