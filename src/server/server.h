@@ -63,7 +63,7 @@ public:
    * @param message the incoming message
    * @param id the connection ID
    */
-  void notifyObservers(const Message& message, ConnectionId id);
+  Message notifyObserver(const Message& message, ConnectionId id);
 
   /**
    * Returns the number of connection threads
@@ -161,7 +161,7 @@ private:
   std::map<ConnectionId, ConnectionStatus> m_connectionStatuses;
 
   /** server observers that are notified when a new message comes in from a client */
-  std::vector<ServerObserver*> m_observers;
+  ServerObserver* m_observer;
 
   /** Connection id counter, increases with every new connection thread, never decreases */
   ConnectionId m_nIdCounter;

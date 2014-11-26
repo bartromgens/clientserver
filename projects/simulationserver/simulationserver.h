@@ -13,13 +13,7 @@ public:
   virtual ~SimulationServer();
 
 protected:
-  virtual void notifyReceivedData(const Message& message, int connectionId);
-
-private:
-  void sendMessage(MessageJSON* message, int connectionId);
-
-private:
-  Server* m_server;
+  virtual Message createReply(const Message& message);
 };
 
 #endif // SIMULATIONSERVER_H

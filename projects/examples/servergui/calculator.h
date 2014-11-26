@@ -10,7 +10,7 @@ public:
   explicit Calculator(Server* server);
   virtual ~Calculator();
 
-  virtual void notifyReceivedData(const Message &message, int connectionId);
+  virtual Message createReply(const Message &message);
 
 private:
   Server* m_server;

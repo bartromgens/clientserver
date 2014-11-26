@@ -210,9 +210,9 @@ Server::serverLoop(ConnectionId id)
     Message message;
     message.fromRawString( bufIncoming.data() );
 
-//    send(message, id);
 
-    notifyObservers(message, id);
+    Message reply = notifyObserver(message, id);
+    send(reply, id);
   }
 
   closeConnection(id);
@@ -271,7 +271,7 @@ Server::registerObserver(ServerObserver* observer)
   }
 
   std::lock_guard<std::mutex> lock(m_mutex);
-  m_observers.push_back(observer);
+  m_observer = observer;
 }
 
 
@@ -285,24 +285,25 @@ Server::unregisterObserver(ServerObserver* observer)
   }
 
   std::lock_guard<std::mutex> lock(m_mutex);
-  m_observers.erase( std::find(m_observers.begin(), m_observers.end(), observer) );
+  m_observer = 0;
 }
 
 
-void
-Server::notifyObservers(const Message& message, ConnectionId id)
+Message
+Server::notifyObserver(const Message& message, ConnectionId id)
 {
-  std::vector<ServerObserver*> observers;
+  if (!m_observer)
   {
-    std::lock_guard<std::mutex> lock(m_mutex);
-    observers = m_observers;
+    return Message();
   }
 
-  std::for_each(observers.begin(), observers.end(),
-                [&message, &id](ServerObserver* observer)
-                {
-                  observer->notifyReceivedData(message, id);
-                });
+  ServerObserver* observer;
+  {
+    std::lock_guard<std::mutex> lock(m_mutex);
+    observer = m_observer;
+  }
+
+  return observer->createReply(message);
 }
 
 

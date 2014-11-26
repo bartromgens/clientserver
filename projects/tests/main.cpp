@@ -4,8 +4,6 @@
 #include "shared/message.h"
 #include "shared/messagejson.h"
 
-#include "test/client/clienttestgroup.h"
-
 #include <thread>
 
 void runTestServer();

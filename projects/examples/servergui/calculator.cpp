@@ -14,10 +14,10 @@ Calculator::~Calculator()
 }
 
 
-void
-Calculator::notifyReceivedData(const Message& message, int connectionId)
+Message
+Calculator::createReply(const Message& message)
 {
-  //  std::cout << "Calculator::notifyReceivedData() - connectionID: " << connectionId << std::endl;
+  //  std::cout << "Calculator::createReply() - connectionID: " << connectionId << std::endl;
 
 //  QTime timer;
 //  timer.start();
@@ -47,8 +47,8 @@ Calculator::notifyReceivedData(const Message& message, int connectionId)
 //  }
 //  catch (std::exception& e)
 //  {
-//    std::cerr << "Calculator::notifyReceivedData() - write error: " << e.what() << std::endl;
+//    std::cerr << "Calculator::createReply() - write error: " << e.what() << std::endl;
 //  }
-//  std::cout << "Calculator::notifyReceivedData() - connectionID: " << connectionId << " time to compute and write: " << timer.elapsed()<< std::endl;
+//  std::cout << "Calculator::createReply() - connectionID: " << connectionId << " time to compute and write: " << timer.elapsed()<< std::endl;
 }
 

@@ -25,11 +25,11 @@ public:
   virtual ~ServerObserver();
 
   /**
-   * notifyReceivedData
+   * createReply
    * @param dataStrings the list of strings that are send by a client with the connectionId
    * @param connectionId the connection ID of the connection that sends the message
    */
-  virtual void notifyReceivedData(const Message& message, int id) = 0;
+  virtual Message createReply(const Message& message) = 0;
 
 private:
   Server* m_server;
