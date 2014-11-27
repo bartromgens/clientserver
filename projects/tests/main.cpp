@@ -1,5 +1,6 @@
 
 #include "server/server.h"
+#include "server/serverjson.h"
 #include "client/client.h"
 #include "shared/message.h"
 #include "shared/messagejson.h"
@@ -44,6 +45,7 @@ void runTestServerJSON()
   unsigned short port = 2021;
   Server* server  = new Server(port);
   server->startServer();
+  ServerJSON* serverjson  = new ServerJSON(server);
 }
 
 
