@@ -1,7 +1,7 @@
 TEMPLATE = lib
 QT       += core gui
 
-TARGET = libclientjson
+TARGET = clientjson
 DESTDIR = ../../lib
 
 LIBS += -L/home/bart/dev/clientserver/lib

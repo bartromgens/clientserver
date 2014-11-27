@@ -1,7 +1,8 @@
+TEMPLATE = lib
 QT       += core gui
 
-TARGET = libserverjson
-TEMPLATE = lib
+TARGET = serverjson
+DESTDIR = ../../lib
 
 LIBS += -L/home/bart/dev/clientserver/lib
 LIBS += -lserver
@@ -14,14 +15,14 @@ SOURCES += \
         main.cpp \
         serverwindow.cpp \
         gui/connectionstatustablewidget.cpp \
-        serverjson.cpp \
+        server/serverjson.cpp \
         shared/messagejson.cpp \
 
 HEADERS  += \
         serverwindow.h \
         server/connectionstatus.h \
         gui/connectionstatustablewidget.h \
-        serverjson.h \
+        server/serverjson.h \
         shared/messagejson.h \
 
 FORMS    += serverwindow.ui

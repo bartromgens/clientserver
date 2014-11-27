@@ -1,7 +1,7 @@
 #include "serverwindow.h"
 #include "ui_serverwindow.h"
 
-#include "serverjson.h"
+#include "server/serverjson.h"
 
 
 ServerWindow::ServerWindow(QWidget *parent) :
