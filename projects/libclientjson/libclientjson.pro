@@ -1,7 +1,8 @@
+TEMPLATE = lib
 QT       += core gui
 
-TARGET = simulationclient
-TEMPLATE = app
+TARGET = libclientjson
+DESTDIR = ../../lib
 
 LIBS += -L/home/bart/dev/clientserver/lib
 LIBS += -lclient
@@ -11,7 +12,6 @@ include(../common_settings.pri)
 VPATH += $$INCLUDEPATH
 
 SOURCES += \
-        main.cpp \
         clientwindow.cpp \
 
 HEADERS  += \
@@ -23,3 +23,4 @@ OTHER_FILES += \
     ../common_settings.pri \
 
 CONFIG += silent
+
