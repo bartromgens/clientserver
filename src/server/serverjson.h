@@ -1,10 +1,10 @@
 #ifndef SERVERJSON_H
 #define SERVERJSON_H
 
-#include "server/server.h"
 #include "server/serverobserver.h"
 
 class MessageJSON;
+class Server;
 
 class ServerJSON : public ServerObserver
 {

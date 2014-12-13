@@ -17,7 +17,6 @@ SOURCES += \
     server/server.cpp \
     server/serverobserver.cpp \
     shared/message.cpp \
-    shared/messagejson.cpp \
 
 HEADERS += \
     server/connectionstatus.h \
@@ -25,7 +24,6 @@ HEADERS += \
     server/serverobserver.h \
     shared/clientserverdata.h \
     shared/message.h \
-    shared/messagejson.h \
 
 CONFIG(debug, debug|release) {
   OBJECTS_DIR = ./tmp/debug

@@ -1,7 +1,9 @@
+
 #include "shared/messagejson.h"
 
 #include <vector>
 #include <algorithm>
+
 
 // MessageJSON //
 const int MessageJSON::ms_version = 1;
@@ -43,8 +45,6 @@ MessageJSON::createMessageFromJson(const std::string& json)
     message->deserialize(json);
   }
 
-  std::cout << __PRETTY_FUNCTION__ << " - created type: " << message->getName() << std::endl;
-
   return message;
 }
 
@@ -67,6 +67,7 @@ MessageJSON::getTreeFromJson(const std::string& json)
   {
     std::stringstream ss;
     ss << json;
+    std::cout << json << std::endl;
     boost::property_tree::read_json(ss, pt);
   }
   catch (std::exception& error)

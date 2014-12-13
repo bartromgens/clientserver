@@ -1,6 +1,8 @@
 
 #include "serverjson.h"
 
+#include "server/server.h"
+
 #include "shared/message.h"
 #include "shared/messagejson.h"
 
@@ -52,6 +54,8 @@ ServerJSON::createReply(const Message& message)
     std::cerr << error.what() << std::endl;
     return Message();
   }
+  std::cout << __PRETTY_FUNCTION__ << " END" << std::endl;
+  return Message();
 }
 
 

@@ -4,6 +4,7 @@ DEPENDPATH += $$INCLUDEPATH
 
 # boost libraries
 LIBS += -lboost_system
+LIBS += -lboost_thread
 LIBS += -lpthread
 
 # compiler settings

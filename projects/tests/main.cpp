@@ -53,7 +53,13 @@ main(int /*argc*/, char* /*argv*/[])
   std::cout << "------------------" << std::endl;
 
   std::thread clientJSONThread( runTestClientsJSON );
-  clientJSONThread.join();
+  clientJSONThread.detach();
+  std::thread clientJSONThread2a( runTestClientsJSON );
+  clientJSONThread2a.detach();
+  std::thread clientJSONThread2b( runTestClientsJSON );
+  clientJSONThread2b.detach();
+  std::thread clientJSONThread3( runTestClientsJSON );
+  clientJSONThread3.join();
 
   server->stopServer();
 
