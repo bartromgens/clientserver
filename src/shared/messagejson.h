@@ -6,11 +6,9 @@
 
 #include <string>
 
-class Parameters;
-
-struct Parameter
+struct ParameterData
 {
-  Parameter(std::string name, int id)
+  ParameterData(std::string name, int id)
     : name(name), id(id)
   {}
 
@@ -61,11 +59,11 @@ private:
 };
 
 
-class GetParameters : public MessageJSON
+class GetParametersMessage : public MessageJSON
 {
 public:
-  GetParameters();
-  virtual ~GetParameters();
+  GetParametersMessage();
+  virtual ~GetParametersMessage();
 
   virtual std::string serialize() const;
   virtual void deserialize(const std::string& json);
@@ -84,20 +82,20 @@ public:
 };
 
 
-class Parameters : public MessageJSON
+class ParametersMessage : public MessageJSON
 {
 public:
-  Parameters();
-  Parameters(const std::string& json);
-  virtual ~Parameters();
+  ParametersMessage();
+  ParametersMessage(const std::string& json);
+  virtual ~ParametersMessage();
 
   virtual std::string serialize() const;
   virtual void deserialize(const std::string& json);
 
   virtual std::unique_ptr<MessageJSON> createReply() const;
 
-  void setParameters(const std::vector<Parameter>& parameters);
-  const std::vector<Parameter>& getParameters() const;
+  void setParameters(const std::vector<ParameterData>& parameters);
+  const std::vector<ParameterData>& getParameters() const;
 
   virtual MessageJSON::MessageType getMessageType() const
   {
@@ -110,7 +108,7 @@ public:
   }
 
 private:
-  std::vector<Parameter> m_parameters;
+  std::vector<ParameterData> m_parameters;
 };
 
 #endif // MESSAGEJSON_H

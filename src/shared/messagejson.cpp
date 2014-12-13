@@ -24,12 +24,12 @@ MessageJSON::createMessageFromJson(const std::string& json)
   {
     case parameters:
     {
-      message.reset( new Parameters() ) ;
+      message.reset( new ParametersMessage() ) ;
       break;
     }
     case getParameters:
     {
-      message.reset( new GetParameters() ) ;
+      message.reset( new GetParametersMessage() ) ;
       break;
     }
     case none:
@@ -129,30 +129,29 @@ MessageJSON::print(boost::property_tree::ptree pt)
 
 
 // GetParameters //
-Parameters::Parameters() :
+ParametersMessage::ParametersMessage() :
   MessageJSON(),
   m_parameters()
 {
 }
 
-Parameters::~Parameters()
+ParametersMessage::~ParametersMessage()
 {
 }
 
 void
-Parameters::setParameters(const std::vector<Parameter>& parameters)
+ParametersMessage::setParameters(const std::vector<ParameterData>& parameters)
 {
   m_parameters = parameters;
 }
 
-const std::vector<Parameter>&
-Parameters::getParameters() const
+const std::vector<ParameterData>& ParametersMessage::getParameters() const
 {
   return m_parameters;
 }
 
 std::string
-Parameters::serialize() const
+ParametersMessage::serialize() const
 {
   boost::property_tree::ptree pt;
   addTypeAndVersion(pt);
@@ -173,7 +172,7 @@ Parameters::serialize() const
 }
 
 void
-Parameters::deserialize(const std::string& json)
+ParametersMessage::deserialize(const std::string& json)
 {
   if (json.empty())
   {
@@ -200,7 +199,7 @@ Parameters::deserialize(const std::string& json)
       int id = iter->second.get_value<int>();
       iter++;
       std::string name = iter->second.get_value<std::string>();
-      m_parameters.push_back( Parameter(name, id) )  ;
+      m_parameters.push_back( ParameterData(name, id) )  ;
     }
   }
   catch (std::exception const& e)
@@ -210,23 +209,23 @@ Parameters::deserialize(const std::string& json)
 }
 
 std::unique_ptr<MessageJSON>
-Parameters::createReply() const
+ParametersMessage::createReply() const
 {
   return 0;
 }
 
 
 // GetParameters //
-GetParameters::GetParameters()
+GetParametersMessage::GetParametersMessage()
 {
 }
 
-GetParameters::~GetParameters()
+GetParametersMessage::~GetParametersMessage()
 {
 }
 
 std::string
-GetParameters::serialize() const
+GetParametersMessage::serialize() const
 {
   boost::property_tree::ptree pt;
   addTypeAndVersion(pt);
@@ -237,19 +236,19 @@ GetParameters::serialize() const
 }
 
 void
-GetParameters::deserialize(const std::string& /*json*/)
+GetParametersMessage::deserialize(const std::string& /*json*/)
 {
 
 }
 
 std::unique_ptr<MessageJSON>
-GetParameters::createReply() const
+GetParametersMessage::createReply() const
 {
-  std::vector<Parameter> parameters;
-  parameters.push_back( Parameter("force", 1) );
-  parameters.push_back( Parameter("diameter", 2) );
+  std::vector<ParameterData> parameters;
+  parameters.push_back( ParameterData("force", 1) );
+  parameters.push_back( ParameterData("diameter", 2) );
 
-  Parameters* paramRaw = new Parameters();
+  ParametersMessage* paramRaw = new ParametersMessage();
   paramRaw->setParameters(parameters);
   return std::unique_ptr<MessageJSON>( paramRaw );
 }

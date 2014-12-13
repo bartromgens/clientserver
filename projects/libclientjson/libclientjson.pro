@@ -12,8 +12,12 @@ include(../common_settings.pri)
 VPATH += $$INCLUDEPATH
 
 SOURCES += \
+        client/clientjson.cpp \
+        shared/messagejson.cpp \
 
 HEADERS  += \
+        client/clientjson.h \
+        shared/messagejson.h \
 
 OTHER_FILES += \
     ../common_settings.pri \

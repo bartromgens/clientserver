@@ -2,6 +2,7 @@
 #include "server/server.h"
 #include "server/serverjson.h"
 #include "client/client.h"
+#include "client/clientjson.h"
 #include "shared/message.h"
 #include "shared/messagejson.h"
 
@@ -136,25 +137,18 @@ void runTestClients()
 void runTestClientsJSON()
 {
   std::cout << __PRETTY_FUNCTION__ << std::endl;
-  Client client(ClientServerData::defaultIp, 2021);
+  ClientJSON client(ClientServerData::defaultIp, 2021);
   assert( client.connect() );
   assert( client.isConnected() );
 
-  GetParameters command;
-  std::string json = command.serialize();
-  std::cout << __PRETTY_FUNCTION__ << std::endl;
-
-  Message message(0, 0);
-  message.setData( json );
-
   try
   {
-    Message reply = client.sendMessage( message );
-    std::cout << "runTestClientsJSON() : " << reply.getData() << std::endl;
-    Parameters parametersMessage;
-    parametersMessage.deserialize( reply.getData() );
-    std::vector<Parameter> parameters = parametersMessage.getParameters();
-    std::cout << __PRETTY_FUNCTION__ << std::endl;
+    std::vector<ParameterData> parameters = client.getParameters();
+
+    for (auto iter = parameters.begin(); iter != parameters.end(); ++iter)
+    {
+      std::cout << iter->name << ", " << iter->id <<std::endl;
+    }
   }
   catch (std::exception& e)
   {
