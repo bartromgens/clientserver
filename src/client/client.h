@@ -49,7 +49,7 @@ public:
    * Disconnect the connection with the server.
    * The socket is closed, shutdown send and io_service stopped
    */
-  void disconnect();
+  bool disconnect();
 
   bool isConnected() const;
 

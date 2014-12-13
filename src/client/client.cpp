@@ -58,19 +58,19 @@ Client::connect()
     return false;
   }
 
-  std::cout << "Client::connect() - connected: " << error.message() << std::endl;
+//  std::cout << "Client::connect() - connected: " << error.message() << std::endl;
   return true;
 }
 
 
-void
+bool
 Client::disconnect()
 {
   std::lock_guard<std::mutex> lock(m_mutex);
 
   if (!m_socket)
   {
-    return;
+    return false;
   }
 
   boost::system::error_code error;
@@ -78,12 +78,15 @@ Client::disconnect()
   if (error)
   {
     std::cerr << "Client::disconnect() - ERROR: " << error.message() << std::endl;
+    return false;
   }
 
-  std::cout << "Client::disconnect() - socket.shutdown(): " << error.message() << std::endl;
+//  std::cout << "Client::disconnect() - socket.shutdown(): " << error.message() << std::endl;
 
   m_socket->close();
   m_io_service->stop();
+
+  return true;
 }
 
 
