@@ -3,6 +3,7 @@
 
 #include "server/server.h"
 #include "server/serverobserver.h"
+#include "shared/message.h"
 
 class Calculator : public ServerObserver
 {

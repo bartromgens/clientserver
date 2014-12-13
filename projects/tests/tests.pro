@@ -13,8 +13,10 @@ VPATH += $$INCLUDEPATH
 
 SOURCES += \
         main.cpp \
+        ../simulationserver/simulationserver.cpp
 
 HEADERS  += \
+        ../simulationserver/simulationserver.h
 
 OTHER_FILES += \
     ../common_settings.pri \
