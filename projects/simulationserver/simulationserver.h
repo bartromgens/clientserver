@@ -12,6 +12,8 @@ public:
   explicit SimulationServer(Server* server);
   virtual ~SimulationServer();
 
+  void startServer();
+
 protected:
   virtual Message createReply(const Message& message);
 };

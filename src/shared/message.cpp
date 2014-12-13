@@ -64,3 +64,24 @@ Message::fromRawString(const std::string& data)
   m_id = std::stoi(id);
   m_data = std::string(data.begin()+posId+1, data.end());
 }
+
+
+MessageError::MessageError()
+: Message(),
+  m_errorType(unknown)
+{
+  std::cout << __PRETTY_FUNCTION__ << std::endl;
+  setData( "ERROR: type:" + std::to_string(m_errorType) );
+}
+
+MessageError::MessageError(unsigned int version, unsigned int id, MessageError::Error errorType)
+: Message(version, id),
+  m_errorType(errorType)
+{
+  std::cout << __PRETTY_FUNCTION__ << std::endl;
+  setData( "ERROR: type:" + std::to_string(m_errorType) );
+}
+
+MessageError::~MessageError()
+{
+}

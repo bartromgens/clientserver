@@ -3,11 +3,6 @@
 
 #include <string>
 
-/**
- * message:
- * version@type@message
- */
-
 class Message
 {
 public:
@@ -27,6 +22,26 @@ private:
   std::string m_data;
 
   static const std::string m_separationCharacter;
+};
+
+
+class MessageError : public Message
+{
+public:
+  enum Error
+  {
+    unknown,
+    unknownMessageType,
+    noObersverToReply
+  };
+
+public:
+  explicit MessageError();
+  explicit MessageError(unsigned int version, unsigned int id, MessageError::Error errorType);
+  virtual ~MessageError();
+
+private:
+  Error m_errorType;
 };
 
 #endif // MESSAGE_H

@@ -13,3 +13,4 @@ projects/examples/clientgui/clientgui
 projects/simulationclient/simulationclient
 projects/simulationserver/simulationserver
 projects/tests/tests
+clean

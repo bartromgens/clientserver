@@ -33,6 +33,9 @@ public:
    */
   ~Server();
 
+  /**
+   * @brief startServer
+   */
   void startServer();
 
   /**
@@ -51,19 +54,19 @@ public:
   /**
    * Register an observer
    */
-  void registerObserver(ServerObserver* observer);
+  void setObserver(ServerObserver* observer);
 
   /**
    * Unregister an observer
    */
-  void unregisterObserver(ServerObserver* observer);
+  void removeObserver(ServerObserver* observer);
 
   /**
    * Notifies the observers with the incoming data
    * @param message the incoming message
    * @param id the connection ID
    */
-  Message notifyObserver(const Message& message, ConnectionId id);
+  Message createReply(const Message& message, ConnectionId id);
 
   /**
    * Returns the number of connection threads

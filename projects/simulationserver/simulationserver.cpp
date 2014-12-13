@@ -5,13 +5,19 @@
 #include "shared/message.h"
 
 SimulationServer::SimulationServer(Server* server)
-  : ServerObserver(server)
+: ServerObserver(server)
 {
 }
 
 
 SimulationServer::~SimulationServer()
 {
+}
+
+void
+SimulationServer::startServer()
+{
+  getServer()->startServer();
 }
 
 
@@ -35,6 +41,7 @@ SimulationServer::createReply(const Message& message)
     {
       return Message();
     }
+
     Message messageRaw;
     messageRaw.setData( reply->serialize() );
     return messageRaw;
