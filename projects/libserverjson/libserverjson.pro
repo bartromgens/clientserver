@@ -12,20 +12,14 @@ include(../common_settings.pri)
 VPATH += $$INCLUDEPATH
 
 SOURCES += \
-        main.cpp \
-        serverwindow.cpp \
-        gui/connectionstatustablewidget.cpp \
-        server/serverjson.cpp \
+        server/connectionstatus.cpp \
         shared/messagejson.cpp \
+        server/serverjson.cpp \
 
 HEADERS  += \
-        serverwindow.h \
         server/connectionstatus.h \
-        gui/connectionstatustablewidget.h \
-        server/serverjson.h \
         shared/messagejson.h \
-
-FORMS    += serverwindow.ui
+        server/serverjson.h \
 
 OTHER_FILES += \
     ../common_settings.pri \

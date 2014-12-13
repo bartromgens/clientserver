@@ -12,12 +12,8 @@ include(../common_settings.pri)
 VPATH += $$INCLUDEPATH
 
 SOURCES += \
-        clientwindow.cpp \
 
 HEADERS  += \
-        clientwindow.h \
-
-FORMS    +=  clientwindow.ui
 
 OTHER_FILES += \
     ../common_settings.pri \
