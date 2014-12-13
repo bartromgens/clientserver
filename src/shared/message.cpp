@@ -7,7 +7,7 @@ const std::string Message::m_separationCharacter = "@";
 Message::Message(unsigned int version, unsigned int id) :
   m_version(version),
   m_id(id),
-  m_data()
+  m_data("nodata")
 {
 }
 
@@ -15,7 +15,7 @@ Message::Message(unsigned int version, unsigned int id) :
 Message::Message() :
   m_version(0),
   m_id(0),
-  m_data()
+  m_data("nodata")
 {
 }
 

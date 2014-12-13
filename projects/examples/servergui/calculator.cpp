@@ -50,5 +50,8 @@ Calculator::createReply(const Message& message)
 //    std::cerr << "Calculator::createReply() - write error: " << e.what() << std::endl;
 //  }
 //  std::cout << "Calculator::createReply() - connectionID: " << connectionId << " time to compute and write: " << timer.elapsed()<< std::endl;
+  Message reply;
+  reply.setData("Hi");
+  return reply;
 }
 

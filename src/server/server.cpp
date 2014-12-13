@@ -216,7 +216,6 @@ Server::serverLoop(ConnectionId id)
     Message message;
     message.fromRawString( bufIncoming.data() );
 
-
     Message reply = createReply(message);
     send(reply, id);
   }
