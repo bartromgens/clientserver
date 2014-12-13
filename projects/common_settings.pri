@@ -4,7 +4,7 @@ DEPENDPATH += $$INCLUDEPATH
 
 # boost libraries
 LIBS += -lboost_system
-LIBS += -lboost_thread
+LIBS += -lboost_thread # needed for BOOST_SPIRIT_THREADSAFE define that makes json parser thread safe
 LIBS += -lpthread
 
 # compiler settings
