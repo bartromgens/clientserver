@@ -7,11 +7,17 @@ ServerObserver::ServerObserver(Server* server)
   : m_server(server)
 {
   assert(m_server);
-  m_server->registerObserver(this);
+  m_server->setObserver(this);
 }
 
 
 ServerObserver::~ServerObserver()
 {
-  m_server->unregisterObserver(this);
+  m_server->removeObserver(this);
+}
+
+Server*
+ServerObserver::getServer()
+{
+  return m_server;
 }

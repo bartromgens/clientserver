@@ -24,6 +24,8 @@ public:
    */
   virtual ~ServerObserver();
 
+  Server* getServer();
+
   /**
    * createReply
    * @param dataStrings the list of strings that are send by a client with the connectionId
