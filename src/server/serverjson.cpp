@@ -27,7 +27,7 @@ ServerJSON::createReply(const Message& message)
 {
   std::cout << __PRETTY_FUNCTION__ << std::endl;
   std::string json = message.getData();
-  std::cout << json << std::endl;
+//  std::cout << json << std::endl;
 
   try
   {

@@ -56,10 +56,16 @@ main(int /*argc*/, char* /*argv*/[])
   clientJSONThread.join();
 
   server->stopServer();
+
+  std::cout << "------------------" << std::endl;
   std::cout << "STOP SERVERJSON" << std::endl;
+  std::cout << "------------------" << std::endl;
+
   serverForJson->stopServer();
 
+  std::cout << "------------------" << std::endl;
   std::cout << "END TESTS" << std::endl;
+  std::cout << "------------------" << std::endl;
 
   return 0;
 }

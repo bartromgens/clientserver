@@ -250,8 +250,6 @@ Server::send(const Message& message, ConnectionId id)
 
   std::string messageString = message.createMessage();
 
-  std::cout << messageString << std::endl;
-
   boost::system::error_code error;
   boost::asio::write(*socket, boost::asio::buffer( messageString ), boost::asio::transfer_all(), error);
   if (error)
