@@ -66,7 +66,7 @@ public:
    * @param message the incoming message
    * @param id the connection ID
    */
-  Message createReply(const Message& message, ConnectionId id);
+  Message createReply(const Message& message);
 
   /**
    * Returns the number of connection threads

@@ -217,7 +217,7 @@ Server::serverLoop(ConnectionId id)
     message.fromRawString( bufIncoming.data() );
 
 
-    Message reply = createReply(message, id);
+    Message reply = createReply(message);
     send(reply, id);
   }
 
@@ -297,7 +297,7 @@ Server::removeObserver(ServerObserver* observer)
 
 
 Message
-Server::createReply(const Message& message, ConnectionId id)
+Server::createReply(const Message& message)
 {
   if (!m_observer)
   {
