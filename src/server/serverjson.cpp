@@ -1,28 +1,29 @@
-#include "simulationserver.h"
 
-#include "shared/messagejson.h"
+#include "serverjson.h"
 
 #include "shared/message.h"
+#include "shared/messagejson.h"
 
-SimulationServer::SimulationServer(Server* server)
+
+ServerJSON::ServerJSON(Server* server)
 : ServerObserver(server)
 {
 }
 
 
-SimulationServer::~SimulationServer()
+ServerJSON::~ServerJSON()
 {
 }
 
 void
-SimulationServer::startServer()
+ServerJSON::startServer()
 {
   getServer()->startServer();
 }
 
 
 Message
-SimulationServer::createReply(const Message& message)
+ServerJSON::createReply(const Message& message)
 {
   std::cout << __PRETTY_FUNCTION__ << std::endl;
   std::string json = message.getData();

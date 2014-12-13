@@ -1,14 +1,14 @@
 #include "serverwindow.h"
 #include "ui_serverwindow.h"
 
-#include "simulationserver.h"
+#include "server/serverjson.h"
 
 
 ServerWindow::ServerWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::ServerWindow),
   m_server( new Server() ),
-  m_simulationServer( new SimulationServer( m_server ) ),
+  m_serverJSON( new ServerJSON( m_server ) ),
   m_timer(new QTimer(this)),
   m_timeStatusUpdate()
 {

@@ -9,7 +9,7 @@
 #include <QTime>
 #include <QTimer>
 
-class SimulationServer;
+class ServerJSON;
 
 namespace Ui {
 class ServerWindow;
@@ -39,7 +39,7 @@ private:
   std::unique_ptr<std::thread> m_serverThread;
 
   Server* m_server;
-  SimulationServer* m_simulationServer;
+  ServerJSON* m_serverJSON;
   QTimer* m_timer;
   QTime m_timeStatusUpdate;
 };

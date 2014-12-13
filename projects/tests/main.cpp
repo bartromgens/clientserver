@@ -1,10 +1,9 @@
 
 #include "server/server.h"
+#include "server/serverjson.h"
 #include "client/client.h"
 #include "shared/message.h"
 #include "shared/messagejson.h"
-
-#include "../simulationserver/simulationserver.h"
 
 #include <QTime>
 
@@ -13,14 +12,11 @@
 #include <thread>
 
 void runTestServer(Server* server);
-void runTestServerJSON(SimulationServer* server);
+void runTestServerJSON(ServerJSON* server);
 void runTestClients();
 void runTestClientsJSON();
 bool serverRunning();
 bool serverJSONRunning();
-
-//static std::atomic<bool> stopServer{false};
-
 
 int
 main(int /*argc*/, char* /*argv*/[])
@@ -30,7 +26,7 @@ main(int /*argc*/, char* /*argv*/[])
   serverThread.detach();
 
   Server* serverForJson  = new Server(2021);
-  SimulationServer* serverJSON  = new SimulationServer(serverForJson);
+  ServerJSON* serverJSON  = new ServerJSON(serverForJson);
   std::thread threadJSON( runTestServerJSON, serverJSON );
   threadJSON.detach();
 
@@ -101,7 +97,7 @@ void runTestServer(Server* server)
 }
 
 
-void runTestServerJSON(SimulationServer* server)
+void runTestServerJSON(ServerJSON* server)
 {
   std::cout << __PRETTY_FUNCTION__ << std::endl;
   server->startServer();
