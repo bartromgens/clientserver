@@ -47,12 +47,12 @@ Server::openConnection(ConnectionId id)
 void
 Server::closeConnection(ConnectionId id)
 {
-  std::cout << "Server::closeConnection() - id: " << id << std::endl;
+//  std::cout << "Server::closeConnection() - id: " << id << std::endl;
   std::lock_guard<std::mutex> lock(m_mutex);
 
   if (m_sockets.find(id) == m_sockets.end())
   {
-    std::cerr << "Server::closeConnection - ERROR: connection with id " << id << " does not exist." << std::endl;
+//    std::cout << "Server::closeConnection - connection with id " << id << " does not exist. Probably already closed by peer."  << std::endl;
     return;
   }
 
@@ -65,12 +65,13 @@ Server::closeConnection(ConnectionId id)
   {
     boost::system::error_code error;
     m_sockets[id]->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
-    std::cout << "Server::closeConnection() - socket.shutdown() id : " << id << ", " << error.message() << std::endl;
+//    std::cout << "Server::closeConnection() - socket.shutdown() id : " << id << ", " << error.message() << std::endl;
     m_sockets[id]->close();
   }
   m_sockets.erase(id);
   m_threads.erase(id);
   m_connectionStatuses.erase(id);
+//  std::cout << "Server::closeConnection() - Done - id: " << id << std::endl;
 }
 
 
@@ -91,6 +92,10 @@ void
 Server::stopServer()
 {
   std::cout << "Server::stopServer()" << std::endl;
+  if (m_acceptor && m_acceptor->is_open())
+  {
+    m_acceptor->cancel();
+  }
 
   std::vector<Server::ConnectionId> socketIds = getSocketIds();
   for (std::size_t i = 0; i < socketIds.size(); i++)
@@ -99,6 +104,7 @@ Server::stopServer()
   }
 
   std::lock_guard<std::mutex> lock(m_mutex);
+
 
   if (m_acceptor && m_acceptor->is_open())
   {
@@ -132,7 +138,7 @@ Server::startServer()
 void
 Server::startAccepting(ConnectionId id)
 {
-  std::cout << "Server::startAccepting() = id: " << id << std::endl;
+//  std::cout << "Server::startAccepting() = id: " << id << std::endl;
 
   openConnection(id);
 
@@ -145,10 +151,10 @@ Server::startAccepting(ConnectionId id)
 void
 Server::handleAccept(const boost::system::error_code& error, ConnectionId id)
 {
-  std::cout << "Server::HandleAccept() : " << error.message() << std::endl;
+//  std::cout << "Server::HandleAccept() : " << error.message() << std::endl;
   if (error)
   {
-    std::cerr << "Server:HandleAccept() - id: " << id << ", ERROR: " << error.message() << std::endl;
+    std::cout << "Server:HandleAccept() - id: " << id << ", INFO: " << error.message() << std::endl;
     closeConnection(id);
     return;
   }
@@ -174,7 +180,7 @@ Server::startServerThread(ConnectionId id)
 void
 Server::serverLoop(ConnectionId id)
 {
-  std::cout << "Server::serverLoop() - connection accepted - id: " << id << std::endl;
+//  std::cout << "Server::serverLoop() - connection accepted - id: " << id << std::endl;
 
   bool isOk = true;
   std::shared_ptr<boost::asio::ip::tcp::socket> socket = getSocket(id);
@@ -198,7 +204,7 @@ Server::serverLoop(ConnectionId id)
 
     if (error == boost::asio::error::eof)
     {
-      std::cout << "Server:serverLoop() - connection was closed by the peer." << std::endl;
+//      std::cout << "Server:serverLoop() - connection was closed by the peer." << std::endl;
       break;
     }
     else if (error)
@@ -217,7 +223,7 @@ Server::serverLoop(ConnectionId id)
 
   closeConnection(id);
 
-  std::cout << "Server::serverLoop() - end of thread - id: " << id << std::endl;
+//  std::cout << "Server::serverLoop() - end of thread - id: " << id << std::endl;
 }
 
 
@@ -245,6 +251,8 @@ Server::send(const Message& message, ConnectionId id)
 
   std::string messageString = message.createMessage();
 
+  std::cout << messageString << std::endl;
+
   boost::system::error_code error;
   boost::asio::write(*socket, boost::asio::buffer( messageString ), boost::asio::transfer_all(), error);
   if (error)
@@ -261,9 +269,8 @@ Server::send(const Message& message, ConnectionId id)
 
 
 void
-Server::registerObserver(ServerObserver* observer)
+Server::setObserver(ServerObserver* observer)
 {
-  std::cout << "Server::registerObserver()" << std::endl;
   if (!observer)
   {
     assert(0);
@@ -276,9 +283,9 @@ Server::registerObserver(ServerObserver* observer)
 
 
 void
-Server::unregisterObserver(ServerObserver* observer)
+Server::removeObserver(ServerObserver* observer)
 {
-  if (!observer)
+  if (observer != m_observer)
   {
     assert(0);
     return;
